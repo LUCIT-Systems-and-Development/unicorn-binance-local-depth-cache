@@ -1,3 +1,0 @@
-requests
-unicorn-binance-websocket-api
-unicorn-binance-rest-api

@@ -34,4 +34,4 @@
 
 rm ./build -r
 rm ./dist -r
-rm ./unicorn_binance_trailing_stop_loss_engine.egg-info -r
+rm ./unicorn_binance_local_depth_cache.egg-info -r
