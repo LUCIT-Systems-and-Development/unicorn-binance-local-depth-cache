@@ -184,7 +184,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         """
         logger.debug(f"Started thread for stream_data of symbol {symbol}")
-        while self.stop_request is False:
+        while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
             while self.depth_caches[symbol.lower()]['stream_status'] != "RUNNING":
                 logger.debug(f"Wait till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
                              f"symbol {symbol} is running")
@@ -195,6 +195,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
             if stream_data:
                 try:
+                    # Todo: Hier weiter machen!
                     if self.depth_caches[symbol.lower()]['last_update_id'] is not None and \
                             int(stream_data['data']['u']) > self.depth_caches[symbol.lower()]['last_update_id']:
                         if stream_data['data']['U'] != self.depth_caches[symbol.lower()]['last_update_id'] + 1:
