@@ -297,3 +297,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
             raise ValueError(f"Missing parameter `symbol`")
+
+    def get_version(self):
+        # Todo
+        pass
