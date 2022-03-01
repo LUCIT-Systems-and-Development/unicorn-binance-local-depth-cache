@@ -32,7 +32,7 @@ from unicorn_binance_trailing_stop_loss_engine.unicorn_binance_trailing_stop_los
 --long-description--
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
-- Fully managed websockets and 100% auto-reconnect! Also handles maintenance windows!
+- 
 
 ## Installation and Upgrade
 The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent 
