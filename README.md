@@ -36,6 +36,8 @@ import unicorn_binance_local_depth_cache
 
 --long-description--
 
+https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
+
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - 
 

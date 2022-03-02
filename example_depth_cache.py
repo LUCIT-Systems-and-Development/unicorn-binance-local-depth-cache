@@ -37,7 +37,7 @@ import logging
 import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.WARNING,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 

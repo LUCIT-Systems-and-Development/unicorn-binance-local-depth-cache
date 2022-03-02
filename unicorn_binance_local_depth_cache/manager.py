@@ -192,18 +192,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.depth_caches[symbol.lower()]['thread_is_started'] = True
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
             while self.depth_caches[symbol.lower()]['stream_status'] != "RUNNING":
-                logger.debug(f"Wait till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
+                logger.debug(f"Waiting till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
                              f"symbol {symbol} is running")
                 if self.depth_caches[symbol.lower()]['stream_status'] == "FIRST_RECEIVED_DATA":
                     logger.info(f"New websocket connection established, start initialization of the cache "
                                 f"with symbol {symbol}")
                     self.depth_caches[symbol.lower()]['stream_status'] = "RUNNING"
                     self._init_depth_cache(symbol=symbol)
+                time.sleep(0.01)
 
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
             if stream_data:
                 try:
-                    # Todo: Hier weiter machen!
                     if self.depth_caches[symbol.lower()]['last_update_id'] is not None and \
                             int(stream_data['data']['u']) > self.depth_caches[symbol.lower()]['last_update_id']:
                         if stream_data['data']['U'] != self.depth_caches[symbol.lower()]['last_update_id'] + 1:
@@ -214,8 +214,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                 int(time.time()) > self.depth_caches[symbol.lower()]['last_refresh_time']:
                             self._init_depth_cache(symbol=symbol)
                 except KeyError as error_msg:
-                    logger.debug(f"_process_stream_data() - KeyError: {error_msg}")
-            time.sleep(0.02)
+                    logger.debug(f"_process_stream_data() - KeyError: {error_msg} - stream_data: {stream_data}")
+            time.sleep(0.01)
 
     def _process_stream_signals(self):
         logger.debug(f"Started thread for stream_signals")
@@ -274,6 +274,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         while self.depth_caches[symbol.lower()]['thread_is_started'] is False:
             # This is to await the creation of the thread to avoid errors if the main thread gets closed before. This
             # can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
+            logger.debug(f"Waiting till thread for symbol {symbol} is running")
             time.sleep(0.01)
         return True
 
@@ -302,7 +303,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         """
         # Todo: check if stream is running, if not return false or REST
-        print(str(self.depth_caches[symbol.lower()]))
+        print("blah" + str(self.depth_caches[symbol.lower()]))
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
