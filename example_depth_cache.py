@@ -5,7 +5,7 @@
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
-# Documentation: https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache
+# Documentation: https://unicorn-binance-local-depth-cache.docs.lucit.tech
 # PyPI: https://pypi.org/project/unicorn-binance-local-depth-cache
 #
 # Author: LUCIT Systems and Development
@@ -37,7 +37,7 @@ import logging
 import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.DEBUG,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 

@@ -5,7 +5,7 @@
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
-# Documentation: https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache
+# Documentation: https://unicorn-binance-local-depth-cache.docs.lucit.tech
 # PyPI: https://pypi.org/project/unicorn-binance-local-depth-cache
 #
 # Author: LUCIT Systems and Development

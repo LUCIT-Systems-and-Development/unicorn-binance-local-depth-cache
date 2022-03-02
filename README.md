@@ -10,19 +10,20 @@
 [![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=Z6SEARA4W4)](https://codecov.io/gh/oliver-zehentleitner/unicorn-binance-local-depth-cache)
 [![Telegram](https://img.shields.io/badge/chat-telegram-yellow.svg)](https://t.me/unicorndevs)
 
-# UNICORN Binance Local Depth Cache
+# UNICORN Binance Local Depth Cache *** ALPHA ***
 
-[Description](#description) | [Live Demo](#live-demo) | [Installation](#installation-and-upgrade) | [How To](#howto) |
+[Description](#description) | [Installation](#installation-and-upgrade) | [How To](#howto) |
 [Documentation](#documentation) | [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) |
 [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
 [Contributing](#contributing) | [Commercial Support](#commercial-support)
 
---short-description--
+A local DepthCache for the Binance order books written in Python. (com+testnet, com-margin+testnet, 
+com-isolated_margin+testnet, com-futures+testnet, com-coin_futures, us, tr, jex, dex/chain+testnet) 
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 
 ```
-from unicorn_binance_trailing_stop_loss_engine.unicorn_binance_trailing_stop_loss_engine_manager import BinanceTrailingStopLossEngineManager
+import unicorn_binance_local_depth_cache
 
 --example-code--
 ```
@@ -73,7 +74,7 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 
 ## Documentation
 - [General](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache)
-- [Modules](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_trailing_stop_loss_engine.html)
+- [Modules](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_local_depth_cache.html)
 
 ## Examples
 
@@ -95,7 +96,7 @@ To receive notifications on available updates you can
 the repository on [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache), write your 
 [own script](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py) 
 with using 
-[`is_update_availabe()`](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_trailing_stop_loss_engine.html#unicorn_binance_trailing_stop_loss_engine.unicorn_binance_trailing_stop_loss_engine_manager.BinanceTrailingStopLossEngineManager.is_update_availabe).
+[`is_update_availabe()`](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager.BinanceTrailingStopLossEngineManager.is_update_availabe).
 
 Follow us on [Twitter](https://twitter.com/LUCIT_SysDev) or on [Facebook](https://www.facebook.com/lucit.systems.and.development) for general news about the [unicorn-binance-suite](https://www.lucit.tech/unicorn-binance-suite.html)!
 

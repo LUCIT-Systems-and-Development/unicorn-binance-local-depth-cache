@@ -5,7 +5,7 @@
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
-# Documentation: https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache
+# Documentation: https://unicorn-binance-local-depth-cache.docs.lucit.tech
 # PyPI: https://pypi.org/project/unicorn-binance-local-depth-cache
 #
 # Author: LUCIT Systems and Development
@@ -44,7 +44,7 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
-    def __init__(self, exchange="binance.com", ubwa_manager=False, default_refresh_interval=1800):
+    def __init__(self, exchange="binance.com", ubwa_manager=False, default_refresh_interval=30):
         """
         An unofficial Python API to use the Binance Websocket API`s (com+testnet, com-margin+testnet,
         com-isolated_margin+testnet, com-futures+testnet, us, jex, dex/chain+testnet) in a easy, fast, flexible,
@@ -60,6 +60,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type exchange: str
         :param ubwa_manager: Provide a unicorn_binance_websocket_api.manager instance.
         :type ubwa_manager: BinanceWebSocketApiManager
+        :param default_refresh_interval: The default refresh interval in minutes.
+        :type default_refresh_interval: int
 
         """
         super().__init__()
@@ -161,7 +163,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type symbol:
         :return:
         """
+        logger.info(f"Starting initialization of the cache with symbol {symbol}")
         order_book = self.ubra.get_order_book(symbol=symbol, limit=1000)
+        logger.debug(f"Downloaded order_book snapshot for the cache with symbol {symbol}")
         self.depth_caches[symbol.lower()]['asks'] = {}
         self.depth_caches[symbol.lower()]['bids'] = {}
         self.depth_caches[symbol.lower()]['last_refresh_time'] = int(time.time())
@@ -172,6 +176,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self._add_bid(bid, symbol=symbol)
         for ask in order_book['asks']:
             self._add_ask(ask, symbol=symbol)
+        logger.debug(f"Finished initialization of the cache with symbol {symbol}")
         return True
 
     def _process_stream_data(self, symbol: str = None):
@@ -189,6 +194,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 logger.debug(f"Wait till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
                              f"symbol {symbol} is running")
                 if self.depth_caches[symbol.lower()]['stream_status'] == "FIRST_RECEIVED_DATA":
+                    logger.info(f"New websocket connection established, start initialization of the cache "
+                                f"with symbol {symbol}")
                     self.depth_caches[symbol.lower()]['stream_status'] = "RUNNING"
                     self._init_depth_cache(symbol=symbol)
 
@@ -299,5 +306,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             raise ValueError(f"Missing parameter `symbol`")
 
     def get_version(self):
-        # Todo
-        pass
+        """
+        Get the version of this module.
+
+        :return: str
+        """
+        return self.version
