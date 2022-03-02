@@ -277,9 +277,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             time.sleep(0.01)
         return True
 
-    def get_bids(self, symbol: str = None):
+    def get_asks(self, symbol: str = None):
         """
-        Get the current bids
+        Get the current asks
 
         :param symbol: Symbol of the DepthCache
         :type symbol: str
@@ -288,13 +288,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         # Todo: check if stream is running, if not return false or REST
         if symbol:
-            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=True)
+            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=True)
         else:
             raise ValueError(f"Missing parameter `symbol`")
 
-    def get_asks(self, symbol: str = None):
+    def get_bids(self, symbol: str = None):
         """
-        Get the current asks
+        Get the current bids
 
         :param symbol: Symbol of the DepthCache
         :type symbol: str
@@ -302,6 +302,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         """
         # Todo: check if stream is running, if not return false or REST
+        print(str(self.depth_caches[symbol.lower()]))
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:

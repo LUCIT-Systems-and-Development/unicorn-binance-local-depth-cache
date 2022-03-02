@@ -43,7 +43,3 @@ logging.basicConfig(level=logging.DEBUG,
 
 ubldc = BinanceLocalDepthCacheManager()
 ubldc.create_depth_cache(symbol='LUNABTC')
-
-time.sleep(5)
-
-

@@ -21,8 +21,8 @@
 
 *** ALPHA ***
 
-A local DepthCache for the Binance order books written in Python. (com+testnet, com-margin+testnet, 
-com-isolated_margin+testnet, com-futures+testnet, com-coin_futures, us, tr, jex, dex/chain+testnet) 
+A local DepthCache written in Python for the Binance order books (com+testnet, com-margin+testnet, 
+com-isolated_margin+testnet, com-futures+testnet, com-coin_futures, us, tr, jex, dex/chain+testnet).
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 
