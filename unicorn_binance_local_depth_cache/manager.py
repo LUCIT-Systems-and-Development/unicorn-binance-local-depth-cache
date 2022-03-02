@@ -36,6 +36,7 @@ from operator import itemgetter
 from unicorn_binance_rest_api import *
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 import logging
+import requests
 import time
 import threading
 
@@ -46,9 +47,7 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 class BinanceLocalDepthCacheManager(threading.Thread):
     def __init__(self, exchange="binance.com", ubwa_manager=False, default_refresh_interval=30):
         """
-        An unofficial Python API to use the Binance Websocket API`s (com+testnet, com-margin+testnet,
-        com-isolated_margin+testnet, com-futures+testnet, us, jex, dex/chain+testnet) in a easy, fast, flexible,
-        robust and fully-featured way.
+        A local Binance DepthCache for Python that supports multiple depth caches in one instance.
 
         Binance API documentation:
         https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
@@ -58,7 +57,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                          binance.com-futures-testnet, binance.com-coin_futures, binance.us, trbinance.com,
                          jex.com, binance.org or binance.org-testnet (default: binance.com)
         :type exchange: str
-        :param ubwa_manager: Provide a unicorn_binance_websocket_api.manager instance.
+        :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
         :type ubwa_manager: BinanceWebSocketApiManager
         :param default_refresh_interval: The default refresh interval in minutes.
         :type default_refresh_interval: int
@@ -69,6 +68,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.exchange = exchange
         self.depth_caches = {}
         self.default_refresh_interval = default_refresh_interval
+        self.last_update_check_github = {'timestamp': time.time(),
+                                         'status': None}
         self.timeout = 60
         self.ubra = BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
@@ -151,9 +152,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self._add_ask(ask, symbol=symbol)
         for bid in order_book.get('b', []) + order_book.get('bids', []):
             self._add_bid(bid, symbol=symbol)
-
-        # Todo:
-        self.depth_caches[symbol.lower()]["last_update_time"] = order_book.get('E') or order_book.get('lastUpdateId')
 
     def _init_depth_cache(self, symbol: str = None):
         """
@@ -308,13 +306,61 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             raise ValueError(f"Missing parameter `symbol`")
 
+    @staticmethod
+    def get_latest_release_info():
+        """
+        Get infos about the latest available release
+        :return: dict or False
+        """
+        try:
+            respond = requests.get('https://api.github.com/repos/LUCIT-Systems-and-Development/'
+                                   'unicorn-binance-local-depth-cache/releases/latest')
+            latest_release_info = respond.json()
+            return latest_release_info
+        except Exception:
+            return False
+
+    def get_latest_version(self):
+        """
+        Get the version of the latest available release (cache time 1 hour)
+        :return: str or False
+        """
+        # Do a fresh request if status is None or last timestamp is older 1 hour
+        if self.last_update_check_github['status'] is None or \
+                (self.last_update_check_github['timestamp'] + (60 * 60) < time.time()):
+            self.last_update_check_github['status'] = self.get_latest_release_info()
+        if self.last_update_check_github['status']:
+            try:
+                return self.last_update_check_github['status']["tag_name"]
+            except KeyError:
+                return "unknown"
+        else:
+            return "unknown"
+
     def get_version(self):
         """
-        Get the version of this module.
+        Get the package/module version
 
         :return: str
+
         """
         return self.version
+
+    def is_update_availabe(self):
+        """
+        Is a new release of this package available?
+
+        :return: bool
+        """
+        installed_version = self.get_version()
+        if ".dev" in installed_version:
+            installed_version = installed_version[:-4]
+        if self.get_latest_version() == installed_version:
+            return False
+        elif self.get_latest_version() == "unknown":
+            return False
+        else:
+            return True
 
     def stop_manager(self):
         """

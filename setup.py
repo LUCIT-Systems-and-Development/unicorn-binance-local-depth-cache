@@ -53,14 +53,14 @@ setuptools.setup(
      install_requires=['requests', 'unicorn-binance-websocket-api', 'unicorn-binance-rest-api'],
      keywords='binance, ',
      project_urls={
-        'Documentation': 'https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache',
+        'Documentation': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech',
         'Wiki': 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki',
         'Author': 'https://www.lucit.tech',
      },
      python_requires='>=3.7.0',
      packages=setuptools.find_packages(),
      classifiers=[
-         "Development Status :: 5 - Production/Stable",
+         "Development Status :: 4 - Beta",
          "Programming Language :: Python :: 3.7",
          "Programming Language :: Python :: 3.8",
          "Programming Language :: Python :: 3.9",
@@ -73,6 +73,5 @@ setuptools.setup(
          "Operating System :: OS Independent",
          "Topic :: Office/Business :: Financial :: Investment",
          'Topic :: Software Development :: Libraries :: Python Modules',
-         "Framework :: AsyncIO",
      ],
 )
