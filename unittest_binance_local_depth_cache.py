@@ -44,14 +44,21 @@ logging.basicConfig(level=logging.DEBUG,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
+print(f"Starting unittests:")
 
-class TestUBLDC(unittest.TestCase):
+
+class TestUbldc(unittest.TestCase):
     def setUp(self):
         self.ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 
-    def create_depth_cache(self):
-        self.ubldc.create_depth_cache(symbol='LUNABTC')
-        time.sleep(60)
+    def test_create_depth_cache(self):
+        self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
 
     def tearDown(self):
-        self.ubldc.stop_request = True
+        time.sleep(60)
+        print(f"Shutting down ...")
+        self.ubldc.stop_manager()
+
+
+if __name__ == '__main__':
+    unittest.main()

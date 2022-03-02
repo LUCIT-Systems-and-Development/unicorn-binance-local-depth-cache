@@ -189,6 +189,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         """
         logger.debug(f"Started thread for stream_data of symbol {symbol}")
+        self.depth_caches[symbol.lower()]['thread_is_started'] = True
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
             while self.depth_caches[symbol.lower()]['stream_status'] != "RUNNING":
                 logger.debug(f"Wait till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
@@ -274,6 +275,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             # This is to await the creation of the thread to avoid errors if the main thread gets closed before. This
             # can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
             time.sleep(0.01)
+        return True
 
     def get_bids(self, symbol: str = None):
         """
@@ -312,3 +314,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: str
         """
         return self.version
+
+    def stop_manager(self):
+        """
+
+        :return:
+        """
+        self.stop_request = True
+        self.ubwa.stop_manager_with_all_streams()
