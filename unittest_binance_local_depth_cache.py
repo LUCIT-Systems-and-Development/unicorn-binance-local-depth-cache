@@ -53,15 +53,9 @@ class TestUbldc(unittest.TestCase):
 
     def test_create_depth_cache(self):
         self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
-        time.sleep(30)
-
-    def test_get_asks(self):
-        print(self.ubldc.get_asks(symbol='LUNABTC'))
-
-    def test_get_bids(self):
-        print(self.ubldc.get_bids(symbol='LUNABTC'))
-
-    def test_sort(self):
+        time.sleep(10)
+        self.ubldc.get_asks(symbol='LUNABTC')
+        self.ubldc.get_bids(symbol='LUNABTC')
         # Todo: test both types
         items = "TODO with assert!"
         self.ubldc._sort_depth_cache(items)

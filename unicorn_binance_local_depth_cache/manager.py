@@ -188,33 +188,33 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return:
 
         """
+        is_initialized = False
         logger.debug(f"Started thread for stream_data of symbol {symbol}")
         self.depth_caches[symbol.lower()]['thread_is_started'] = True
+        logger.info(f"Clearing stream_buffer with stream_id {self.depth_caches[symbol.lower()]['stream_id']} of the "
+                    f"cache of symbol {symbol} (stream_buffer length: "
+                    f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])}")
+        self.ubwa.clear_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
+        logger.info(f"Cleared stream_buffer: "
+                    f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])} items")
+        while self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id']) < 3:
+            logger.debug(f"Waiting for enough depth events for depth_cache with symbol {symbol}")
+            time.sleep(0.01)
+        logger.info(f"Collected enough depth events, starting the initialization of the cache with symbol {symbol}")
+        self._init_depth_cache(symbol=symbol)
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
-            while self.depth_caches[symbol.lower()]['stream_status'] != "RUNNING":
-                logger.debug(f"Waiting till stream {self.depth_caches[symbol.lower()]['stream_id']} with "
-                             f"symbol {symbol} is running")
-                if self.depth_caches[symbol.lower()]['stream_status'] == "FIRST_RECEIVED_DATA":
-                    logger.info(f"New websocket connection established, start initialization of the cache "
-                                f"with symbol {symbol}")
-                    self.depth_caches[symbol.lower()]['stream_status'] = "RUNNING"
-                    self._init_depth_cache(symbol=symbol)
-                time.sleep(0.01)
-
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
-            if stream_data:
-                try:
-                    if self.depth_caches[symbol.lower()]['last_update_id'] is not None and \
-                            int(stream_data['data']['u']) > self.depth_caches[symbol.lower()]['last_update_id']:
-                        if stream_data['data']['U'] != self.depth_caches[symbol.lower()]['last_update_id'] + 1:
-                            self._init_depth_cache(symbol=symbol)
+            if stream_data and "'result': None," not in str(stream_data):
+                if is_initialized:
+                    self._apply_updates(stream_data, symbol=symbol)
+                else:
+                    if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
+                        continue
+                    if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
+                            <= int(stream_data['data']['u']):
                         self._apply_updates(stream_data, symbol=symbol)
-                        self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
-                        if self.depth_caches[symbol.lower()]['refresh_interval'] and \
-                                int(time.time()) > self.depth_caches[symbol.lower()]['last_refresh_time']:
-                            self._init_depth_cache(symbol=symbol)
-                except KeyError as error_msg:
-                    logger.debug(f"_process_stream_data() - KeyError: {error_msg} - stream_data: {stream_data}")
+                        is_initialized = True
+                    self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
             time.sleep(0.01)
 
     def _process_stream_signals(self):
@@ -303,7 +303,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         """
         # Todo: check if stream is running, if not return false or REST
-        print("blah" + str(self.depth_caches[symbol.lower()]))
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
