@@ -34,7 +34,7 @@
 # IN THE SOFTWARE.
 
 from operator import itemgetter
-from unicorn_binance_rest_api import *
+from unicorn_binance_rest_api import BinanceRestApiManager
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 import logging
 import requests
