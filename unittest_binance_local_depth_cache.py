@@ -38,11 +38,20 @@ import unittest
 import os
 import time
 
-BINANCE_COM_API_KEY = ""
-BINANCE_COM_API_SECRET = ""
-
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
+
+
+class TestUBLDC(unittest.TestCase):
+    def setUp(self):
+        self.ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+
+    def create_depth_cache(self):
+        self.ubldc.create_depth_cache(symbol='LUNABTC')
+        time.sleep(60)
+
+    def tearDown(self):
+        self.ubldc.stop_request = True
