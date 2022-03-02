@@ -32,7 +32,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-from unicorn_binance_local_depth_cache.manager import BinanceTrailingStopLossEngineManager
+from unicorn_binance_local_depth_cache.manager import *
 import logging
 import unittest
 import os
@@ -41,7 +41,7 @@ import time
 BINANCE_COM_API_KEY = ""
 BINANCE_COM_API_SECRET = ""
 
-logging.getLogger("unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager")
+logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
