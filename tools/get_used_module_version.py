@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# File: pypi/install_packaging_tools.sh
+# File: tools/get_used_module_version.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
@@ -33,4 +33,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-python3 -m pip install --user --upgrade pip setuptools wheel twine tqdm
+from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager
+
+# create instance of BinanceLocalDepthCacheManager
+ubldc = BinanceLocalDepthCacheManager()
+
+# get version of the used UNICORN Binance Local Depth Cache
+print(ubldc.get_version())
+
+ubldc.stop_manager()

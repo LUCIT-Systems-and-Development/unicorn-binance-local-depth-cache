@@ -5,12 +5,13 @@
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
+# Github: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
 # Documentation: https://unicorn-binance-local-depth-cache.docs.lucit.tech
 # PyPI: https://pypi.org/project/unicorn-binance-local-depth-cache
 #
 # Author: LUCIT Systems and Development
 #
-# Copyright (c) 2022-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
+# Copyright (c) 2019-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
 # All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -45,7 +46,7 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
-    def __init__(self, exchange="binance.com", ubwa_manager=False, default_refresh_interval=30):
+    def __init__(self, exchange="binance.com", ubra_manager=False, ubwa_manager=False, default_refresh_interval=30):
         """
         A local Binance DepthCache for Python that supports multiple depth caches in one instance.
 
@@ -57,6 +58,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                          binance.com-futures-testnet, binance.com-coin_futures, binance.us, trbinance.com,
                          jex.com, binance.org or binance.org-testnet (default: binance.com)
         :type exchange: str
+        :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
+        :type ubra_manager: BinanceRestApiManager
         :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
         :type ubwa_manager: BinanceWebSocketApiManager
         :param default_refresh_interval: The default refresh interval in minutes.
@@ -71,7 +74,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.last_update_check_github = {'timestamp': time.time(),
                                          'status': None}
         self.timeout = 60
-        self.ubra = BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
+        self.ubra = ubra_manager or BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True)
