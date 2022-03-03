@@ -34,8 +34,6 @@
 # IN THE SOFTWARE.
 
 # Todo:
-#   - Delete/Stop Cache
-#   - Get/Set/Is functions
 #   - Test: Long run and find exceptions
 #   - thread locks?
 #   - support all binance endpoints
@@ -451,6 +449,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             return "unknown"
 
+    def get_list_of_depth_caches(self):
+        """
+        Get a list of existing depth caches
+
+        :return: list
+        """
+        depth_cache_list = []
+        for depth_cache in self.depth_caches:
+            depth_cache_list.append(depth_cache)
+        return depth_cache_list
+
     def get_version(self):
         """
         Get the package/module version
@@ -458,6 +467,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: str
         """
         return self.version
+
+    def is_depth_cache_synchronized(self, market: str = None):
+        """
+        Is a specific depth cache synchronized?
+
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
+
+        :return: bool
+        """
+        return self.depth_caches[market.lower()]['is_synchronized']
 
     def is_update_available(self):
         """
