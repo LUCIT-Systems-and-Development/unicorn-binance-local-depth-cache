@@ -34,6 +34,7 @@
 # IN THE SOFTWARE.
 
 from operator import itemgetter
+from .exceptions import DepthCacheOutOfSync
 from unicorn_binance_rest_api import BinanceRestApiManager
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 import logging
@@ -105,9 +106,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if symbol and stream_id:
             self.depth_caches[symbol.lower()] = {"asks": {},
                                                  "bids": {},
+                                                 "is_synchronized": False,
                                                  "last_refresh_time": None,
                                                  "last_update_id": None,
                                                  "refresh_interval": refresh_interval or self.default_refresh_interval,
+                                                 "refresh_request": False,
                                                  "stop_request": False,
                                                  "stream_id": stream_id,
                                                  "stream_status": None,
@@ -202,9 +205,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param symbol: Specify the market symbol for the used depth_cache
         :type symbol: str
         """
-        is_initialized = False
         logger.debug(f"_process_stream_data() - Started thread for stream_data of symbol {symbol}")
         self.depth_caches[symbol.lower()]['thread_is_started'] = True
+        self.depth_caches[symbol.lower()]['is_synchronized'] = False
         logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
                     f"{self.depth_caches[symbol.lower()]['stream_id']} of the "
                     f"cache of symbol {symbol} (stream_buffer length: "
@@ -222,19 +225,24 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
             if stream_data and "'result': None," not in str(stream_data):
-                if is_initialized:
+                if self.depth_caches[symbol.lower()]['is_synchronized']:
+                    # Regular depth update events
+                    logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
+                                 f"symbol {symbol}")
                     # Todo: While listening to the stream, each new event's U should be equal to the previous
                     #  event's u+1. If not -> new init
                     self._apply_updates(stream_data, symbol=symbol)
                 else:
                     if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
+                        # Drop it
                         continue
                     if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
                             <= int(stream_data['data']['u']):
+                        # This is the first applied depth update
                         self._apply_updates(stream_data, symbol=symbol)
                         logger.info(f"_process_stream_data() -  Finished initialization of the cache with "
                                     f"symbol {symbol}")
-                        is_initialized = True
+                        self.depth_caches[symbol.lower()]['is_synchronized'] = True
                     self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
             time.sleep(0.01)
 
@@ -250,7 +258,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 for symbol in self.depth_caches:
                     if self.depth_caches[symbol]['stream_id'] == stream_signal['stream_id']:
                         self.depth_caches[symbol]['stream_status'] = stream_signal['type']
-                        # Todo: new init after disconnect
+                        if stream_signal['type'] == "DISCONNECT":
+                            self.depth_caches[symbol]['is_synchronized'] = False
+                            self.depth_caches[symbol]['refresh_request'] = True
+
             else:
                 time.sleep(0.01)
 
@@ -314,7 +325,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=True)
         else:
-            raise ValueError(f"Missing parameter `symbol`")
+            raise ValueError(f"Missing parameter `symbol` or invalid value provided: symbol={symbol}")
 
     def get_bids(self, symbol: str = None):
         """
@@ -328,7 +339,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
-            raise ValueError(f"Missing parameter `symbol`")
+            raise ValueError(f"Missing parameter `symbol` or invalid value provided: symbol={symbol}")
 
     @staticmethod
     def get_latest_release_info():
