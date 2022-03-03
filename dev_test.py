@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# File: example_depth_cache.py
+# File: dev_test.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
@@ -39,7 +39,7 @@ import os
 import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
@@ -63,3 +63,5 @@ while True:
         print(f"ERROR: {error_msg}")
     time.sleep(5)
 
+time.sleep(5)
+ubldc.stop_manager()

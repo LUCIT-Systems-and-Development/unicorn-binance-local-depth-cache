@@ -33,6 +33,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+# Todo:
+#   - Control that last_update_id fits, if not, refresh!
+#   - Refresh interval
+#   - Test: multi caches
+#   - Test: update works fine, cache data is fine?
+#   - Test: Long run and find exceptions
+
 from operator import itemgetter
 from .exceptions import DepthCacheOutOfSync
 from unicorn_binance_rest_api import BinanceRestApiManager
@@ -329,13 +336,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type symbol: str
         :return: list of asks with price and quantity.
         """
-        if self.depth_caches[symbol]['is_synchronized'] is False:
-            raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
-                                      f"again later")
+        if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
+            try:
+                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+                                          f"again later")
+            except KeyError:
+                raise KeyError(f"Invalid value provided: symbol={symbol}")
+
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=True)
         else:
-            raise ValueError(f"Missing parameter `symbol` or invalid value provided: symbol={symbol}")
+            raise KeyError(f"Missing parameter `symbol`")
 
     def get_bids(self, symbol: str = None):
         """
@@ -345,14 +356,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type symbol: str
         :return: list of asks with price and quantity.
         """
-        if self.depth_caches[symbol]['is_synchronized'] is False:
-            raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
-                                      f"again later")
-
+        try:
+            if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
+                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+                                          f"again later")
+        except KeyError:
+            raise KeyError(f"Invalid value provided: symbol={symbol}")
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
-            raise ValueError(f"Missing parameter `symbol` or invalid value provided: symbol={symbol}")
+            raise KeyError(f"Missing parameter `symbol`")
 
     @staticmethod
     def get_latest_release_info():

@@ -7,7 +7,7 @@
 [![Python application](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/context:python)
-[![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=Z6SEARA4W4)](https://codecov.io/gh/oliver-zehentleitner/unicorn-binance-local-depth-cache)
+[![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=Z6SEARA4W4)](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 [![Read the Docs](https://img.shields.io/badge/read-%20docs-yellow)](https://unicorn-binance-local-depth-cache.docs.lucit.tech/)
 [![Github](https://img.shields.io/badge/source-github-yellow)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 [![Telegram](https://img.shields.io/badge/chat-telegram-yellow.svg)](https://t.me/unicorndevs)
@@ -19,10 +19,7 @@
 [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
 [Contributing](#contributing) | [Commercial Support](#commercial-support)
 
-*** ALPHA ***
-
-A local DepthCache for the Binance order books written in Python. (com+testnet, com-margin+testnet, 
-com-isolated_margin+testnet, com-futures+testnet, com-coin_futures, us, tr, jex, dex/chain+testnet) 
+A local Binance DepthCache for Python that supports multiple depth caches in one instance.
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 
@@ -35,6 +32,8 @@ import unicorn_binance_local_depth_cache
 ## Description
 
 --long-description--
+
+https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - 
@@ -130,7 +129,7 @@ contribute follow
 [this guide](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/CONTRIBUTING.md).
  
 ### Contributors
-[![Contributors](https://contributors-img.web.app/image?repo=oliver-zehentleitner/unicorn-binance-local-depth-cache)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/graphs/contributors)
+[![Contributors](https://contributors-img.web.app/image?repo=LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/graphs/contributors)
 
 We ![love](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/heart.png) open source!
 

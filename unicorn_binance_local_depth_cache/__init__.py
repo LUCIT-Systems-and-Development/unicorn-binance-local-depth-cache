@@ -1,2 +1,3 @@
 from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager
+from unicorn_binance_local_depth_cache.exceptions import DepthCacheOutOfSync
 
