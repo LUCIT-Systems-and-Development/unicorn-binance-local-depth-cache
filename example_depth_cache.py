@@ -11,7 +11,7 @@
 #
 # Author: LUCIT Systems and Development
 #
-# Copyright (c) 2019-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
+# Copyright (c) 2022-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
 # All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -44,21 +44,21 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-symbol = 'LUNABTC'
+market = 'LUNABTC'
 
 ubldc = BinanceLocalDepthCacheManager()
-ubldc.create_depth_cache(symbol=symbol)
+ubldc.create_depth_cache(market=market)
 
 try:
-    print(f"{ubldc.get_bids(symbol='TEST_INVALID_SYMBOL')}")
+    print(f"{ubldc.get_bids(market='TEST_INVALID_MARKET_SYMBOL')}")
 except KeyError as error_msg:
     print(f"ERROR: {error_msg}")
 
 while True:
-    print(f"is_synchronized: {ubldc.depth_caches[symbol.lower()]['is_synchronized']}")
+    print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")
     try:
-        print(f"Top 10 asks: {ubldc.get_asks(symbol=symbol)[:10]}")
-        print(f"Top 10 bids: {ubldc.get_bids(symbol=symbol)[:10]}")
+        print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
+        print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
     except DepthCacheOutOfSync as error_msg:
         print(f"ERROR: {error_msg}")
     time.sleep(5)

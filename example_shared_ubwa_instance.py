@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# File: pypi/create_wheel.sh
+# File: example_shared_ubwa_instance.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
@@ -33,15 +33,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-security-check() {
-    echo -n "Did you change the version in \`sphinx/source/conf.py\` and \`unicorn_binance_local_depth_cache/manager.py\`? [yes|NO] "
-    local SURE
-    read SURE
-    if [ "$SURE" != "yes" ]; then
-        exit 1
-    fi
-    echo "ok, lets go ..."
-}
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_websocket_api import BinanceWebSocketApiManager
+import logging
+import os
+import time
 
-security-check
-python3 setup.py bdist_wheel
+logging.getLogger("unicorn_binance_local_depth_cache")
+logging.basicConfig(level=logging.INFO,
+                    filename=os.path.basename(__file__) + '.log',
+                    format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
+                    style="{")
+
+market = 'LUNABTC'
+exchange = "binance.com"
+
+ubwa = BinanceWebSocketApiManager(exchange=exchange)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
+ubldc.create_depth_cache(market=market)
+
+while True:
+    try:
+        top_asks = ubldc.get_asks(market=market)[:3]
+        top_bids = ubldc.get_bids(market=market)[:3]
+    except DepthCacheOutOfSync:
+        top_asks = ""
+        top_bids = ""
+    depth = f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
+    ubwa.print_summary(add_string=depth)
+    time.sleep(1)
+

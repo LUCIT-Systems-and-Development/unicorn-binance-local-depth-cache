@@ -11,7 +11,7 @@
 #
 # Author: LUCIT Systems and Development
 #
-# Copyright (c) 2019-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
+# Copyright (c) 2022-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
 # All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -726,9 +726,9 @@ class TestUbldc(unittest.TestCase):
                             [0.0021761, 0.09], [0.0021762, 1.2], [0.0021763, 2.35]]
 
     def test_add_depth_cache_missing_stream_id(self):
-        self.assertFalse(self.ubldc._add_depth_cache(symbol="LUNABTC"))
+        self.assertFalse(self.ubldc._add_depth_cache(market="LUNABTC"))
 
-    def test_add_depth_cache_missing_symbol(self):
+    def test_add_depth_cache_missing_market(self):
         self.assertFalse(self.ubldc._add_depth_cache(stream_id="AAAAAAAAAAAAAAAAA"))
 
     def test_div(self):
@@ -738,17 +738,17 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.is_update_available()
 
     def test_create_depth_cache_true(self):
-        self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
+        self.assertTrue(self.ubldc.create_depth_cache(market='LUNABTC'))
         time.sleep(30)
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
 
     def test_get_asks(self):
-        self.ubldc.get_asks(symbol='LUNABTC')
+        self.ubldc.get_asks(market='LUNABTC')
 
     def test_get_bids(self):
-        self.ubldc.get_bids(symbol='LUNABTC')
+        self.ubldc.get_bids(market='LUNABTC')
 
     def test_sort_dict(self):
         self.assertListEqual(self.assert_list, self.ubldc._sort_depth_cache(self.items))
@@ -758,9 +758,9 @@ class TestUbldc(unittest.TestCase):
         # Todo: with the first release this can get activated
         # self.assertTrue((self.ubldc.is_update_availabe()))
 
-    def test_invalid_symbol(self):
+    def test_invalid_market(self):
         try:
-            self.ubldc.get_bids(symbol='TEST_INVALID_SYMBOL')
+            self.ubldc.get_bids(market='TEST_INVALID_MARKET')
         except KeyError:
             pass
 

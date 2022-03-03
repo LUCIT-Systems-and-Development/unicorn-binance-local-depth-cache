@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# File: pypi/create_wheel.sh
+# File: dev_monitoring_streams.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
@@ -33,15 +33,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-security-check() {
-    echo -n "Did you change the version in \`sphinx/source/conf.py\` and \`unicorn_binance_local_depth_cache/manager.py\`? [yes|NO] "
-    local SURE
-    read SURE
-    if [ "$SURE" != "yes" ]; then
-        exit 1
-    fi
-    echo "ok, lets go ..."
-}
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_websocket_api import BinanceWebSocketApiManager
+import logging
+import os
+import sys
+import time
 
-security-check
-python3 setup.py bdist_wheel
+try:
+    from unicorn_binance_rest_api import BinanceRestApiManager
+except ImportError:
+    print("Please install `unicorn-binance-rest-api`! https://pypi.org/project/unicorn-binance-rest-api/")
+    sys.exit(1)
+
+logging.getLogger("unicorn_binance_local_depth_cache")
+logging.basicConfig(level=logging.INFO,
+                    filename=os.path.basename(__file__) + '.log',
+                    format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
+                    style="{")
+
+spawn_depth_caches = 100
+exchange = "binance.com"
+
+ubwa = BinanceWebSocketApiManager(exchange=exchange)
+ubra = BinanceRestApiManager("*", "*", exchange=exchange)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
+
+markets = []
+data = ubra.get_all_tickers()
+for item in data:
+    markets.append(item['symbol'])
+
+print(f"Starting {spawn_depth_caches} new depth caches")
+ubldc.create_depth_caches(markets=markets[:spawn_depth_caches], update_speed=100)
+
+while True:
+    depth = f""
+    ubwa.print_summary(add_string=depth)
+    time.sleep(1)
+

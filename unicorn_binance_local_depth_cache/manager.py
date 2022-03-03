@@ -11,7 +11,7 @@
 #
 # Author: LUCIT Systems and Development
 #
-# Copyright (c) 2019-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
+# Copyright (c) 2022-2022, LUCIT Systems and Development (https://www.lucit.tech) and Oliver Zehentleitner
 # All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -41,11 +41,15 @@
 #   - Test: Long run and find exceptions
 #   - Get/Set/Is functions
 #   - Delete/Stop Cache
+#   - get asks and bids can take data from rest if it is out of sync
+#   - support all binance endpoints
+#   - thread locks?
 
-from operator import itemgetter
 from .exceptions import DepthCacheOutOfSync
+from operator import itemgetter
 from unicorn_binance_rest_api import BinanceRestApiManager
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
+from typing import Optional
 import logging
 import requests
 import time
@@ -102,18 +106,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.thread_stream_signals = threading.Thread(target=self._process_stream_signals)
         self.thread_stream_signals.start()
 
-    def _add_depth_cache(self, symbol=None, stream_id=None, refresh_interval=None):
+    def _add_depth_cache(self, market=None, stream_id=None, refresh_interval=None):
         """
         Add a depth_cache to the depth_caches stack.
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market market for the used depth_cache
+        :type market: str
         :param stream_id: Provide a stream_id
         :type stream_id: str
         :return: bool
         """
-        if symbol and stream_id:
-            self.depth_caches[symbol.lower()] = {"asks": {},
+        if market and stream_id:
+            self.depth_caches[market.lower()] = {"asks": {},
                                                  "bids": {},
                                                  "is_synchronized": False,
                                                  "last_refresh_time": None,
@@ -123,155 +127,157 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                  "stop_request": False,
                                                  "stream_id": stream_id,
                                                  "stream_status": None,
-                                                 "symbol": symbol,
+                                                 "market": market.lower(),
                                                  "thread": None,
                                                  "thread_is_started": False}
-            logger.debug(f"_add_depth_cache() - Added new entry for symbol {symbol} and stream_id {stream_id}")
+            logger.debug(f"_add_depth_cache() - Added new entry for market {market.lower()} and stream_id {stream_id}")
             return True
         else:
-            logger.debug(f"_add_depth_cache() - Not able to add entry for symbol {symbol} and stream_id {stream_id}")
+            logger.debug(f"_add_depth_cache() - Not able to add entry for market {market} and "
+                         f"stream_id {stream_id}")
             return False
 
-    def _add_ask(self, ask, symbol: str = None):
+    def _add_ask(self, ask, market: str = None):
         """
         Add, update or delete an ask of a specific depth cache.
 
         :param ask: Add asks to the depth_cache
         :type ask: list
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market market for the used depth_cache
+        :type market: str
         :return: bool
         """
-        self.depth_caches[symbol.lower()]["asks"][ask[0]] = float(ask[1])
+        self.depth_caches[market.lower()]["asks"][ask[0]] = float(ask[1])
         if ask[1] == "0.00000000":
             logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side")
-            del self.depth_caches[symbol.lower()]["asks"][ask[0]]
+            del self.depth_caches[market.lower()]["asks"][ask[0]]
         return True
 
-    def _add_bid(self, bid, symbol: str = None):
+    def _add_bid(self, bid, market: str = None):
         """
         Add a bid to a specific depth cache.
 
         :param bid: Add bids to the depth_cache
         :type bid: list
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :return: bool
         """
-        self.depth_caches[symbol.lower()]["bids"][bid[0]] = float(bid[1])
+        self.depth_caches[market.lower()]["bids"][bid[0]] = float(bid[1])
         if bid[1] == "0.00000000":
             logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side")
-            del self.depth_caches[symbol.lower()]["bids"][bid[0]]
+            del self.depth_caches[market.lower()]["bids"][bid[0]]
         return True
 
-    def _apply_updates(self, order_book, symbol: str = None):
+    def _apply_updates(self, order_book, market: str = None):
         """
         Apply updates to a specific depth cache.
 
         :param order_book: Provide order_book data from rest or ws
         :type order_book: dict
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :return: bool
         """
-        logger.debug(f"_apply_updates() - Applying updates to the depth cache with symbol {symbol}")
+        logger.debug(f"_apply_updates() - Applying updates to the depth cache with market {market.lower()}")
         for ask in order_book.get('a', []) + order_book.get('asks', []):
-            self._add_ask(ask, symbol=symbol)
+            self._add_ask(ask, market=market.lower())
         for bid in order_book.get('b', []) + order_book.get('bids', []):
-            self._add_bid(bid, symbol=symbol)
+            self._add_bid(bid, market=market.lower())
         return True
 
-    def _init_depth_cache(self, symbol: str = None):
+    def _init_depth_cache(self, market: str = None):
         """
         Initialise the depth cache with a rest snapshot.
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :return: bool
         """
-        logger.info(f"_init_depth_cache() - Starting initialization of the cache with symbol {symbol}")
+        logger.info(f"_init_depth_cache() - Starting initialization of the cache with market {market.lower()}")
         try:
-            order_book = self.ubra.get_order_book(symbol=symbol, limit=1000)
+            order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
         except requests.exceptions.ReadTimeout as error_msg:
             logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth cache with "
-                         f"symbol {symbol} -> trying again till it works - error_msg: {error_msg}")
-            self._init_depth_cache(symbol=symbol)
+                         f"market {market.lower()} -> trying again till it works - error_msg: {error_msg}")
+            self._init_depth_cache(market=market.lower())
             return True
-        logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth cache with symbol {symbol}")
-        self.depth_caches[symbol.lower()]['asks'] = {}
-        self.depth_caches[symbol.lower()]['bids'] = {}
-        self.depth_caches[symbol.lower()]['last_refresh_time'] = int(time.time())
-        self.depth_caches[symbol.lower()]['last_update_time'] = int(time.time())
-        self.depth_caches[symbol.lower()]['last_update_id'] = int(order_book['lastUpdateId'])
-        self._apply_updates(order_book, symbol=symbol)
+        logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth cache with"
+                     f" market {market.lower()}")
+        self.depth_caches[market.lower()]['asks'] = {}
+        self.depth_caches[market.lower()]['bids'] = {}
+        self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
+        self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
+        self.depth_caches[market.lower()]['last_update_id'] = int(order_book['lastUpdateId'])
+        self._apply_updates(order_book, market=market.lower())
         for bid in order_book['bids']:
-            self._add_bid(bid, symbol=symbol)
+            self._add_bid(bid, market=market.lower())
         for ask in order_book['asks']:
-            self._add_ask(ask, symbol=symbol)
-        logger.debug(f"_init_depth_cache() - Finished initialization of the cache with symbol {symbol}")
+            self._add_ask(ask, market=market.lower())
+        logger.debug(f"_init_depth_cache() - Finished initialization of the cache with market {market.lower()}")
         return True
 
-    def _process_stream_data(self, symbol: str = None):
+    def _process_stream_data(self, market: str = None):
         """
         Process depth stream_data
 
         The logic is described here:
         https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         """
-        logger.debug(f"_process_stream_data() - Started thread for stream_data of symbol {symbol}")
-        self.depth_caches[symbol.lower()]['thread_is_started'] = True
-        self.depth_caches[symbol.lower()]['is_synchronized'] = False
-        while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
+        logger.debug(f"_process_stream_data() - Started thread for stream_data of market {market.lower()}")
+        self.depth_caches[market.lower()]['thread_is_started'] = True
+        self.depth_caches[market.lower()]['is_synchronized'] = False
+        while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
             logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
-                        f"{self.depth_caches[symbol.lower()]['stream_id']} of the "
-                        f"cache of symbol {symbol} (stream_buffer length: "
-                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])}")
-            self.depth_caches[symbol.lower()]['refresh_request'] = False
-            self.ubwa.clear_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
+                        f"{self.depth_caches[market.lower()]['stream_id']} of the "
+                        f"cache of market {market.lower()} (stream_buffer length: "
+                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])}")
+            self.depth_caches[market.lower()]['refresh_request'] = False
+            self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
             logger.info(f"_process_stream_data() - Cleared stream_buffer: "
-                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])} items")
-            while self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id']) < 3:
+                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
+            while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) < 3:
                 logger.debug(f"_process_stream_data() - Waiting for enough depth events for depth_cache with "
-                             f"symbol {symbol}")
+                             f"market {market.lower()}")
                 time.sleep(0.01)
             logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
-                        f"cache with symbol {symbol}")
-            self._init_depth_cache(symbol=symbol)
-            while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
-                if self.depth_caches[symbol.lower()]['refresh_request'] is True:
+                        f"cache with market {market.lower()}")
+            self._init_depth_cache(market=market.lower())
+            while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
+                if self.depth_caches[market.lower()]['refresh_request'] is True:
                     break
-                stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
+                stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
                 if stream_data and "'result': None," not in str(stream_data):
-                    if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
-                        if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
+                    if self.depth_caches[market.lower()]['is_synchronized'] is False:
+                        if int(stream_data['data']['u']) <= self.depth_caches[market.lower()]['last_update_id']:
                             # Drop it
                             logger.info(f"_process_stream_data() - Dropping outdated depth update of the cache with "
-                                        f"symbol {symbol}")
+                                        f"market {market.lower()}")
                             continue
-                        if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
+                        if int(stream_data['data']['U']) <= self.depth_caches[market.lower()]['last_update_id'] \
                                 <= int(stream_data['data']['u']):
                             # This is the first applied depth update
-                            self._apply_updates(stream_data['data'], symbol=symbol)
+                            self._apply_updates(stream_data['data'], market=market.lower())
                             logger.info(f"_process_stream_data() - Finished initialization of the cache with "
-                                        f"symbol {symbol}")
+                                        f"market {market.lower()}")
                             # Init (refresh) finished
-                            self.depth_caches[symbol.lower()]['is_synchronized'] = True
-                            self.depth_caches[symbol.lower()]['last_refresh_time'] = int(time.time())
+                            self.depth_caches[market.lower()]['is_synchronized'] = True
+                            self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
                     else:
                         # Regular depth update events
-                        if stream_data['data']['U'] != self.depth_caches[symbol.lower()]['last_update_id']+1:
+                        if stream_data['data']['U'] != self.depth_caches[market.lower()]['last_update_id']+1:
                             logger.debug(f"_process_stream_data() - There is a gap between the last and the penultimate"
-                                         f" update ID, the depth cache `{symbol}` is no longer correct and must "
-                                         f"be reinitialized")
+                                         f" update ID, the depth cache `{market.lower()}` is no longer correct and "
+                                         f"must be reinitialized")
                             break
                         logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
-                                     f"symbol {symbol}")
-                        self._apply_updates(stream_data['data'], symbol=symbol)
-                    self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
-                    self.depth_caches[symbol.lower()]['last_update_time'] = int(time.time())
+                                     f"market {market.lower()}")
+                        self._apply_updates(stream_data['data'], market=market.lower())
+                    self.depth_caches[market.lower()]['last_update_id'] = stream_data['data']['u']
+                    self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
                 time.sleep(0.01)
 
     def _process_stream_signals(self):
@@ -283,14 +289,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             stream_signal = self.ubwa.pop_stream_signal_from_stream_signal_buffer()
             if stream_signal:
                 logger.debug(f"_process_stream_signals() - received stream_signal: {stream_signal}")
-                for symbol in self.depth_caches:
-                    if self.depth_caches[symbol]['stream_id'] == stream_signal['stream_id']:
-                        self.depth_caches[symbol]['stream_status'] = stream_signal['type']
+                for market in self.depth_caches:
+                    if self.depth_caches[market]['stream_id'] == stream_signal['stream_id']:
+                        self.depth_caches[market]['stream_status'] = stream_signal['type']
                         if stream_signal['type'] == "DISCONNECT":
-                            self.depth_caches[symbol]['is_synchronized'] = False
-                            self.depth_caches[symbol]['refresh_request'] = True
+                            self.depth_caches[market]['is_synchronized'] = False
+                            self.depth_caches[market]['refresh_request'] = True
                         elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
-                            self.depth_caches[symbol]['stream_status'] = "RUNNING"
+                            self.depth_caches[market]['stream_status'] = "RUNNING"
             else:
                 time.sleep(0.01)
 
@@ -310,76 +316,99 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
         return new_items
 
-    def create_depth_cache(self, symbol: str = None, update_speed: int = 1000, refresh_interval: int = None):
+    def create_depth_cache(self, market: str = None, update_speed: int = 1000, refresh_interval: int = None):
         """
         Create a new depth_cache!
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
         :type update_speed: int
-        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval`.
+        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
+                                 `BinanceLocalDepthCache()`.
         :type refresh_interval: int
         :return: bool
         """
-        if symbol is None:
+        if market is None:
             return False
         try:
-            if self.depth_caches[symbol]:
-                logger.debug(f"create_depth_cache() - depth_cache {symbol} already exists!")
+            if self.depth_caches[market.lower()]:
+                logger.debug(f"create_depth_cache() - depth_cache {market.lower()} already exists!")
                 return False
         except KeyError as error_msg:
-            logger.debug(f"create_depth_cache() - No existing cache for symbol {symbol} found! - KeyError: {error_msg}")
-        stream_id = self.ubwa.create_stream(f"depth@{update_speed}ms", symbol, stream_buffer_name=True, output="dict")
-        self._add_depth_cache(symbol=symbol, stream_id=stream_id, refresh_interval=refresh_interval)
-        self.depth_caches[symbol.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(symbol,))
-        self.depth_caches[symbol.lower()]['thread'].start()
-        while self.depth_caches[symbol.lower()]['thread_is_started'] is False:
+            logger.debug(f"create_depth_cache() - No existing cache for market {market.lower()} found! - "
+                         f"KeyError: {error_msg}")
+        stream_id = self.ubwa.create_stream(f"depth@{update_speed}ms", market, stream_buffer_name=True,
+                                            stream_label=f"depth_{market}", output="dict")
+        self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
+        self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(market,))
+        self.depth_caches[market.lower()]['thread'].start()
+        while self.depth_caches[market.lower()]['thread_is_started'] is False:
             # This is to await the creation of the thread to avoid errors if the main thread gets closed before. This
             # can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
-            logger.debug(f"create_depth_cache() - Waiting till thread for symbol {symbol} is running")
+            logger.debug(f"create_depth_cache() - Waiting till thread for market {market.lower()} is running")
             time.sleep(0.01)
         return True
 
-    def get_asks(self, symbol: str = None):
+    def create_depth_caches(self, markets: Optional[list] = None, update_speed: int = 1000, refresh_interval: int = None):
+        """
+        Create one or more depth_cache!
+
+        :param markets: Specify the market symbols for caches to be created
+        :type markets: list
+        :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
+                             https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
+        :type update_speed: int
+        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
+                                 `BinanceLocalDepthCache()`.
+        :type refresh_interval: int
+        :return: bool
+        """
+        if markets is None:
+            return False
+        for market in markets:
+            self.create_depth_cache(market=market.lower(), update_speed=update_speed, refresh_interval=refresh_interval)
+        return True
+
+    def get_asks(self, market: str = None):
         """
         Get the current asks
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :return: list of asks with price and quantity.
         """
-        if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
+        if self.depth_caches[market.lower()]['is_synchronized'] is False:
             try:
-                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{market.lower()}' is out of sync, please try "
                                           f"again later")
             except KeyError:
-                raise KeyError(f"Invalid value provided: symbol={symbol}")
+                raise KeyError(f"Invalid value provided: market={market.lower()}")
 
-        if symbol:
-            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=False)
+        if market:
+            return self._sort_depth_cache(self.depth_caches[market.lower()]['asks'], reverse=False)
         else:
-            raise KeyError(f"Missing parameter `symbol`")
+            raise KeyError(f"Missing parameter `market`")
 
-    def get_bids(self, symbol: str = None):
+    def get_bids(self, market: str = None):
         """
         Get the current bids
 
-        :param symbol: Specify the market symbol for the used depth_cache
-        :type symbol: str
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
         :return: list of asks with price and quantity.
         """
         try:
-            if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
-                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+            if self.depth_caches[market.lower().lower()]['is_synchronized'] is False:
+                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{market.lower()}' is out of sync, please try "
                                           f"again later")
         except KeyError:
-            raise KeyError(f"Invalid value provided: symbol={symbol}")
-        if symbol:
-            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=True)
+            raise KeyError(f"Invalid value provided: market={market.lower()}")
+        if market:
+            return self._sort_depth_cache(self.depth_caches[market.lower()]['bids'], reverse=True)
         else:
-            raise KeyError(f"Missing parameter `symbol`")
+            raise KeyError(f"Missing parameter `market`")
 
     @staticmethod
     def get_latest_release_info():
