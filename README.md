@@ -56,8 +56,7 @@ logging.getLogger("unicorn_binance_local_depth_cache")
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
-provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
- - more are coming soon.
+provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) - more are coming soon.
 
 The algorythm was designed according to these instructions: 
 [How to manage a local order book correctly](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
@@ -121,8 +120,8 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 - [example_depth_cache.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_depth_cache.py)
 - [example_refresh_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_refresh_interval.py)
 - [example_shared_ubwa_instance.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_shared_ubwa_instance.py)
-- [example_update_interval.py]()
-- [example_version_of_this_package.py]()
+- [example_update_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_update_interval.py)
+- [example_version_of_this_package.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py)
 
 ## Project Homepage
 [https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
