@@ -19,7 +19,7 @@
 [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
 [Contributing](#contributing) | [Commercial Support](#commercial-support)
 
-A local Binance DepthCache for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
+A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
 robust and fully-featured way.
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
@@ -38,7 +38,7 @@ asks = ubldc.get_asks("LUNABTC")
 bids = ubldc.get_bids("LUNABTC")
 ```
 
-### Catch an exception if the cache is out of sync while accessing its data
+### Catch an exception if the cache is out of sync while accessing its data:
 ```
 try:
     print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
@@ -47,7 +47,17 @@ except DepthCacheOutOfSync as error_msg:
     print(f"ERROR: {error_msg}")
 ```
 
-### Get the right logger
+### Stop and delete a single depth cache:
+```
+ubldc.stop_depth_cache("LUNABTC")
+```
+
+### Stop the full instance
+```
+ubldc.stop_manager()
+```
+
+### Get the right logger:
 ```
 logging.getLogger("unicorn_binance_local_depth_cache")
 ```

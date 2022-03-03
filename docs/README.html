@@ -84,7 +84,7 @@
 <a class="reference external" href="#documentation">Documentation</a> | <a class="reference external" href="#examples">Examples</a> | <a class="reference external" href="#change-log">Change Log</a> | <a class="reference external" href="#wiki">Wiki</a> | <a class="reference external" href="#social">Social</a> |
 <a class="reference external" href="#receive-notifications">Notifications</a> | <a class="reference external" href="#how-to-report-bugs-or-suggest-improvements">Bugs</a> |
 <a class="reference external" href="#contributing">Contributing</a> | <a class="reference external" href="#commercial-support">Commercial Support</a></p>
-<p>A local Binance DepthCache for Python that supports multiple depth caches in one instance in a easy, fast, flexible,
+<p>A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible,
 robust and fully-featured way.</p>
 <p>Part of <a class="reference external" href="https://www.lucit.tech/unicorn-binance-suite.html">‘UNICORN Binance Suite’</a>.</p>
 <div class="section" id="create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">
@@ -104,7 +104,7 @@ robust and fully-featured way.</p>
 </div>
 </div>
 <div class="section" id="catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">
-<h2>Catch an exception if the cache is out of sync while accessing its data<a class="headerlink" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data" title="Permalink to this headline">¶</a></h2>
+<h2>Catch an exception if the cache is out of sync while accessing its data:<a class="headerlink" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 asks: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 bids: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -113,8 +113,20 @@ robust and fully-featured way.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="stop-and-delete-a-single-depth-cache">
+<h2>Stop and delete a single depth cache:<a class="headerlink" href="#stop-and-delete-a-single-depth-cache" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_depth_cache</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stop-the-full-instance">
+<h2>Stop the full instance<a class="headerlink" href="#stop-the-full-instance" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_manager</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="get-the-right-logger">
-<h2>Get the right logger<a class="headerlink" href="#get-the-right-logger" title="Permalink to this headline">¶</a></h2>
+<h2>Get the right logger:<a class="headerlink" href="#get-the-right-logger" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -299,8 +311,10 @@ contribute follow
 <li><a class="reference internal" href="#">UNICORN Binance Local Depth Cache</a><ul>
 <li><a class="reference internal" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">Create a local depth cache of Binance with just 3 lines of code:</a></li>
 <li><a class="reference internal" href="#and-get-the-depth-with">And get the depth with:</a></li>
-<li><a class="reference internal" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">Catch an exception if the cache is out of sync while accessing its data</a></li>
-<li><a class="reference internal" href="#get-the-right-logger">Get the right logger</a></li>
+<li><a class="reference internal" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">Catch an exception if the cache is out of sync while accessing its data:</a></li>
+<li><a class="reference internal" href="#stop-and-delete-a-single-depth-cache">Stop and delete a single depth cache:</a></li>
+<li><a class="reference internal" href="#stop-the-full-instance">Stop the full instance</a></li>
+<li><a class="reference internal" href="#get-the-right-logger">Get the right logger:</a></li>
 <li><a class="reference internal" href="#description">Description</a><ul>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
@@ -435,7 +449,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 04 2022 at 00:00 (CET).
+        Last updated on Mar 04 2022 at 00:33 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
