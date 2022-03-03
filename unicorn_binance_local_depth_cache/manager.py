@@ -202,49 +202,58 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Process depth stream_data
 
+        The logic is described here:
+        https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly
+
         :param symbol: Specify the market symbol for the used depth_cache
         :type symbol: str
         """
         logger.debug(f"_process_stream_data() - Started thread for stream_data of symbol {symbol}")
         self.depth_caches[symbol.lower()]['thread_is_started'] = True
         self.depth_caches[symbol.lower()]['is_synchronized'] = False
-        logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
-                    f"{self.depth_caches[symbol.lower()]['stream_id']} of the "
-                    f"cache of symbol {symbol} (stream_buffer length: "
-                    f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])}")
-        self.ubwa.clear_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
-        logger.info(f"_process_stream_data() - Cleared stream_buffer: "
-                    f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])} items")
-        while self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id']) < 3:
-            logger.debug(f"_process_stream_data() - Waiting for enough depth events for depth_cache with "
-                         f"symbol {symbol}")
-            time.sleep(0.01)
-        logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
-                    f"cache with symbol {symbol}")
-        self._init_depth_cache(symbol=symbol)
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
-            stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
-            if stream_data and "'result': None," not in str(stream_data):
-                if self.depth_caches[symbol.lower()]['is_synchronized']:
-                    # Regular depth update events
-                    logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
-                                 f"symbol {symbol}")
-                    # Todo: While listening to the stream, each new event's U should be equal to the previous
-                    #  event's u+1. If not -> new init
-                    self._apply_updates(stream_data, symbol=symbol)
-                else:
-                    if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
-                        # Drop it
-                        continue
-                    if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
-                            <= int(stream_data['data']['u']):
-                        # This is the first applied depth update
+            logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
+                        f"{self.depth_caches[symbol.lower()]['stream_id']} of the "
+                        f"cache of symbol {symbol} (stream_buffer length: "
+                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])}")
+            self.depth_caches[symbol.lower()]['refresh_request'] = False
+            self.ubwa.clear_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
+            logger.info(f"_process_stream_data() - Cleared stream_buffer: "
+                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])} items")
+            while self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id']) < 3:
+                logger.debug(f"_process_stream_data() - Waiting for enough depth events for depth_cache with "
+                             f"symbol {symbol}")
+                time.sleep(0.01)
+            logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
+                        f"cache with symbol {symbol}")
+            self._init_depth_cache(symbol=symbol)
+            while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
+                if self.depth_caches[symbol.lower()]['refresh_request'] is True:
+                    break
+                stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
+                if stream_data and "'result': None," not in str(stream_data):
+                    if self.depth_caches[symbol.lower()]['is_synchronized'] is False:
+                        if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
+                            # Drop it
+                            logger.info(f"_process_stream_data() - Dropping outdated depth update of the cache with "
+                                        f"symbol {symbol}")
+                            continue
+                        if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
+                                <= int(stream_data['data']['u']):
+                            # This is the first applied depth update
+                            self._apply_updates(stream_data, symbol=symbol)
+                            logger.info(f"_process_stream_data() - Finished initialization of the cache with "
+                                        f"symbol {symbol}")
+                            self.depth_caches[symbol.lower()]['is_synchronized'] = True
+                        self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
+                    else:
+                        # Regular depth update events
+                        logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
+                                     f"symbol {symbol}")
+                        # Todo: While listening to the stream, each new event's U should be equal to the previous
+                        #  event's u+1. If not -> new init
                         self._apply_updates(stream_data, symbol=symbol)
-                        logger.info(f"_process_stream_data() -  Finished initialization of the cache with "
-                                    f"symbol {symbol}")
-                        self.depth_caches[symbol.lower()]['is_synchronized'] = True
-                    self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
-            time.sleep(0.01)
+                time.sleep(0.01)
 
     def _process_stream_signals(self):
         """
@@ -261,7 +270,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         if stream_signal['type'] == "DISCONNECT":
                             self.depth_caches[symbol]['is_synchronized'] = False
                             self.depth_caches[symbol]['refresh_request'] = True
-
             else:
                 time.sleep(0.01)
 
@@ -321,7 +329,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type symbol: str
         :return: list of asks with price and quantity.
         """
-        # Todo: check if stream is running, if not return false or REST
+        if self.depth_caches[symbol]['is_synchronized'] is False:
+            raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+                                      f"again later")
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=True)
         else:
@@ -335,7 +345,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type symbol: str
         :return: list of asks with price and quantity.
         """
-        # Todo: check if stream is running, if not return false or REST
+        if self.depth_caches[symbol]['is_synchronized'] is False:
+            raise DepthCacheOutOfSync(f"The depth cache for market symbol '{symbol}' is out of sync, please try "
+                                      f"again later")
+
         if symbol:
             return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
         else:
