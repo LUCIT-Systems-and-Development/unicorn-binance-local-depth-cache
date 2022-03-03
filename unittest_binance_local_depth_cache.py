@@ -47,11 +47,11 @@ logging.basicConfig(level=logging.DEBUG,
 
 print(f"Starting unittests:")
 
+UBWA = BinanceLocalDepthCacheManager(exchange="binance.com")
 
 class TestUbldc(unittest.TestCase):
     def setUp(self):
-        self.ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
-        time.sleep(2)
+        self.ubldc = UBWA
         self.items = {'0.00204980': 39.05, '0.00204990': 1.63, '0.00205050': 158.68, '0.00205060': 81.97,
                       '0.00205080': 32.5,
                       '0.00205090': 16.74, '0.00205100': 149.34, '0.00205110': 6.68, '0.00205140': 16.77,
@@ -738,7 +738,7 @@ class TestUbldc(unittest.TestCase):
 
     def test_create_depth_cache_true(self):
         self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
-        time.sleep(60)
+        time.sleep(6)
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
@@ -759,9 +759,6 @@ class TestUbldc(unittest.TestCase):
 
     def test_stop_manager(self):
         self.ubldc.stop_manager()
-
-    def tearDown(self):
-        pass
 
 
 if __name__ == '__main__':
