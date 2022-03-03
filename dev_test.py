@@ -40,7 +40,7 @@ import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
-                    filename=os.path.basename(__file__) + '.log',
+                    #filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
@@ -49,7 +49,7 @@ market = 'LUNABTC'
 ubldc = BinanceLocalDepthCacheManager()
 ubldc.create_depth_cache(market=market)
 
-while True:
+while False:
     time.sleep(1)
     print(f"last_update_id: {ubldc.depth_caches[market.lower()]['last_update_id']}")
     print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")
