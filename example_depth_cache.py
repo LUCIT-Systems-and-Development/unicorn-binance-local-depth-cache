@@ -38,11 +38,17 @@ import logging
 import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.ERROR,
+logging.basicConfig(level=logging.DEBUG,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
 ubldc = BinanceLocalDepthCacheManager()
 ubldc.create_depth_cache(symbol='LUNABTC')
-time.sleep(10)
-print(str(ubldc.get_asks(symbol="LUNABTC")))
+while False:
+    # Todo: get last update time
+    print(f"Top 10 asks: {ubldc.get_asks(symbol='LUNABTC')[:10]}")
+    print(f"Top 10 bids: {ubldc.get_bids(symbol='LUNABTC')[:10]}")
+    time.sleep(5)
+
+time.sleep(5)
+ubldc.stop_manager()

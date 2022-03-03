@@ -33,7 +33,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-from unicorn_binance_local_depth_cache.manager import *
+from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager
 import logging
 import unittest
 import os
@@ -47,12 +47,11 @@ logging.basicConfig(level=logging.DEBUG,
 
 print(f"Starting unittests:")
 
-UBLDC = BinanceLocalDepthCacheManager(exchange="binance.com")
-
 
 class TestUbldc(unittest.TestCase):
     def setUp(self):
-        self.ubldc = UBLDC
+        self.ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+        time.sleep(2)
         self.items = {'0.00204980': 39.05, '0.00204990': 1.63, '0.00205050': 158.68, '0.00205060': 81.97,
                       '0.00205080': 32.5,
                       '0.00205090': 16.74, '0.00205100': 149.34, '0.00205110': 6.68, '0.00205140': 16.77,
@@ -755,10 +754,14 @@ class TestUbldc(unittest.TestCase):
 
     def test_is_update_availabe_true(self):
         self.ubldc.version = "0.0.0"
-        #self.assertTrue((self.ubldc.is_update_availabe()))
+        # Todo: with the first release this can get activated
+        # self.assertTrue((self.ubldc.is_update_availabe()))
+
+    def test_stop_manager(self):
+        self.ubldc.stop_manager()
 
     def tearDown(self):
-        UBLDC.stop_manager()
+        pass
 
 
 if __name__ == '__main__':
