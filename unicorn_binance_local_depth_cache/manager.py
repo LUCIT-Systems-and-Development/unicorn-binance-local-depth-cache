@@ -34,12 +34,12 @@
 # IN THE SOFTWARE.
 
 # Todo:
-#   - Test: Long run and find exceptions
-#   - Get/Set/Is functions
 #   - Delete/Stop Cache
-#   - get asks and bids can take data from rest if it is out of sync
-#   - support all binance endpoints
+#   - Get/Set/Is functions
+#   - Test: Long run and find exceptions
 #   - thread locks?
+#   - support all binance endpoints
+#   - get asks and bids can take data from rest if it is out of sync
 
 from .exceptions import DepthCacheOutOfSync
 from operator import itemgetter
@@ -265,21 +265,26 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     else:
                         # Regular depth update events
                         if stream_data['data']['U'] != self.depth_caches[market.lower()]['last_update_id']+1:
-                            logger.debug(f"_process_stream_data() - There is a gap between the last and the penultimate"
+                            logger.error(f"_process_stream_data() - There is a gap between the last and the penultimate"
                                          f" update ID, the depth cache `{market.lower()}` is no longer correct and "
                                          f"must be reinitialized")
                             break
                         if self.depth_caches[market.lower()]['refresh_interval'] is not None:
-                            if self.depth_caches[market.lower()]['last_refresh_time'] < int(time.time()) - self.depth_caches[market.lower()]['refresh_interval']:
-                                logger.debug(f"_process_stream_data() - The refresh interval has been exceeded, "
-                                             f"start new initialization for depth cache `{market.lower()}`")
+                            if self.depth_caches[market.lower()]['last_refresh_time'] < int(time.time()) - \
+                                    self.depth_caches[market.lower()]['refresh_interval']:
+                                logger.info(f"_process_stream_data() - The refresh interval has been exceeded, "
+                                            f"start new initialization for depth cache `{market.lower()}`")
                                 break
                         logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
-                                     f"market {market.lower()}")
+                                     f"market {market.lower()} - update_id: {stream_data['data']['U']} - "
+                                     f"{stream_data['data']['u']}")
                         self._apply_updates(stream_data['data'], market=market.lower())
                     self.depth_caches[market.lower()]['last_update_id'] = stream_data['data']['u']
                     self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
                 time.sleep(0.01)
+        # Exiting ...
+        del self.depth_caches[market.lower()]
+        logger.info(f"_process_stream_data() - Depth cache `{market.lower()}` was stopped and cleared")
 
     def _process_stream_signals(self):
         """
@@ -382,8 +387,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         if self.depth_caches[market.lower()]['is_synchronized'] is False:
             try:
-                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{market.lower()}' is out of sync, please try "
-                                          f"again later")
+                raise DepthCacheOutOfSync(f"The depth cache for market symbol '{market.lower()}' is out of sync, "
+                                          f"please try again later")
             except KeyError:
                 raise KeyError(f"Invalid value provided: market={market.lower()}")
 
@@ -470,6 +475,33 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return False
         else:
             return True
+
+    def stop_depth_cache(self, market: str = None):
+        """
+        Stop a depth_cache!
+
+        :param market: Specify the market symbol for the depth_cache to be stopped and deleted
+        :type market: str
+        :return: bool
+        """
+        if market is None:
+            return False
+        self.depth_caches[market.lower()]['stop_request'] = True
+        return True
+
+    def stop_depth_caches(self, markets: Optional[list] = None):
+        """
+        Stop a list of depth_caches!
+
+        :param markets: Specify the market symbols for the depth_caches to be stopped and deleted
+        :type markets: list
+        :return: bool
+        """
+        if markets is None:
+            return False
+        for market in markets:
+            self.depth_caches[market.lower()]['stop_request'] = True
+        return True
 
     def stop_manager(self):
         """
