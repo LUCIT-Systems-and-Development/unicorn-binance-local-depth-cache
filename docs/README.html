@@ -87,26 +87,77 @@
 <p>A local Binance DepthCache for Python that supports multiple depth caches in one instance in a easy, fast, flexible,
 robust and fully-featured way.</p>
 <p>Part of <a class="reference external" href="https://www.lucit.tech/unicorn-binance-suite.html">‘UNICORN Binance Suite’</a>.</p>
+<div class="section" id="create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">
+<h2><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">Create a local depth cache</a> of Binance with just 3 lines of code:<a class="headerlink" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicorn_binance_local_depth_cache</span>
 
-<span class="o">--</span><span class="n">example</span><span class="o">-</span><span class="n">code</span><span class="o">--</span>
+<span class="n">ubldc</span> <span class="o">=</span> <span class="n">unicorn_binance_local_depth_cache</span><span class="o">.</span><span class="n">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">)</span>
+<span class="n">ubldc</span><span class="o">.</span><span class="n">create_depth_cache</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="and-get-the-depth-with">
+<h2>And get the depth with:<a class="headerlink" href="#and-get-the-depth-with" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asks</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
+<span class="n">bids</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">
+<h2>Catch an exception if the cache is out of sync while accessing its data<a class="headerlink" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 asks: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 bids: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">DepthCacheOutOfSync</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-the-right-logger">
+<h2>Get the right logger<a class="headerlink" href="#get-the-right-logger" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html">Discover more possibilities</a></p>
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p>–long-description–</p>
-<p>https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</p>
+<p>The Python package <a class="reference external" href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">UNICORN Binance Local Depth Cache</a>
+provides a local depth cache for Binance Exchanges <a class="reference external" href="https://github.com/binance-exchange/binance-official-api-docs">Binance</a>
+(<a class="reference external" href="https://testnet.binance.vision/">+Testnet</a>), more coming soon.</p>
+<p>The algorythm was designed according to these instructions:
+<a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly">How to manage a local order book correctly</a></p>
 <div class="section" id="what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">
 <h3>What are the benefits of the UNICORN Binance Local Depth Cache?<a class="headerlink" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li><p>100% auto-reconnect!</p></li>
+<li><p>Supported Exchanges</p></li>
+</ul>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>Exchange</th>
+<th>Exchange string</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://www.binance.com">Binance</a></td>
+<td><code>BinanceWebSocketApiManager(exchange="binance.com")</code></td>
+</tr>
+<tr>
+<td><a href="https://testnet.binance.vision/">Binance Testnet</a></td>
+<td><code>BinanceWebSocketApiManager(exchange="binance.com-testnet")</code></td>
+</tr>
+</tbody>
+</table><ul class="simple">
 <li></li>
 </ul>
 </div>
 </div>
 <div class="section" id="installation-and-upgrade">
 <h2>Installation and Upgrade<a class="headerlink" href="#installation-and-upgrade" title="Permalink to this headline">¶</a></h2>
-<p>The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent
-processing.</p>
+<p>The module requires Python 3.7 or above.</p>
 <p>The current dependencies are listed
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt">here</a>.</p>
 <p>If you run into errors during the installation take a look <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/Installation">here</a>.</p>
@@ -236,6 +287,10 @@ contribute follow
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">UNICORN Binance Local Depth Cache</a><ul>
+<li><a class="reference internal" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">Create a local depth cache of Binance with just 3 lines of code:</a></li>
+<li><a class="reference internal" href="#and-get-the-depth-with">And get the depth with:</a></li>
+<li><a class="reference internal" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">Catch an exception if the cache is out of sync while accessing its data</a></li>
+<li><a class="reference internal" href="#get-the-right-logger">Get the right logger</a></li>
 <li><a class="reference internal" href="#description">Description</a><ul>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
@@ -370,7 +425,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 03 2022 at 22:04 (CET).
+        Last updated on Mar 03 2022 at 22:41 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />

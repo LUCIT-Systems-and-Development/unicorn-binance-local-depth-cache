@@ -24,24 +24,57 @@ robust and fully-featured way.
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 
+### [Create a local depth cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) of Binance with just 3 lines of code:
 ```
 import unicorn_binance_local_depth_cache
 
---example-code--
+ubldc = unicorn_binance_local_depth_cache.BinanceLocalDepthCacheManager(exchange="binance.com")
+ubldc.create_depth_cache("LUNABTC")
 ```
 
+### And get the depth with:
+```
+asks = ubldc.get_asks("LUNABTC")
+bids = ubldc.get_bids("LUNABTC")
+```
+
+### Catch an exception if the cache is out of sync while accessing its data
+```
+try:
+    print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
+    print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
+except DepthCacheOutOfSync as error_msg:
+    print(f"ERROR: {error_msg}")
+```
+
+### Get the right logger
+```
+logging.getLogger("unicorn_binance_local_depth_cache")
+```
+
+[Discover more possibilities](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html)
+
 ## Description
+The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
+provides a local depth cache for Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
+([+Testnet](https://testnet.binance.vision/)), more coming soon.
 
---long-description--
-
-https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
+The algorythm was designed according to these instructions: 
+[How to manage a local order book correctly](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
+- 100% auto-reconnect!
+- Supported Exchanges
+
+| Exchange | Exchange string | 
+| -------- | --------------- | 
+| [Binance](https://www.binance.com) | `BinanceWebSocketApiManager(exchange="binance.com")` |
+| [Binance Testnet](https://testnet.binance.vision/) | `BinanceWebSocketApiManager(exchange="binance.com-testnet")` |
+
 - 
 
 ## Installation and Upgrade
-The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent 
-processing. 
+The module requires Python 3.7 or above.
 
 The current dependencies are listed 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt).
