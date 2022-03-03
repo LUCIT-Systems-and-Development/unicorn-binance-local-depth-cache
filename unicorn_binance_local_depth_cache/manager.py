@@ -103,12 +103,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         if symbol and stream_id:
-            refresh_interval = refresh_interval or self.default_refresh_interval
             self.depth_caches[symbol.lower()] = {"asks": {},
                                                  "bids": {},
                                                  "last_refresh_time": None,
                                                  "last_update_id": None,
-                                                 "refresh_interval": refresh_interval,
+                                                 "refresh_interval": refresh_interval or self.default_refresh_interval,
                                                  "stop_request": False,
                                                  "stream_id": stream_id,
                                                  "stream_status": None,
@@ -224,6 +223,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
             if stream_data and "'result': None," not in str(stream_data):
                 if is_initialized:
+                    # Todo: While listening to the stream, each new event's U should be equal to the previous event's u+1.
+                    #       If not -> new init
                     self._apply_updates(stream_data, symbol=symbol)
                 else:
                     if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
@@ -249,6 +250,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 for symbol in self.depth_caches:
                     if self.depth_caches[symbol]['stream_id'] == stream_signal['stream_id']:
                         self.depth_caches[symbol]['stream_status'] = stream_signal['type']
+                        # Todo: new init after disconnect
             else:
                 time.sleep(0.01)
 
