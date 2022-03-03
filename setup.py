@@ -51,7 +51,7 @@ setuptools.setup(
      long_description_content_type="text/markdown",
      license='MIT License',
      install_requires=['requests', 'unicorn-binance-websocket-api', 'unicorn-binance-rest-api'],
-     keywords='binance, ',
+     keywords='binance, depth cache',
      project_urls={
         'Documentation': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech',
         'Wiki': 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki',
@@ -75,3 +75,5 @@ setuptools.setup(
          'Topic :: Software Development :: Libraries :: Python Modules',
      ],
 )
+
+ubldc.stop_manager()
