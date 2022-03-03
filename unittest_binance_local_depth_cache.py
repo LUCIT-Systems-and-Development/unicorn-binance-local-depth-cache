@@ -738,7 +738,7 @@ class TestUbldc(unittest.TestCase):
 
     def test_create_depth_cache_true(self):
         self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
-        time.sleep(6)
+        time.sleep(120)
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
