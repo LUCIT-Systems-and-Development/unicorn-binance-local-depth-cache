@@ -34,10 +34,7 @@
 # IN THE SOFTWARE.
 
 # Todo:
-#   - Control that last_update_id fits, if not, refresh!
 #   - Refresh interval
-#   - Test: multi caches
-#   - Test: update works fine, cache data is fine?
 #   - Test: Long run and find exceptions
 #   - Get/Set/Is functions
 #   - Delete/Stop Cache
@@ -273,6 +270,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          f" update ID, the depth cache `{market.lower()}` is no longer correct and "
                                          f"must be reinitialized")
                             break
+                        if self.depth_caches[market.lower()]['refresh_interval'] is not None:
+                            if self.depth_caches[market.lower()]['last_refresh_time'] < int(time.time()) - self.depth_caches[market.lower()]['refresh_interval']:
+                                logger.debug(f"_process_stream_data() - The refresh interval has been exceeded, "
+                                             f"start new initialization for depth cache `{market.lower()}`")
+                                break
                         logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
                                      f"market {market.lower()}")
                         self._apply_updates(stream_data['data'], market=market.lower())
@@ -340,7 +342,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             logger.debug(f"create_depth_cache() - No existing cache for market {market.lower()} found! - "
                          f"KeyError: {error_msg}")
         stream_id = self.ubwa.create_stream(f"depth@{update_speed}ms", market, stream_buffer_name=True,
-                                            stream_label=f"depth_{market}", output="dict")
+                                            stream_label=f"depth_{market.lower()}", output="dict")
         self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
         self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(market,))
         self.depth_caches[market.lower()]['thread'].start()
