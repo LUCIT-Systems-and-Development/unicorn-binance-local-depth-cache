@@ -735,7 +735,7 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.get_latest_release_info()
         self.ubldc.get_latest_version()
         self.ubldc.get_version()
-        self.ubldc.is_update_available()()
+        self.ubldc.is_update_available()
 
     def test_create_depth_cache_true(self):
         self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
