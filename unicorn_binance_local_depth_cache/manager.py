@@ -52,7 +52,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         A local Binance DepthCache for Python that supports multiple depth caches in one instance.
 
         Binance API documentation:
-        https://github.com/binance/binance-spot-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
+        https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
 
         :param exchange: Select binance.com, binance.com-testnet, binance.com-margin, binance.com-margin-testnet,
                          binance.com-isolated_margin, binance.com-isolated_margin-testnet, binance.com-futures,
