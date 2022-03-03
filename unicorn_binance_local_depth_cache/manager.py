@@ -322,17 +322,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
         return new_items
 
-    def create_depth_cache(self, market: str = None, update_speed: int = 1000, refresh_interval: int = None):
+    def create_depth_cache(self, market: str = None, update_interval: int = 1000, refresh_interval: int = None):
         """
         Create a new depth_cache!
 
         :param market: Specify the market symbol for the used depth_cache
         :type market: str
-        :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
+        :param update_interval: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
-        :type update_speed: int
+        :type update_interval: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
+                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
         :return: bool
         """
@@ -345,7 +345,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError as error_msg:
             logger.debug(f"create_depth_cache() - No existing cache for market {market.lower()} found! - "
                          f"KeyError: {error_msg}")
-        stream_id = self.ubwa.create_stream(f"depth@{update_speed}ms", market, stream_buffer_name=True,
+        stream_id = self.ubwa.create_stream(f"depth@{update_interval}ms", market, stream_buffer_name=True,
                                             stream_label=f"depth_{market.lower()}", output="dict")
         self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
         self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(market,))
@@ -357,18 +357,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             time.sleep(0.01)
         return True
 
-    def create_depth_caches(self, markets: Optional[list] = None, update_speed: int = 1000,
+    def create_depth_caches(self, markets: Optional[list] = None, update_interval: int = 1000,
                             refresh_interval: int = None):
         """
         Create one or more depth_cache!
 
         :param markets: Specify the market symbols for caches to be created
         :type markets: list
-        :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
+        :param update_interval: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
-        :type update_speed: int
+        :type update_interval: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
+                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
         :return: bool
         """
@@ -376,7 +376,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if markets is None:
             return False
         for market in markets:
-            self.create_depth_cache(market=market.lower(), update_speed=update_speed, refresh_interval=refresh_interval)
+            self.create_depth_cache(market=market.lower(), update_interval=update_interval,
+                                    refresh_interval=refresh_interval)
         return True
 
     def get_asks(self, market: str = None):
