@@ -46,7 +46,8 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
-    def __init__(self, exchange="binance.com", ubra_manager=False, ubwa_manager=False, default_refresh_interval=30):
+    def __init__(self, exchange="binance.com", ubra_manager=False, ubwa_manager=False, default_refresh_interval=None,
+                 warn_on_update=True):
         """
         A local Binance DepthCache for Python that supports multiple depth caches in one instance.
 
@@ -62,23 +63,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type ubra_manager: BinanceRestApiManager
         :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
         :type ubwa_manager: BinanceWebSocketApiManager
-        :param default_refresh_interval: The default refresh interval in minutes.
+        :param default_refresh_interval: The default refresh interval in seconds, default is None.
         :type default_refresh_interval: int
-
+        :param warn_on_update: set to `False` to disable the update warning
+        :type warn_on_update: bool
         """
         super().__init__()
-        self.version = "0.0.0.dev"
+        self.version = "0.1.0.dev"
         self.exchange = exchange
+        logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.depth_caches = {}
         self.default_refresh_interval = default_refresh_interval
         self.last_update_check_github = {'timestamp': time.time(),
                                          'status': None}
+        self.name = "unicorn-binance-local-depth-cache"
         self.timeout = 60
         self.ubra = ubra_manager or BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True)
         self.stop_request = False
+        if warn_on_update and self.is_update_availabe():
+            update_msg = f"Release {self.name}_" + self.get_latest_version() + " is available, " \
+                         "please consider updating! (Changelog: https://github.com/LUCIT-Systems-and-Development/" \
+                         "unicorn-binance-local-depth-cache/blob/master/CHANGELOG.md)"
+            print(update_msg)
+            logger.warning(update_msg)
         self.thread_stream_signals = threading.Thread(target=self._process_stream_signals)
         self.thread_stream_signals.start()
 
@@ -86,14 +96,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Add a depth_cache to the depth_caches stack.
 
-        :param symbol:
-        :type symbol:
-        :param stream_id:
-        :type stream_id:
-
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
+        :param stream_id: Provide a stream_id
+        :type stream_id: str
         :return: bool
         """
-        if symbol:
+        if symbol and stream_id:
             refresh_interval = refresh_interval or self.default_refresh_interval
             self.depth_caches[symbol.lower()] = {"asks": {},
                                                  "bids": {},
@@ -106,67 +115,74 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                  "symbol": symbol,
                                                  "thread": None,
                                                  "thread_is_started": False}
+            logger.debug(f"_add_depth_cache() - Added new entry for symbol {symbol} and stream_id {stream_id}")
             return True
         else:
+            logger.debug(f"_add_depth_cache() - Not able to add entry for symbol {symbol} and stream_id {stream_id}")
             return False
 
     def _add_ask(self, ask, symbol: str = None):
         """
         Add an ask to a specific depth cache.
 
-        :param ask:
-        :type ask:
-        :param symbol:
-        :type symbol:
+        :param ask: Add asks to the depth_cache
+        :type ask: list
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
         :return: bool
-
         """
         self.depth_caches[symbol.lower()]["asks"][ask[0]] = float(ask[1])
         if ask[1] == "0.00000000":
+            logger.debug(f"_add_ask() - Deleting depth position {self.depth_caches[symbol.lower()]['asks'][ask[0]]} "
+                         f"on ask side")
             del self.depth_caches[symbol.lower()]["asks"][ask[0]]
+        return True
 
     def _add_bid(self, bid, symbol: str = None):
         """
         Add a bid to a specific depth cache.
 
-        :param bid:
-        :type bid:
-        :param symbol:
-        :type symbol:
+        :param bid: Add bids to the depth_cache
+        :type bid: list
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
         :return: bool
-
         """
         self.depth_caches[symbol.lower()]["bids"][bid[0]] = float(bid[1])
         if bid[1] == "0.00000000":
+            logger.debug(f"_add_bid() - Deleting depth position {self.depth_caches[symbol.lower()]['bids'][bid[0]]} "
+                         f"on bid side")
             del self.depth_caches[symbol.lower()]["bids"][bid[0]]
+        return True
 
     def _apply_updates(self, order_book, symbol: str = None):
         """
         Apply updates to a specific depth cache.
 
-        :param order_book:
-        :type order_book:
-        :param symbol:
-        :type symbol:
-        :return:
-
+        :param order_book: Provide order_book data from rest or ws
+        :type order_book: dict
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
+        :return: bool
         """
+        logger.debug(f"_apply_updates() - Applying updates to the depth cache with symbol {symbol}")
         for ask in order_book.get('a', []) + order_book.get('asks', []):
             self._add_ask(ask, symbol=symbol)
         for bid in order_book.get('b', []) + order_book.get('bids', []):
             self._add_bid(bid, symbol=symbol)
+        return True
 
     def _init_depth_cache(self, symbol: str = None):
         """
         Initialise the depth cache with a rest snapshot.
 
-        :param symbol:
-        :type symbol:
-        :return:
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
+        :return: bool
         """
-        logger.info(f"Starting initialization of the cache with symbol {symbol}")
+        logger.info(f"_init_depth_cache() - Starting initialization of the cache with symbol {symbol}")
         order_book = self.ubra.get_order_book(symbol=symbol, limit=1000)
-        logger.debug(f"Downloaded order_book snapshot for the cache with symbol {symbol}")
+        logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth cache with symbol {symbol}")
         self.depth_caches[symbol.lower()]['asks'] = {}
         self.depth_caches[symbol.lower()]['bids'] = {}
         self.depth_caches[symbol.lower()]['last_refresh_time'] = int(time.time())
@@ -177,31 +193,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self._add_bid(bid, symbol=symbol)
         for ask in order_book['asks']:
             self._add_ask(ask, symbol=symbol)
-        logger.debug(f"Finished initialization of the cache with symbol {symbol}")
+        logger.debug(f"_init_depth_cache() - Finished initialization of the cache with symbol {symbol}")
         return True
 
     def _process_stream_data(self, symbol: str = None):
         """
         Process depth stream_data
 
-        :param symbol:
-        :type symbol:
-        :return:
-
+        :param symbol: Specify the market symbol for the used depth_cache
+        :type symbol: str
         """
         is_initialized = False
-        logger.debug(f"Started thread for stream_data of symbol {symbol}")
+        logger.debug(f"_process_stream_data() - Started thread for stream_data of symbol {symbol}")
         self.depth_caches[symbol.lower()]['thread_is_started'] = True
-        logger.info(f"Clearing stream_buffer with stream_id {self.depth_caches[symbol.lower()]['stream_id']} of the "
+        logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
+                    f"{self.depth_caches[symbol.lower()]['stream_id']} of the "
                     f"cache of symbol {symbol} (stream_buffer length: "
                     f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])}")
         self.ubwa.clear_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
-        logger.info(f"Cleared stream_buffer: "
+        logger.info(f"_process_stream_data() - Cleared stream_buffer: "
                     f"{self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id'])} items")
         while self.ubwa.get_stream_buffer_length(self.depth_caches[symbol.lower()]['stream_id']) < 3:
-            logger.debug(f"Waiting for enough depth events for depth_cache with symbol {symbol}")
+            logger.debug(f"_process_stream_data() - Waiting for enough depth events for depth_cache with "
+                         f"symbol {symbol}")
             time.sleep(0.01)
-        logger.info(f"Collected enough depth events, starting the initialization of the cache with symbol {symbol}")
+        logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
+                    f"cache with symbol {symbol}")
         self._init_depth_cache(symbol=symbol)
         while self.stop_request is False and self.depth_caches[symbol.lower()]['stop_request'] is False:
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
@@ -214,16 +231,21 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
                             <= int(stream_data['data']['u']):
                         self._apply_updates(stream_data, symbol=symbol)
+                        logger.info(f"_process_stream_data() -  Finished initialization of the cache with "
+                                    f"symbol {symbol}")
                         is_initialized = True
                     self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
             time.sleep(0.01)
 
     def _process_stream_signals(self):
-        logger.debug(f"Started thread for stream_signals")
+        """
+        Process stream_signals
+        """
+        logger.debug(f"_process_stream_signals() - Started thread for stream_signals")
         while self.stop_request is False:
             stream_signal = self.ubwa.pop_stream_signal_from_stream_signal_buffer()
             if stream_signal:
-                logger.debug(f"stream_signal: {stream_signal}")
+                logger.debug(f"_process_stream_signals() - received stream_signal: {stream_signal}")
                 for symbol in self.depth_caches:
                     if self.depth_caches[symbol]['stream_id'] == stream_signal['stream_id']:
                         self.depth_caches[symbol]['stream_status'] = stream_signal['type']
@@ -233,19 +255,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     @staticmethod
     def _sort_depth_cache(items, reverse=False):
         """
-        Sort bids or asks by price
+        Sort asks or bids by price
 
-        :param items:
-        :type items:
-        :param reverse:
-        :type reverse:
+        :param items: asks or bids
+        :type items: dict
+        :param reverse: False is regular, True is reversed
+        :type reverse: bool
         :return: False or sorted list
         """
-        new_items = []
-        if isinstance(items, dict):
-            new_items = [[float(price), float(quantity)] for price, quantity in items.items()]
-        elif isinstance(items, list):
-            new_items = [[float(price), float(quantity)] for price, quantity in items]
+        logger.debug(f"_sort_depth_cache() - Start sorting")
+        new_items = [[float(price), float(quantity)] for price, quantity in items.items()]
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
         return new_items
 
@@ -253,11 +272,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Create a new depth_cache!
 
-        :param symbol: Symbol of the DepthCache
+        :param symbol: Specify the market symbol for the used depth_cache
         :type symbol: str
-        :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default)
+        :param update_speed: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
+                             https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
         :type update_speed: int
-        :param refresh_interval:
+        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval`.
         :type refresh_interval: int
         :return: bool
         """
@@ -265,9 +285,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return False
         try:
             if self.depth_caches[symbol]:
+                logger.debug(f"create_depth_cache() - depth_cache {symbol} already exists!")
                 return False
         except KeyError as error_msg:
-            logger.debug(f"No existing cache for symbol {symbol} found! - KeyError: {error_msg}")
+            logger.debug(f"create_depth_cache() - No existing cache for symbol {symbol} found! - KeyError: {error_msg}")
         stream_id = self.ubwa.create_stream(f"depth@{update_speed}ms", symbol, stream_buffer_name=True, output="dict")
         self._add_depth_cache(symbol=symbol, stream_id=stream_id, refresh_interval=refresh_interval)
         self.depth_caches[symbol.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(symbol,))
@@ -275,7 +296,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         while self.depth_caches[symbol.lower()]['thread_is_started'] is False:
             # This is to await the creation of the thread to avoid errors if the main thread gets closed before. This
             # can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
-            logger.debug(f"Waiting till thread for symbol {symbol} is running")
+            logger.debug(f"create_depth_cache() - Waiting till thread for symbol {symbol} is running")
             time.sleep(0.01)
         return True
 
@@ -283,10 +304,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Get the current asks
 
-        :param symbol: Symbol of the DepthCache
+        :param symbol: Specify the market symbol for the used depth_cache
         :type symbol: str
-        :return: list of bids with price and quantity.
-
+        :return: list of asks with price and quantity.
         """
         # Todo: check if stream is running, if not return false or REST
         if symbol:
@@ -298,10 +318,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Get the current bids
 
-        :param symbol: Symbol of the DepthCache
+        :param symbol: Specify the market symbol for the used depth_cache
         :type symbol: str
         :return: list of asks with price and quantity.
-
         """
         # Todo: check if stream is running, if not return false or REST
         if symbol:
@@ -313,8 +332,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def get_latest_release_info():
         """
         Get infos about the latest available release
+
         :return: dict or False
         """
+        logger.debug(f"get_latest_release_info() - Starting the request")
         try:
             respond = requests.get('https://api.github.com/repos/LUCIT-Systems-and-Development/'
                                    'unicorn-binance-local-depth-cache/releases/latest')
@@ -326,8 +347,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def get_latest_version(self):
         """
         Get the version of the latest available release (cache time 1 hour)
+
         :return: str or False
         """
+        logger.debug(f"get_latest_version() - Starting the request")
         # Do a fresh request if status is None or last timestamp is older 1 hour
         if self.last_update_check_github['status'] is None or \
                 (self.last_update_check_github['timestamp'] + (60 * 60) < time.time()):
@@ -345,7 +368,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         Get the package/module version
 
         :return: str
-
         """
         return self.version
 
@@ -355,6 +377,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         :return: bool
         """
+        logger.debug(f"is_update_availabe() - Starting the request")
         installed_version = self.get_version()
         if ".dev" in installed_version:
             installed_version = installed_version[:-4]
@@ -367,8 +390,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
     def stop_manager(self):
         """
+        Stop unicorn-binance-local-depth-cache with all sub routines
 
-        :return:
+        :return: bool
         """
+        logger.debug(f"stop_manager() - Stop initiated")
         self.stop_request = True
         self.ubwa.stop_manager_with_all_streams()
+        return True
