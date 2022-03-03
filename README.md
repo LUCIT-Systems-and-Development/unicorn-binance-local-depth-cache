@@ -19,7 +19,8 @@
 [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
 [Contributing](#contributing) | [Commercial Support](#commercial-support)
 
-A local Binance DepthCache for Python that supports multiple depth caches in one instance.
+A local Binance DepthCache for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
+robust and fully-featured way.
 
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 

@@ -332,7 +332,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
         :type update_speed: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager)>`_.
+                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
         :return: bool
         """
@@ -368,7 +368,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
         :type update_speed: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager)>`_.
+                                 `BinanceLocalDepthCache<https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
         :return: bool
         """
