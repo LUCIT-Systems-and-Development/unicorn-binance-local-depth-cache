@@ -55,13 +55,15 @@ except KeyError as error_msg:
     print(f"ERROR: {error_msg}")
 
 while True:
+    time.sleep(1)
+    print(f"last_update_id: {ubldc.depth_caches[symbol.lower()]['last_update_id']}")
     print(f"is_synchronized: {ubldc.depth_caches[symbol.lower()]['is_synchronized']}")
     try:
-        print(f"Top 10 asks: {ubldc.get_asks(symbol=symbol)[:10]}")
-        print(f"Top 10 bids: {ubldc.get_bids(symbol=symbol)[:10]}")
+        print(f"Top asks: {ubldc.get_asks(symbol=symbol)[:1]}")
+        print(f"Top bids: {ubldc.get_bids(symbol=symbol)[:1]}")
     except DepthCacheOutOfSync as error_msg:
         print(f"ERROR: {error_msg}")
-    time.sleep(5)
+    print("=========================================================================")
 
 time.sleep(5)
 ubldc.stop_manager()

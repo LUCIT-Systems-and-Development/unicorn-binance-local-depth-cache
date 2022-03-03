@@ -39,6 +39,8 @@
 #   - Test: multi caches
 #   - Test: update works fine, cache data is fine?
 #   - Test: Long run and find exceptions
+#   - Get/Set/Is functions
+#   - Delete/Stop Cache
 
 from operator import itemgetter
 from .exceptions import DepthCacheOutOfSync
@@ -132,7 +134,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
     def _add_ask(self, ask, symbol: str = None):
         """
-        Add an ask to a specific depth cache.
+        Add, update or delete an ask of a specific depth cache.
 
         :param ask: Add asks to the depth_cache
         :type ask: list
@@ -142,8 +144,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         self.depth_caches[symbol.lower()]["asks"][ask[0]] = float(ask[1])
         if ask[1] == "0.00000000":
-            logger.debug(f"_add_ask() - Deleting depth position {self.depth_caches[symbol.lower()]['asks'][ask[0]]} "
-                         f"on ask side")
+            logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side")
             del self.depth_caches[symbol.lower()]["asks"][ask[0]]
         return True
 
@@ -159,8 +160,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         self.depth_caches[symbol.lower()]["bids"][bid[0]] = float(bid[1])
         if bid[1] == "0.00000000":
-            logger.debug(f"_add_bid() - Deleting depth position {self.depth_caches[symbol.lower()]['bids'][bid[0]]} "
-                         f"on bid side")
+            logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side")
             del self.depth_caches[symbol.lower()]["bids"][bid[0]]
         return True
 
@@ -190,7 +190,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         logger.info(f"_init_depth_cache() - Starting initialization of the cache with symbol {symbol}")
-        order_book = self.ubra.get_order_book(symbol=symbol, limit=1000)
+        try:
+            order_book = self.ubra.get_order_book(symbol=symbol, limit=1000)
+        except requests.exceptions.ReadTimeout as error_msg:
+            logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth cache with "
+                         f"symbol {symbol} -> trying again till it works - error_msg: {error_msg}")
+            self._init_depth_cache(symbol=symbol)
+            return True
         logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth cache with symbol {symbol}")
         self.depth_caches[symbol.lower()]['asks'] = {}
         self.depth_caches[symbol.lower()]['bids'] = {}
@@ -248,18 +254,24 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         if int(stream_data['data']['U']) <= self.depth_caches[symbol.lower()]['last_update_id'] \
                                 <= int(stream_data['data']['u']):
                             # This is the first applied depth update
-                            self._apply_updates(stream_data, symbol=symbol)
+                            self._apply_updates(stream_data['data'], symbol=symbol)
                             logger.info(f"_process_stream_data() - Finished initialization of the cache with "
                                         f"symbol {symbol}")
+                            # Init (refresh) finished
                             self.depth_caches[symbol.lower()]['is_synchronized'] = True
-                        self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
+                            self.depth_caches[symbol.lower()]['last_refresh_time'] = int(time.time())
                     else:
                         # Regular depth update events
+                        if stream_data['data']['U'] != self.depth_caches[symbol.lower()]['last_update_id']+1:
+                            logger.debug(f"_process_stream_data() - There is a gap between the last and the penultimate"
+                                         f" update ID, the depth cache `{symbol}` is no longer correct and must "
+                                         f"be reinitialized")
+                            break
                         logger.debug(f"_process_stream_data() - Applying regular depth update to the depth cache with "
                                      f"symbol {symbol}")
-                        # Todo: While listening to the stream, each new event's U should be equal to the previous
-                        #  event's u+1. If not -> new init
-                        self._apply_updates(stream_data, symbol=symbol)
+                        self._apply_updates(stream_data['data'], symbol=symbol)
+                    self.depth_caches[symbol.lower()]['last_update_id'] = stream_data['data']['u']
+                    self.depth_caches[symbol.lower()]['last_update_time'] = int(time.time())
                 time.sleep(0.01)
 
     def _process_stream_signals(self):
@@ -277,6 +289,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         if stream_signal['type'] == "DISCONNECT":
                             self.depth_caches[symbol]['is_synchronized'] = False
                             self.depth_caches[symbol]['refresh_request'] = True
+                        elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
+                            self.depth_caches[symbol]['stream_status'] = "RUNNING"
             else:
                 time.sleep(0.01)
 
@@ -344,7 +358,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise KeyError(f"Invalid value provided: symbol={symbol}")
 
         if symbol:
-            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=True)
+            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['asks'], reverse=False)
         else:
             raise KeyError(f"Missing parameter `symbol`")
 
@@ -363,7 +377,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError:
             raise KeyError(f"Invalid value provided: symbol={symbol}")
         if symbol:
-            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=False)
+            return self._sort_depth_cache(self.depth_caches[symbol.lower()]['bids'], reverse=True)
         else:
             raise KeyError(f"Missing parameter `symbol`")
 

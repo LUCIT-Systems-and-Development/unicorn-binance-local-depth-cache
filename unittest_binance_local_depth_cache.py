@@ -33,7 +33,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager
+from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 import logging
 import unittest
 import os
@@ -48,6 +48,7 @@ logging.basicConfig(level=logging.DEBUG,
 print(f"Starting unittests:")
 
 UBWA = BinanceLocalDepthCacheManager(exchange="binance.com")
+
 
 class TestUbldc(unittest.TestCase):
     def setUp(self):
@@ -738,7 +739,7 @@ class TestUbldc(unittest.TestCase):
 
     def test_create_depth_cache_true(self):
         self.assertTrue(self.ubldc.create_depth_cache(symbol='LUNABTC'))
-        time.sleep(120)
+        time.sleep(30)
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
@@ -756,6 +757,12 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.version = "0.0.0"
         # Todo: with the first release this can get activated
         # self.assertTrue((self.ubldc.is_update_availabe()))
+
+    def test_invalid_symbol(self):
+        try:
+            self.ubldc.get_bids(symbol='TEST_INVALID_SYMBOL')
+        except KeyError:
+            pass
 
     def test_stop_manager(self):
         self.ubldc.stop_manager()
