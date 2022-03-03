@@ -88,7 +88,7 @@
 <li><p><strong>update_speed</strong> (<em>int</em>) – Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
 <a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a></p></li>
 <li><p><strong>refresh_interval</strong> (<em>int</em>) – The refresh interval in seconds, default is the <cite>default_refresh_interval</cite> of
-<cite>BinanceLocalDepthCache()</cite>.</p></li>
+<a href="#id1"><span class="problematic" id="id2">`BinanceLocalDepthCache&lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager)&gt;`_</span></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -108,7 +108,7 @@
 <li><p><strong>update_speed</strong> (<em>int</em>) – Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
 <a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a></p></li>
 <li><p><strong>refresh_interval</strong> (<em>int</em>) – The refresh interval in seconds, default is the <cite>default_refresh_interval</cite> of
-<cite>BinanceLocalDepthCache()</cite>.</p></li>
+<a href="#id3"><span class="problematic" id="id4">`BinanceLocalDepthCache&lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager)&gt;`_</span></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -168,6 +168,17 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches">
+<span class="sig-name descname"><span class="pre">get_list_of_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of existing depth caches</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_version">
 <span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the package/module version</p>
@@ -179,12 +190,54 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized">
+<span class="sig-name descname"><span class="pre">is_depth_cache_synchronized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is a specific depth cache synchronized?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available">
 <span class="sig-name descname"><span class="pre">is_update_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is a new release of this package available?</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">
+<span class="sig-name descname"><span class="pre">stop_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop a depth_cache!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the depth_cache to be stopped and deleted</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_caches">
+<span class="sig-name descname"><span class="pre">stop_depth_caches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_caches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop a list of depth_caches!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>markets</strong> (<em>list</em>) – Specify the market symbols for the depth_caches to be stopped and deleted</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -329,7 +382,7 @@
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 03 2022 at 18:24 (CET).
+        Last updated on Mar 03 2022 at 22:00 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
