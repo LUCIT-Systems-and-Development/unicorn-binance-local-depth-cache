@@ -83,7 +83,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True)
         self.stop_request = False
-        if warn_on_update and self.is_update_availabe():
+        if warn_on_update and self.is_update_available():
             update_msg = f"Release {self.name}_" + self.get_latest_version() + " is available, " \
                          "please consider updating! (Changelog: https://github.com/LUCIT-Systems-and-Development/" \
                          "unicorn-binance-local-depth-cache/blob/master/CHANGELOG.md)"
@@ -223,8 +223,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[symbol.lower()]['stream_id'])
             if stream_data and "'result': None," not in str(stream_data):
                 if is_initialized:
-                    # Todo: While listening to the stream, each new event's U should be equal to the previous event's u+1.
-                    #       If not -> new init
+                    # Todo: While listening to the stream, each new event's U should be equal to the previous
+                    #  event's u+1. If not -> new init
                     self._apply_updates(stream_data, symbol=symbol)
                 else:
                     if int(stream_data['data']['u']) <= self.depth_caches[symbol.lower()]['last_update_id']:
@@ -333,7 +333,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     @staticmethod
     def get_latest_release_info():
         """
-        Get infos about the latest available release
+        Get info about the latest available release
 
         :return: dict or False
         """
@@ -373,13 +373,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         return self.version
 
-    def is_update_availabe(self):
+    def is_update_available(self):
         """
         Is a new release of this package available?
 
         :return: bool
         """
-        logger.debug(f"is_update_availabe() - Starting the request")
+        logger.debug(f"is_update_available() - Starting the request")
         installed_version = self.get_version()
         if ".dev" in installed_version:
             installed_version = installed_version[:-4]
