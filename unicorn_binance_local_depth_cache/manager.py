@@ -34,7 +34,6 @@
 # IN THE SOFTWARE.
 
 # Todo:
-#   - Refresh interval
 #   - Test: Long run and find exceptions
 #   - Get/Set/Is functions
 #   - Delete/Stop Cache
@@ -226,12 +225,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         logger.debug(f"_process_stream_data() - Started thread for stream_data of market {market.lower()}")
         self.depth_caches[market.lower()]['thread_is_started'] = True
-        self.depth_caches[market.lower()]['is_synchronized'] = False
         while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
             logger.info(f"_process_stream_data() - Clearing stream_buffer with stream_id "
                         f"{self.depth_caches[market.lower()]['stream_id']} of the "
                         f"cache of market {market.lower()} (stream_buffer length: "
                         f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])}")
+            self.depth_caches[market.lower()]['is_synchronized'] = False
             self.depth_caches[market.lower()]['refresh_request'] = False
             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
             logger.info(f"_process_stream_data() - Cleared stream_buffer: "
