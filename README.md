@@ -38,7 +38,7 @@ asks = ubldc.get_asks("LUNABTC")
 bids = ubldc.get_bids("LUNABTC")
 ```
 
-### Catch an exception if the cache is out of sync while accessing its data:
+### Catch an exception, if the cache is out of sync while accessing its data:
 ```
 try:
     print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
@@ -52,7 +52,7 @@ except DepthCacheOutOfSync as error_msg:
 ubldc.stop_depth_cache("LUNABTC")
 ```
 
-### Stop the full instance
+### Stop the full instance:
 ```
 ubldc.stop_manager()
 ```
