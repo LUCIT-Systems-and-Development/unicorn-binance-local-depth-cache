@@ -4,4 +4,4 @@ dependencies:
 - pip:
     - requests
     - unicorn-binance-rest-api
-    - unicorn-binance-websocket-api
+    - unicorn-binance-websocket-api>=1.37.1
