@@ -118,13 +118,15 @@ robust and fully-featured way.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html">Discover more possibilities</a></p>
+<p><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html">Discover more possibilities.</a></p>
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p>The Python package <a class="reference external" href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">UNICORN Binance Local Depth Cache</a>
-provides a local depth cache for Binance Exchanges <a class="reference external" href="https://github.com/binance-exchange/binance-official-api-docs">Binance</a>
-(<a class="reference external" href="https://testnet.binance.vision/">+Testnet</a>), more coming soon.</p>
+provides a local depth cache for the Binance Exchanges <a class="reference external" href="https://github.com/binance-exchange/binance-official-api-docs">Binance</a></p>
+<ul class="simple">
+<li><p>more are coming soon.</p></li>
+</ul>
 <p>The algorythm was designed according to these instructions:
 <a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly">How to manage a local order book correctly</a></p>
 <div class="section" id="what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">
@@ -146,12 +148,16 @@ provides a local depth cache for Binance Exchanges <a class="reference external"
 <td><code>BinanceWebSocketApiManager(exchange="binance.com")</code></td>
 </tr>
 <tr>
-<td><a href="https://testnet.binance.vision/">Binance Testnet</a></td>
-<td><code>BinanceWebSocketApiManager(exchange="binance.com-testnet")</code></td>
+<td>More are comming soon</td>
+<td>-</td>
 </tr>
 </tbody>
 </table><ul class="simple">
-<li></li>
+<li><p>Get notified if a dept cache is out of sync</p></li>
+<li><p>If a depth cache is out of sync it gets refreshed automatically within a few seconds</p></li>
+<li><p>Create multiple depth caches within a single instance</p></li>
+<li><p>Each dept_cache is processed in a separate thread</p></li>
+<li><p>Start multiple caches with just one command: <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_caches#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches"><code class="docutils literal notranslate"><span class="pre">create_depth_caches(['lunabtc',</span> <span class="pre">'lunausdt'])</span></code></a></p></li>
 </ul>
 </div>
 </div>
@@ -174,9 +180,9 @@ provides a local depth cache for Binance Exchanges <a class="reference external"
 </div>
 <div class="section" id="windows">
 <h4>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h4>
-<p>Use the below command with the version (such as 1.35.0) you determined
+<p>Use the below command with the version (such as 0.1.0) you determined
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest">here</a>:</p>
-<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/1.35.0.tar.gz</span> <span class="pre">--upgrade</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.1.0.tar.gz</span> <span class="pre">--upgrade</span></code></p>
 </div>
 </div>
 <div class="section" id="from-the-latest-source-dev-stage-with-pip-from-github">
@@ -209,6 +215,11 @@ and use:</p>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_depth_cache.py">example_depth_cache.py</a></p></li>
+<li><p><a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_refresh_interval.py">example_refresh_interval.py</a></p></li>
+<li><p><a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_shared_ubwa_instance.py">example_shared_ubwa_instance.py</a></p></li>
+</ul>
 </div>
 <div class="section" id="project-homepage">
 <h2>Project Homepage<a class="headerlink" href="#project-homepage" title="Permalink to this headline">¶</a></h2>
@@ -234,7 +245,7 @@ and use:</p>
 the repository on <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache">GitHub</a>, write your
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py">own script</a>
 with using
-<a class="reference external" href="https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager.BinanceTrailingStopLossEngineManager.is_update_availabe"><code class="docutils literal notranslate"><span class="pre">is_update_availabe()</span></code></a>.</p>
+<a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_update_available#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available"><code class="docutils literal notranslate"><span class="pre">is_update_available()</span></code></a>.</p>
 <p>Follow us on <a class="reference external" href="https://twitter.com/LUCIT_SysDev">Twitter</a> or on <a class="reference external" href="https://www.facebook.com/lucit.systems.and.development">Facebook</a> for general news about the <a class="reference external" href="https://www.lucit.tech/unicorn-binance-suite.html">unicorn-binance-suite</a>!</p>
 <p>To receive news (like inspection windows/maintenance) about the Binance API`s subscribe to their telegram groups:</p>
 <ul class="simple">
@@ -425,7 +436,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 03 2022 at 22:41 (CET).
+        Last updated on Mar 03 2022 at 23:21 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
