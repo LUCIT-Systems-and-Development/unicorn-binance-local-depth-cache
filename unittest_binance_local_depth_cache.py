@@ -535,19 +535,40 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.get_version()
         self.ubldc.is_update_available()
         self.ubldc.is_depth_cache_synchronized("BTCUSDT")
+        self.ubldc.get_list_of_depth_caches()
 
     def test_create_depth_cache_true(self):
         self.assertTrue(self.ubldc.create_depth_cache(markets='BTCUSDT', refresh_interval=20, update_interval=1000))
+        try:
+            self.ubldc.get_asks(market='BTCUSDT')
+        except DepthCacheOutOfSync:
+            pass
+        try:
+            self.ubldc.get_bids(market='BTCUSDT')
+        except DepthCacheOutOfSync:
+            pass
+
+    def test_create_depth_cache_true_exists(self):
+        self.assertTrue(self.ubldc.create_depth_cache(markets='BTCUSDT'))
+
+    def test_stream_signal_disconnect(self):
+        self.ubldc.ubwa.add_to_stream_signal_buffer("DISCONNECT", "faked_stream_id", "debug msg")
 
     def test_create_depth_cache_true_futures(self):
         self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
         time.sleep(60)
+
+    def test_set_refresh_request(self):
+        self.assertTrue(self.ubldc.set_refresh_request("BTCUSDT"))
 
     def test_stop_depth_cache_false(self):
         self.assertTrue(self.ubldc.stop_depth_cache("BTCUSDT"))
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
+
+    def test_stop_depth_cache_false(self):
+        self.assertFalse(self.ubldc.stop_depth_cache())
 
     def test_get_asks(self):
         try:
