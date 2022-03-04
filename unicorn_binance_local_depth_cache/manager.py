@@ -70,6 +70,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type default_refresh_interval: int
         :param default_update_interval: Update speed of the depth webstream in milliseconds. More info:
                                         https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
+                                        This can be overwritten with `update_interval` of `create_depth_cache()`.
         :type default_update_interval: int
         :param warn_on_update: set to `False` to disable the update warning
         :type warn_on_update: bool
@@ -79,7 +80,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type ubwa_manager: BinanceWebSocketApiManager
         """
         super().__init__()
-        self.version = "0.4.0"
+        self.version = "0.4.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange
