@@ -34,28 +34,31 @@
 # IN THE SOFTWARE.
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 import logging
 import os
 import time
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
-                    #filename=os.path.basename(__file__) + '.log',
+                    filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
 market = 'LUNABTC'
+exchange = "binance.com"
 
-ubldc = BinanceLocalDepthCacheManager()
+ubwa = BinanceWebSocketApiManager(exchange=exchange)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
 ubldc.create_depth_cache(market=market)
 
-while False:
-    time.sleep(1)
-    print(f"last_update_id: {ubldc.depth_caches[market.lower()]['last_update_id']}")
-    print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")
+while True:
     try:
-        print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
-        print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
-    except DepthCacheOutOfSync as error_msg:
-        print(f"ERROR: {error_msg}")
-    print("===========================================================================================================")
+        top_asks = ubldc.get_asks(market=market)[:3]
+        top_bids = ubldc.get_bids(market=market)[:3]
+    except DepthCacheOutOfSync:
+        top_asks = ""
+        top_bids = ""
+    depth = f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
+    ubwa.print_summary(add_string=depth)
+    time.sleep(1)
