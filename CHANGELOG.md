@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.2.0.dev (development stage/unreleased/unstable)
+## 0.3.0.dev (development stage/unreleased/unstable)
+
+## 0.3.0
+### Added
+- threading.Lock(): `self.threading_lock_ask` and `self.threading_lock_bid`
+
 ### Added
 - `set_refresh_request()`
 

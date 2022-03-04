@@ -52,7 +52,7 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-spawn_depth_caches = 2
+spawn_depth_caches = 20
 exchange = "binance.com"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)

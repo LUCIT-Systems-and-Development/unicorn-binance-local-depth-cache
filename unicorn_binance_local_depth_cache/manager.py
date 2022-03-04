@@ -71,7 +71,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type warn_on_update: bool
         """
         super().__init__()
-        self.version = "0.2.0.dev"
+        self.version = "0.3.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange
