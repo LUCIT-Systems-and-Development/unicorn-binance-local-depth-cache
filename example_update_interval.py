@@ -54,7 +54,7 @@ ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 ubldc.create_depth_cache(markets=market, update_interval=100)
 
 while True:
-    print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")
+    print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")
     try:
         print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
         print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
