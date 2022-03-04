@@ -71,7 +71,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type warn_on_update: bool
         """
         super().__init__()
-        self.version = "0.1.0.dev"
+        self.version = "0.2.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange
@@ -136,7 +136,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         self.depth_caches[market.lower()]["asks"][ask[0]] = float(ask[1])
-        if ask[1] == "0.00000000":
+        if ask[1] == "0.00000000" or ask[1] == "0.000":
             logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side for market {market.lower()}")
             del self.depth_caches[market.lower()]["asks"][ask[0]]
         return True
@@ -152,7 +152,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         self.depth_caches[market.lower()]["bids"][bid[0]] = float(bid[1])
-        if bid[1] == "0.00000000":
+        if bid[1] == "0.00000000" or bid[1] == "0.000":
             logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side for market {market.lower()}")
             del self.depth_caches[market.lower()]["bids"][bid[0]]
         return True
@@ -230,9 +230,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])}")
             self.depth_caches[market.lower()]['is_synchronized'] = False
             self.depth_caches[market.lower()]['refresh_request'] = False
-            # self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
-            # logger.info(f"_process_stream_data() - Cleared stream_buffer: "
-            #             f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
+            self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
+            logger.info(f"_process_stream_data() - Cleared stream_buffer: "
+                        f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
             while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 2:
                 logger.debug(f"_process_stream_data() - Waiting for enough depth events for depth_cache with "
                              f"market {market.lower()}")

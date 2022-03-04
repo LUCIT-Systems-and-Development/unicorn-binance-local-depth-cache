@@ -46,7 +46,7 @@ logging.basicConfig(level=logging.DEBUG,
                     style="{")
 
 market = 'BTCUSDT'
-exchange = "binance.com"
+exchange = "binance.com-futures"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)
 ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
