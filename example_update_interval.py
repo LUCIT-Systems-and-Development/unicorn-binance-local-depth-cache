@@ -51,8 +51,8 @@ ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 
 # update_speed tells binance endpoints the frequency in which updates are sent
 # the value is in milliseconds, possible values are different for each endpint:
-# Spot: 1000 and 100 ms (https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream)
-# Futures: 500, 250, and 100 ms (https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
+# https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
+
 ubldc.create_depth_cache(markets=market, update_interval=100)
 
 while True:

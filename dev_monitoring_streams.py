@@ -65,7 +65,7 @@ for item in data:
     markets.append(item['symbol'])
 
 print(f"Starting {spawn_depth_caches} new depth caches")
-ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=1000)
+ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=100)
 
 while True:
     try:
