@@ -79,7 +79,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type ubwa_manager: BinanceWebSocketApiManager
         """
         super().__init__()
-        self.version = "0.4.0.dev"
+        self.version = "0.4.0"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange
