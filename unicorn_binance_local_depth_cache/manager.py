@@ -38,7 +38,6 @@ from operator import itemgetter
 from unicorn_binance_rest_api import BinanceRestApiManager
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from typing import Optional, Union
-import copy
 import logging
 import requests
 import time
