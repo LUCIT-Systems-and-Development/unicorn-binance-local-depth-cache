@@ -85,6 +85,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True)
         self.stop_request = False
+        self.threading_lock_ask = {}
+        self.threading_lock_bid = {}
         if warn_on_update and self.is_update_available():
             update_msg = f"Release {self.name}_" + self.get_latest_version() + " is available, " \
                          "please consider updating! (Changelog: https://github.com/LUCIT-Systems-and-Development/" \
@@ -118,6 +120,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                  "market": market.lower(),
                                                  "thread": None,
                                                  "thread_is_started": False}
+            self.threading_lock_ask[market.lower()] = threading.Lock()
+            self.threading_lock_bid[market.lower()] = threading.Lock()
             logger.debug(f"_add_depth_cache() - Added new entry for market {market.lower()} and stream_id {stream_id}")
             return True
         else:
@@ -135,11 +139,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type market: str
         :return: bool
         """
-        self.depth_caches[market.lower()]["asks"][ask[0]] = float(ask[1])
-        if ask[1] == "0.00000000" or ask[1] == "0.000":
-            logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side for market {market.lower()}")
-            del self.depth_caches[market.lower()]["asks"][ask[0]]
-        return True
+        with self.threading_lock_ask[market.lower()]:
+            self.depth_caches[market.lower()]["asks"][ask[0]] = float(ask[1])
+            if ask[1] == "0.00000000" or ask[1] == "0.000":
+                logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side for market {market.lower()}")
+                del self.depth_caches[market.lower()]["asks"][ask[0]]
+            return True
 
     def _add_bid(self, bid, market: str = None):
         """
@@ -151,11 +156,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type market: str
         :return: bool
         """
-        self.depth_caches[market.lower()]["bids"][bid[0]] = float(bid[1])
-        if bid[1] == "0.00000000" or bid[1] == "0.000":
-            logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side for market {market.lower()}")
-            del self.depth_caches[market.lower()]["bids"][bid[0]]
-        return True
+        with self.threading_lock_bid[market.lower()]:
+            self.depth_caches[market.lower()]["bids"][bid[0]] = float(bid[1])
+            if bid[1] == "0.00000000" or bid[1] == "0.000":
+                logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side for market {market.lower()}")
+                del self.depth_caches[market.lower()]["bids"][bid[0]]
+            return True
 
     def _apply_updates(self, order_book, market: str = None):
         """
@@ -412,7 +418,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise KeyError(f"Invalid value provided: market={market.lower()}")
 
         if market:
-            return self._sort_depth_cache(self.depth_caches[market.lower()]['asks'], reverse=False)
+            with self.threading_lock_ask[market.lower()]:
+                return self._sort_depth_cache(self.depth_caches[market.lower()]['asks'], reverse=False)
         else:
             raise KeyError(f"Missing parameter `market`")
 
@@ -425,13 +432,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: list of asks with price and quantity.
         """
         try:
-            if self.depth_caches[market.lower().lower()]['is_synchronized'] is False:
+            if self.depth_caches[market.lower()]['is_synchronized'] is False:
                 raise DepthCacheOutOfSync(f"The depth_cache for market symbol '{market.lower()}' is out of sync, "
                                           f"please try again later")
         except KeyError:
             raise KeyError(f"Invalid value provided: market={market.lower()}")
         if market:
-            return self._sort_depth_cache(self.depth_caches[market.lower()]['bids'], reverse=True)
+            with self.threading_lock_bid[market.lower()]:
+                return self._sort_depth_cache(self.depth_caches[market.lower()]['bids'], reverse=True)
         else:
             raise KeyError(f"Missing parameter `market`")
 
