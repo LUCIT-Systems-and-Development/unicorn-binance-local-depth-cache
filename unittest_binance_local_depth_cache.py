@@ -47,12 +47,13 @@ logging.basicConfig(level=logging.DEBUG,
 
 print(f"Starting unittests:")
 
-UBWA = BinanceLocalDepthCacheManager(exchange="binance.com")
-
+UBLDC = BinanceLocalDepthCacheManager(exchange="binance.com")
+UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
 
 class TestUbldc(unittest.TestCase):
     def setUp(self):
-        self.ubldc = UBWA
+        self.ubldc = UBLDC
+        self.ubldc_futures = UBLDC_FUTURES
         self.items = {'0.00204980': 39.05, '0.00204990': 1.63, '0.00205050': 158.68, '0.00205060': 81.97,
                       '0.00205080': 32.5, '0.00205090': 16.74, '0.00205100': 149.34, '0.00205110': 6.68,
                       '0.00205140': 16.77, '0.00205150': 50.0, '0.00205170': 17.1, '0.00205180': 20.04,
@@ -523,7 +524,7 @@ class TestUbldc(unittest.TestCase):
                             [0.0021763, 2.35]]
 
     def test_add_depth_cache_missing_stream_id(self):
-        self.assertFalse(self.ubldc._add_depth_cache(market="LUNABTC"))
+        self.assertFalse(self.ubldc._add_depth_cache(market="BTCUSDT"))
 
     def test_add_depth_cache_missing_market(self):
         self.assertFalse(self.ubldc._add_depth_cache(stream_id="AAAAAAAAAAAAAAAAA"))
@@ -533,24 +534,30 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.get_latest_version()
         self.ubldc.get_version()
         self.ubldc.is_update_available()
-        self.ubldc.is_depth_cache_synchronized("LUNABTC")
+        self.ubldc.is_depth_cache_synchronized("BTCUSDT")
 
     def test_create_depth_cache_true(self):
-        self.assertTrue(self.ubldc.create_depth_cache(markets='LUNABTC'))
+        self.assertTrue(self.ubldc.create_depth_cache(markets='BTCUSDT', refresh_interval=20, update_interval=1000))
+
+    def test_create_depth_cache_true_futures(self):
+        self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
         time.sleep(60)
+
+    def test_stop_depth_cache_false(self):
+        self.assertTrue(self.ubldc.stop_depth_cache("BTCUSDT"))
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
 
     def test_get_asks(self):
         try:
-            self.ubldc.get_asks(market='LUNABTC')
+            self.ubldc.get_asks(market='BTCUSDT')
         except DepthCacheOutOfSync:
             pass
 
     def test_get_bids(self):
         try:
-            self.ubldc.get_bids(market='LUNABTC')
+            self.ubldc.get_bids(market='BTCUSDT')
         except DepthCacheOutOfSync:
             pass
 
@@ -568,6 +575,7 @@ class TestUbldc(unittest.TestCase):
 
     def test_stop_manager(self):
         self.ubldc.stop_manager_with_all_depth_caches()
+        self.ubldc_futures.stop_manager_with_all_depth_caches()
 
 
 if __name__ == '__main__':
