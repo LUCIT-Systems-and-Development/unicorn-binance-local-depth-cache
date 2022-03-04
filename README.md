@@ -14,10 +14,8 @@
 
 # UNICORN Binance Local Depth Cache 
 
-[Description](#description) | [Installation](#installation-and-upgrade) | [How To](#howto) |
-[Documentation](#documentation) | [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) |
-[Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
-[Contributing](#contributing) | [Commercial Support](#commercial-support)
+[Description](#description) | [Installation](#installation-and-upgrade) | [Documentation](#documentation) | [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) | [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | [Contributing](#contributing)|
+[Commercial Support](#commercial-support)
 
 A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
 robust and fully-featured way.
@@ -72,6 +70,7 @@ provides a local depth cache for the Binance Exchanges [Binance](https://github.
 ([+Testnet](https://testnet.binancefuture.com)) - more are coming soon.
 
 The algorythm was designed according to these instructions:
+
 - [Binance Spot: "How to manage a local order book correctly"](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 
