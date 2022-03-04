@@ -328,7 +328,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         Create one or more depth_cache!
 
         :param markets: Specify the market symbols for caches to be created
-        :type markets: list
+        :type markets: str or list
         :param update_interval: Update speed of the depth webstream in milliseconds: 100 or 1000 (default) - based on
                              https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
         :type update_interval: int
@@ -482,43 +482,31 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             return True
 
-    def stop_depth_cache(self, market: str = None):
+    def stop_depth_cache(self, markets: Optional[Union[str, list]] = None):
         """
-        Stop a depth_cache!
-
-        :param market: Specify the market symbol for the depth_cache to be stopped and deleted
-        :type market: str
-        :return: bool
-        """
-        if market is None:
-            logger.critical(f"stop_depth_cache() - Please provide a market")
-            return False
-        logger.debug(f"stop_depth_cache() - Setting stop_request for depth_cache {market.lower()}")
-        self.depth_caches[market.lower()]['stop_request'] = True
-        return True
-
-    def stop_depth_caches(self, markets: Optional[list] = None):
-        """
-        Stop a list of depth_caches!
+        Stop and delete one or more depth_caches!
 
         :param markets: Specify the market symbols for the depth_caches to be stopped and deleted
-        :type markets: list
+        :type markets: str or list
         :return: bool
         """
         if markets is None:
-            logger.critical(f"stop_depth_caches() - Please provide a list of markets")
+            logger.critical(f"stop_depth_cache() - Please provide a market")
             return False
+        if isinstance(markets, str):
+            markets = [markets, ]
         for market in markets:
+            logger.debug(f"stop_depth_cache() - Setting stop_request for depth_cache {market.lower()}")
             self.depth_caches[market.lower()]['stop_request'] = True
         return True
 
-    def stop_manager(self):
+    def stop_manager_with_all_depth_caches(self):
         """
         Stop unicorn-binance-local-depth-cache with all sub routines
 
         :return: bool
         """
-        logger.debug(f"stop_manager() - Stop initiated!")
+        logger.debug(f"stop_manager_with_all_depth_caches - Stop initiated!")
         self.stop_request = True
         self.ubwa.stop_manager_with_all_streams()
         return True

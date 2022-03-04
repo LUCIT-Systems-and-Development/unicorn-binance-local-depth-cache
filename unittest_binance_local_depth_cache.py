@@ -568,7 +568,7 @@ class TestUbldc(unittest.TestCase):
             pass
 
     def test_stop_manager(self):
-        self.ubldc.stop_manager()
+        self.ubldc.stop_manager_with_all_depth_caches
 
 
 if __name__ == '__main__':

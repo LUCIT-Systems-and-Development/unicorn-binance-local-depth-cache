@@ -76,4 +76,4 @@ setuptools.setup(
      ],
 )
 
-ubldc.stop_manager()
+ubldc.stop_manager_with_all_depth_caches

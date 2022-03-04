@@ -10,7 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.1.0.dev (development stage/unreleased/unstable)
 ### Changed
 - `create_depth_cache()` renamed parameter `market` to `markets`. `markets` can be a str or a list of one or more market symbols
+- `stop_depth_cache()` renamed parameter `market` to `markets`. `markets` can be a str or a list of one or more market symbols
+-  Renamed `stop_manager()` to `stop_manager_with_all_caches()`
 ### Removed
 - `create_depth_caches()` 
+- `stop_depth_caches()` 
+
 ## 0.1.0
 Initial Release!

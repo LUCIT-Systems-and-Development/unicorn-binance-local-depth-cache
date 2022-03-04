@@ -54,7 +54,7 @@ ubldc.stop_depth_cache("LUNABTC")
 
 ### Stop the full instance:
 ```
-ubldc.stop_manager()
+ubldc.stop_manager_with_all_depth_caches
 ```
 
 ### Get the right logger:

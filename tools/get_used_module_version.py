@@ -41,4 +41,4 @@ ubldc = BinanceLocalDepthCacheManager()
 # get version of the used UNICORN Binance Local Depth Cache
 print(ubldc.get_version())
 
-ubldc.stop_manager()
+ubldc.stop_manager_with_all_depth_caches

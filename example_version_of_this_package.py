@@ -53,4 +53,4 @@ if ubldc.is_update_available():
 else:
     print(ubldc.get_version(), "is the latest version!")
 
-ubldc.stop_manager()
+ubldc.stop_manager_with_all_depth_caches
