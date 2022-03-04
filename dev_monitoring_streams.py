@@ -53,6 +53,7 @@ logging.basicConfig(level=logging.INFO,
                     style="{")
 
 spawn_depth_caches = 20
+update_interval_milliseconds = 100
 exchange = "binance.com"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)
@@ -64,8 +65,8 @@ data = ubra.get_all_tickers()
 for item in data:
     markets.append(item['symbol'])
 
-print(f"Starting {spawn_depth_caches} new depth caches")
-ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=100)
+print(f"Starting {spawn_depth_caches} new depth caches with update_interval={update_interval_milliseconds}")
+ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=update_interval_milliseconds)
 
 while True:
     try:

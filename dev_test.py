@@ -50,7 +50,7 @@ exchange = "binance.com-futures"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)
 ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
-ubldc.create_depth_cache(markets=market)
+ubldc.create_depth_cache(markets=market, update_interval=100)
 
 while True:
     try:
