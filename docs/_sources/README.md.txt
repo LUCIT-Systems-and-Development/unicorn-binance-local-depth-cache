@@ -38,7 +38,7 @@ asks = ubldc.get_asks("LUNABTC")
 bids = ubldc.get_bids("LUNABTC")
 ```
 
-### Catch an exception if the cache is out of sync while accessing its data:
+### Catch an exception, if the cache is out of sync while accessing its data:
 ```
 try:
     print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
@@ -52,7 +52,7 @@ except DepthCacheOutOfSync as error_msg:
 ubldc.stop_depth_cache("LUNABTC")
 ```
 
-### Stop the full instance
+### Stop the full instance:
 ```
 ubldc.stop_manager_with_all_depth_caches
 ```
@@ -66,10 +66,14 @@ logging.getLogger("unicorn_binance_local_depth_cache")
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
-provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) - more are coming soon.
+provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
+([+Testnet](https://testnet.binance.vision/)), 
+[Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
+([+Testnet](https://testnet.binancefuture.com)) - more are coming soon.
 
-The algorythm was designed according to these instructions: 
-[How to manage a local order book correctly](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
+The algorythm was designed according to these instructions:
+- [Binance Spot: "How to manage a local order book correctly"](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
+- [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - 100% auto-reconnect!
@@ -77,14 +81,19 @@ The algorythm was designed according to these instructions:
 
 | Exchange | Exchange string | 
 | -------- | --------------- | 
-| [Binance](https://www.binance.com) | `BinanceWebSocketApiManager(exchange="binance.com")` |
+| [Binance](https://www.binance.com) | `BinanceLocalDepthCacheManager(exchange="binance.com")` |
+| [Binance Testnet](https://testnet.binance.vision/) | `BinanceLocalDepthCacheManager(exchange="binance.com-testnet")` |
+| [Binance USD-M Futures](https://www.binance.com) | `BinanceLocalDepthCacheManager(exchange="binance.com-futures")` |
+| [Binance USD-M Futures Testnet](https://testnet.binancefuture.com) | `BinanceLocalDepthCacheManager(exchange="binance.com-futures-testnet")` |
 | More are comming soon | - |
 
-- Get notified if a dept cache is out of sync
+- Get notified if a dept cache is out of sync [`is_depth_cache_synchronized('lunabtc')`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized)
 - If a depth cache is out of sync it gets refreshed automatically within a few seconds
 - Create multiple depth caches within a single instance
 - Each dept_cache is processed in a separate thread
-- Start multiple caches with just one command: [`create_depth_caches(['lunabtc', 'lunausdt'])`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_caches#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
+- Start or stop multiple caches with just one command 
+[`create_depth_cache(['lunabtc', 'lunausdt'])`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
+or [`stop_depth_cache(['lunabtc', 'lunausdt'])`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_caches)
 
 ## Installation and Upgrade
 The module requires Python 3.7 or above.
@@ -128,6 +137,7 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 
 ## Examples
 - [example_depth_cache.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_depth_cache.py)
+- [example_log_to_console.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_log_to_console.py)
 - [example_refresh_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_refresh_interval.py)
 - [example_shared_ubwa_instance.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_shared_ubwa_instance.py)
 - [example_update_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_update_interval.py)
