@@ -52,7 +52,7 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-spawn_depth_caches = 10
+spawn_depth_caches = 2
 exchange = "binance.com"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)
@@ -65,10 +65,17 @@ for item in data:
     markets.append(item['symbol'])
 
 print(f"Starting {spawn_depth_caches} new depth caches")
-ubldc.create_depth_caches(markets=markets[:spawn_depth_caches], update_speed=100)
+ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=1000)
 
 while True:
-    depth = f""
-    ubwa.print_summary(add_string=depth)
+    try:
+        top_asks = ubldc.get_asks(market=markets[0])[:3]
+        top_bids = ubldc.get_bids(market=markets[0])[:3]
+    except DepthCacheOutOfSync:
+        print("out of sync")
+        top_asks = ""
+        top_bids = ""
+    text = f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
+    ubwa.print_summary(add_string=text)
     time.sleep(1)
 

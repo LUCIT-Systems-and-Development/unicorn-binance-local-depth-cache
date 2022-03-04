@@ -49,7 +49,7 @@ market = 'LUNABTC'
 ubldc = BinanceLocalDepthCacheManager()
 
 # refresh_interval in seconds (1 day = 24 * 60 * 60
-ubldc.create_depth_cache(market=market, refresh_interval=3*5)
+ubldc.create_depth_cache(markets=market, refresh_interval=3*5)
 
 while True:
     print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")

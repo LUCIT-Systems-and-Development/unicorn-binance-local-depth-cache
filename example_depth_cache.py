@@ -47,7 +47,7 @@ logging.basicConfig(level=logging.INFO,
 market = 'LUNABTC'
 
 ubldc = BinanceLocalDepthCacheManager()
-ubldc.create_depth_cache(market=market)
+ubldc.create_depth_cache(markets=market)
 
 try:
     print(f"{ubldc.get_bids(market='TEST_INVALID_MARKET_SYMBOL')}")

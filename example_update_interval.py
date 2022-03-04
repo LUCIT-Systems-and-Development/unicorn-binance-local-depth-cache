@@ -51,7 +51,7 @@ ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 # update_speed tells binance endpoints the frequency in which updates are sent
 # the value is in milliseconds, possible values are 1000 and 100 ms. 1000 is default
 # https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
-ubldc.create_depth_cache(market=market, update_interval=100)
+ubldc.create_depth_cache(markets=market, update_interval=100)
 
 while True:
     print(f"is_synchronized: {ubldc.depth_caches[market.lower()]['is_synchronized']}")
