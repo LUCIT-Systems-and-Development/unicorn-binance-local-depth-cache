@@ -558,8 +558,7 @@ class TestUbldc(unittest.TestCase):
         self.assertListEqual(self.assert_list, self.ubldc._sort_depth_cache(self.items))
 
     def test_is_update_availabe_true(self):
-        self.ubldc.version = "0.0.0"
-        self.assertTrue((self.ubldc.is_update_available()))
+        self.assertFalse((self.ubldc.is_update_available()))
 
     def test_invalid_market(self):
         try:
@@ -568,7 +567,7 @@ class TestUbldc(unittest.TestCase):
             pass
 
     def test_stop_manager(self):
-        self.ubldc.stop_manager_with_all_depth_caches
+        self.ubldc.stop_manager_with_all_depth_caches()
 
 
 if __name__ == '__main__':
