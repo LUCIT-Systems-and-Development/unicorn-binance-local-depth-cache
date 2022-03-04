@@ -532,7 +532,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             markets = [markets, ]
         for market in markets:
             logger.debug(f"set_refresh_request() - Set refresh request for depth cache {market.lower()}")
-            self.depth_caches[market]['refresh_request'] = True
+            self.depth_caches[market.lower()]['refresh_request'] = True
         return True
 
     def stop_depth_cache(self, markets: Optional[Union[str, list]] = None):
