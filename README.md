@@ -67,10 +67,13 @@ logging.getLogger("unicorn_binance_local_depth_cache")
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
 provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
-([+Testnet](https://testnet.binance.vision/)) - more are coming soon.
+([+Testnet](https://testnet.binance.vision/)), 
+[Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
+([+Testnet](https://testnet.binancefuture.com)) - more are coming soon.
 
-The algorythm was designed according to these instructions: 
-[How to manage a local order book correctly](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
+The algorythm was designed according to these instructions:
+- [Binance Spot: "How to manage a local order book correctly"](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
+- [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - 100% auto-reconnect!
@@ -80,6 +83,8 @@ The algorythm was designed according to these instructions:
 | -------- | --------------- | 
 | [Binance](https://www.binance.com) | `BinanceWebSocketApiManager(exchange="binance.com")` |
 | [Binance Testnet](https://testnet.binance.vision/) | `BinanceWebSocketApiManager(exchange="binance.com-testnet")` |
+| [Binance USD-M Futures](https://www.binance.com) | `BinanceWebSocketApiManager(exchange="binance.com-futures")` |
+| [Binance USD-M Futures Testnet](https://testnet.binancefuture.com) | `BinanceWebSocketApiManager(exchange="binance.com-futures-testnet")` |
 | More are comming soon | - |
 
 - Get notified if a dept cache is out of sync
