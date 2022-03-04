@@ -44,14 +44,16 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'LUNABTC'
+market = 'BTCUSDT'
 
 ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+# ubldc = BinanceLocalDepthCacheManager(exchange="binance.com-testnet")
 
 # update_speed tells binance endpoints the frequency in which updates are sent
-# the value is in milliseconds, possible values are 1000 and 100 ms. 1000 is default
-# https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
-ubldc.create_depth_cache(markets=market, update_interval=100)
+# the value is in milliseconds, possible values are different for each endpint:
+# Spot: 1000 and 100 ms (https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream)
+# Futures: 500, 250, and 100 ms (https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
+ubldc.create_depth_cache(markets=market, update_interval=1000)
 
 while True:
     print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")

@@ -44,15 +44,12 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'LUNABTC'
+market = 'BTCUSDT'
 
-ubldc = BinanceLocalDepthCacheManager()
+# ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+ubldc = BinanceLocalDepthCacheManager(exchange="binance.com-testnet")
+
 ubldc.create_depth_cache(markets=market)
-
-try:
-    print(f"{ubldc.get_bids(market='TEST_INVALID_MARKET_SYMBOL')}")
-except KeyError as error_msg:
-    print(f"ERROR: {error_msg}")
 
 while True:
     print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")
@@ -61,5 +58,5 @@ while True:
         print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
     except DepthCacheOutOfSync as error_msg:
         print(f"ERROR: {error_msg}")
-    time.sleep(5)
+    time.sleep(1)
 

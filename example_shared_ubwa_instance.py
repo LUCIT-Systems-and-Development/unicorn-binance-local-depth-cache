@@ -45,8 +45,9 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'LUNABTC'
-exchange = "binance.com"
+market = 'BTCUSDT'
+# exchange = "binance.com"
+exchange = "binance.com-testnet"
 
 ubwa = BinanceWebSocketApiManager(exchange=exchange)
 ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)

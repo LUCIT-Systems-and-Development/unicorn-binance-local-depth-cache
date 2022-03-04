@@ -44,7 +44,7 @@ logging.basicConfig(level=logging.INFO,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'LUNABTC'
+market = 'BTCUSDT'
 
 ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 

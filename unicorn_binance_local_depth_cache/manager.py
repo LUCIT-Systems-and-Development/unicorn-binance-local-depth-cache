@@ -322,7 +322,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
         return new_items
 
-    def create_depth_cache(self, markets: Optional[Union[str, list]] = None, update_interval: int = 1000,
+    def create_depth_cache(self, markets: Optional[Union[str, list]] = None, update_interval: Optional[int] = None,
                            refresh_interval: int = None):
         """
         Create one or more depth_cache!
@@ -345,18 +345,23 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             try:
                 if self.depth_caches[market.lower()]:
                     logger.debug(f"create_depth_cache() - depth_cache {market.lower()} already exists!")
-                    return False
+                    return True
             except KeyError as error_msg:
                 logger.debug(f"create_depth_cache() - No existing cache for market {market.lower()} found! - "
                              f"KeyError: {error_msg}")
-            stream_id = self.ubwa.create_stream(f"depth@{update_interval}ms", market, stream_buffer_name=True,
+                if update_interval is None:
+                    channel = f"depth"
+                else:
+                    channel = f"depth@{update_interval}ms"
+            stream_id = self.ubwa.create_stream(channel, market, stream_buffer_name=True,
                                                 stream_label=f"depth_{market.lower()}", output="dict")
             self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
-            self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data, args=(market,))
+            self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data,
+                                                                           args=(market,))
             self.depth_caches[market.lower()]['thread'].start()
             while self.depth_caches[market.lower()]['thread_is_started'] is False:
-                # This is to await the creation of the thread to avoid errors if the main thread gets closed before. This
-                # can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
+                # This is to await the creation of the thread to avoid errors if the main thread gets closed before.
+                # This can happen if after calling `create_depth_cache()` the main thread has no more code and exits.
                 logger.debug(f"create_depth_cache() - Waiting till thread for market {market.lower()} is running")
                 time.sleep(0.01)
         return True

@@ -66,7 +66,8 @@ logging.getLogger("unicorn_binance_local_depth_cache")
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
-provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) - more are coming soon.
+provides a local depth cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
+([+Testnet](https://testnet.binance.vision/)) - more are coming soon.
 
 The algorythm was designed according to these instructions: 
 [How to manage a local order book correctly](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
@@ -78,6 +79,7 @@ The algorythm was designed according to these instructions:
 | Exchange | Exchange string | 
 | -------- | --------------- | 
 | [Binance](https://www.binance.com) | `BinanceWebSocketApiManager(exchange="binance.com")` |
+| [Binance Testnet](https://testnet.binance.vision/) | `BinanceWebSocketApiManager(exchange="binance.com-testnet")` |
 | More are comming soon | - |
 
 - Get notified if a dept cache is out of sync
