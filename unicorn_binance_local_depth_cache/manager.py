@@ -49,8 +49,8 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 class BinanceLocalDepthCacheManager(threading.Thread):
     """
-     A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy,
-     fast, flexible, robust and fully-featured way.
+     A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast,
+     flexible, robust and fully-featured way.
 
      Binance API documentation:
      https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream

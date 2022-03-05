@@ -69,7 +69,7 @@ provides a local depth_cache for the Binance Exchanges [Binance](https://github.
 [Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
 ([+Testnet](https://testnet.binancefuture.com)) - more are coming soon.
 
-The algorythm of the depth_cache management was designed according to these instructions:
+The algorithm of the depth_cache management was designed according to these instructions:
 
 - [Binance Spot: "How to manage a local order book correctly"](https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly)
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
@@ -98,7 +98,7 @@ local depth_cache is kept in sync in real time and also allows extremely fast ac
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
-is thrown or ask with [`is_depth_cache_synchronized('lunabtc')`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
+is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
 If a depth cache is out of sync it gets refreshed automatically within a few seconds.
 - 100% Websocket auto-reconnect!
 - Supported Exchanges
@@ -109,14 +109,14 @@ If a depth cache is out of sync it gets refreshed automatically within a few sec
 | [Binance Testnet](https://testnet.binance.vision/) | `BinanceLocalDepthCacheManager(exchange="binance.com-testnet")` |
 | [Binance USD-M Futures](https://www.binance.com) | `BinanceLocalDepthCacheManager(exchange="binance.com-futures")` |
 | [Binance USD-M Futures Testnet](https://testnet.binancefuture.com) | `BinanceLocalDepthCacheManager(exchange="binance.com-futures-testnet")` |
-| More are comming soon | - |
+| More are coming soon | - |
 
 - Create multiple depth caches within a single object instance. If a depth cache is out of sync it gets refreshed 
 automatically within a few seconds.
 - Each dept_cache is processed in a separate thread.
 - Start or stop multiple caches with just one command 
-[`create_depth_cache(['lunabtc', 'lunausdt'])`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
-or [`stop_depth_cache(['lunabtc', 'lunausdt'])`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache).
+[`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
+or [`stop_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache).
 - Powered by [UNICORN Binance REST API](https://www.lucit.tech/unicorn-binance-rest-api.html)  and 
 [UNICORN Binance WebSocket API](https://www.lucit.tech/unicorn-binance-websocket-api.html).
 
