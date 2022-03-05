@@ -86,7 +86,7 @@
 robust and fully-featured way.</p>
 <p>Part of <a class="reference external" href="https://www.lucit.tech/unicorn-binance-suite.html">‘UNICORN Binance Suite’</a>.</p>
 <div class="section" id="create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">
-<h2><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">Create a local depth cache</a> of Binance with just 3 lines of code:<a class="headerlink" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code" title="Permalink to this headline">¶</a></h2>
+<h2><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">Create a local depth_cache</a> of Binance with just 3 lines of code:<a class="headerlink" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicorn_binance_local_depth_cache</span>
 
 <span class="n">ubldc</span> <span class="o">=</span> <span class="n">unicorn_binance_local_depth_cache</span><span class="o">.</span><span class="n">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">)</span>
@@ -94,15 +94,15 @@ robust and fully-featured way.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="and-get-the-depth-with">
-<h2>And get the depth with:<a class="headerlink" href="#and-get-the-depth-with" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-the-asks-and-bids-depth-with">
+<h2>Get the <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">asks</a> and <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">bids</a> depth with:<a class="headerlink" href="#get-the-asks-and-bids-depth-with" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asks</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
 <span class="n">bids</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">
-<h2>Catch an exception, if the cache is out of sync while accessing its data:<a class="headerlink" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data">
+<h2>Catch an exception, if the <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">depth_cache is out of sync</a> while accessing its data:<a class="headerlink" href="#catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 asks: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 10 bids: </span><span class="si">{</span><span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -111,15 +111,15 @@ robust and fully-featured way.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="stop-and-delete-a-single-depth-cache">
-<h2>Stop and delete a single depth cache:<a class="headerlink" href="#stop-and-delete-a-single-depth-cache" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="stop-and-delete-a-depth-cache">
+<h2><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">Stop and delete a depth_cache</a>:<a class="headerlink" href="#stop-and-delete-a-depth-cache" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_depth_cache</span><span class="p">(</span><span class="s2">&quot;LUNABTC&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stop-the-full-instance">
-<h2>Stop the full instance:<a class="headerlink" href="#stop-the-full-instance" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_manager_with_all_depth_caches</span>
+<h2><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_manager_with_all_depth_caches#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches">Stop the full instance</a>:<a class="headerlink" href="#stop-the-full-instance" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_manager_with_all_depth_caches</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -149,23 +149,24 @@ the depth updates are applied to it, keeping it in sync in real-time. Once this 
 to “synchronous”.</p>
 <p>Data in the depth_cache can be accessed with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">‘get_asks()’</a>
 and <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">‘get_bids()’</a>.
-If the state of the depth_cache is not synchronous during access, the exception <a class="reference external" href="#">‘DepthCacheOutOfSync’</a>
+If the state of the depth_cache is not synchronous during access, the exception
+<a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
 is thrown.</p>
-<p>The cache will immediately start an automatic re-initialization if a gap in the update_id`s is detected (missing update
-event) or if the websocket connection is interrupted. As soon as this happens the state of the cache is set to “out of
-sync” and when accessing the cache the exception DepthCacheOutOfSync is thrown.</p>
+<p>The depth_cache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing
+update event) or if the websocket connection is interrupted. As soon as this happens the state of the depth_cache is set
+to “out of sync” and when accessing the cache the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a> is thrown.</p>
 <div class="section" id="why-a-local-depth-cache">
 <h3>Why a local depth_cache?<a class="headerlink" href="#why-a-local-depth-cache" title="Permalink to this headline">¶</a></h3>
-<p>A local cache is the fastest way to access current order book depth. A res snapshot takes a long time and the amount of
-data transferred is relatively large. A local cache is initialized once with a REST snapshot and then applies depth
-updates to the websocket connection. Thus, by transferring a small amount of data (only the changes), a local cache is
-kept in sync in real time and also allows extremely fast access to the data.</p>
+<p>A local depth_cache is the fastest way to access current order book depth. A REST snapshot takes a long time and the
+amount of data transferred is relatively large. A local depth_cache is initialized once with a REST snapshot and then
+applies depth updates of the websocket connection. Thus, by transferring a small amount of data (only the changes), a
+local depth_cache is kept in sync in real time and also allows extremely fast access to the data.</p>
 </div>
 <div class="section" id="what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">
 <h3>What are the benefits of the UNICORN Binance Local Depth Cache?<a class="headerlink" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Always know if the cache is in sync! If the depth_cache is out of sync by the exception [<code class="docutils literal notranslate"><span class="pre">DepthCacheOutOfSync</span></code>] or ask
-with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">is_depth_cache_synchronized('lunabtc')</span></code></a>.
+<li><p>Always know if the cache is in sync! If the depth_cache is out of sync by the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
+or ask with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">is_depth_cache_synchronized('lunabtc')</span></code></a>.
 If a depth cache is out of sync it gets refreshed automatically within a few seconds.</p></li>
 <li><p>100% Websocket auto-reconnect!</p></li>
 <li><p>Supported Exchanges</p></li>
@@ -200,12 +201,13 @@ If a depth cache is out of sync it gets refreshed automatically within a few sec
 </tr>
 </tbody>
 </table><ul class="simple">
-<li><p>Create multiple depth caches within a single object instance.- If a depth cache is out of sync it gets refreshed automatically within a few seconds.</p></li>
+<li><p>Create multiple depth caches within a single object instance. If a depth cache is out of sync it gets refreshed
+automatically within a few seconds.</p></li>
 <li><p>Each dept_cache is processed in a separate thread.</p></li>
 <li><p>Start or stop multiple caches with just one command
 <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches"><code class="docutils literal notranslate"><span class="pre">create_depth_cache(['lunabtc',</span> <span class="pre">'lunausdt'])</span></code></a>
 or <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache"><code class="docutils literal notranslate"><span class="pre">stop_depth_cache(['lunabtc',</span> <span class="pre">'lunausdt'])</span></code></a>.</p></li>
-<li><p>Based on <a class="reference external" href="https://www.lucit.tech/unicorn-binance-rest-api.html">UNICORN Binance REST API</a>  and
+<li><p>Powered by <a class="reference external" href="https://www.lucit.tech/unicorn-binance-rest-api.html">UNICORN Binance REST API</a>  and
 <a class="reference external" href="https://www.lucit.tech/unicorn-binance-websocket-api.html">UNICORN Binance WebSocket API</a>.</p></li>
 </ul>
 </div>
@@ -350,10 +352,10 @@ contribute follow
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">UNICORN Binance Local Depth Cache</a><ul>
-<li><a class="reference internal" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">Create a local depth cache of Binance with just 3 lines of code:</a></li>
-<li><a class="reference internal" href="#and-get-the-depth-with">And get the depth with:</a></li>
-<li><a class="reference internal" href="#catch-an-exception-if-the-cache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the cache is out of sync while accessing its data:</a></li>
-<li><a class="reference internal" href="#stop-and-delete-a-single-depth-cache">Stop and delete a single depth cache:</a></li>
+<li><a class="reference internal" href="#create-a-local-depth-cache-of-binance-with-just-3-lines-of-code">Create a local depth_cache of Binance with just 3 lines of code:</a></li>
+<li><a class="reference internal" href="#get-the-asks-and-bids-depth-with">Get the asks and bids depth with:</a></li>
+<li><a class="reference internal" href="#catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the depth_cache is out of sync while accessing its data:</a></li>
+<li><a class="reference internal" href="#stop-and-delete-a-depth-cache">Stop and delete a depth_cache:</a></li>
 <li><a class="reference internal" href="#stop-the-full-instance">Stop the full instance:</a></li>
 <li><a class="reference internal" href="#get-the-right-logger">Get the right logger:</a></li>
 <li><a class="reference internal" href="#description">Description</a><ul>
@@ -491,7 +493,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 05 2022 at 20:33 (CET).
+        Last updated on Mar 05 2022 at 20:51 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
