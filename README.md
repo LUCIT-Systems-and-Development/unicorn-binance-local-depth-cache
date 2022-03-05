@@ -97,7 +97,7 @@ applies depth updates of the websocket connection. Thus, by transferring a small
 local depth_cache is kept in sync in real time and also allows extremely fast access to the data. 
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
-- Always know if the cache is in sync! If the depth_cache is out of sync by the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
+- Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
 is thrown or ask with [`is_depth_cache_synchronized('lunabtc')`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
 If a depth cache is out of sync it gets refreshed automatically within a few seconds.
 - 100% Websocket auto-reconnect!
