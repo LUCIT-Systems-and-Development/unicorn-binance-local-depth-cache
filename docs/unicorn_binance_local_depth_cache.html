@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>unicorn_binance_websocket_api package &#8212; unicorn-binance-local-depth-cache 0.4.0 documentation</title>
+    <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 0.4.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
@@ -52,7 +52,7 @@
     
 
           <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">unicorn_binance_local_depth_cache</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">unicorn_binance_websocket_api package</a></li>
+        <li class="nav-item nav-item-this"><a href="">unicorn_binance_local_depth_cache package</a></li>
     <li class="right">
         <a href="search.html" title="Search">search</a>
          |
@@ -66,17 +66,38 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="unicorn-binance-websocket-api-package">
-<h1>unicorn_binance_websocket_api package<a class="headerlink" href="#unicorn-binance-websocket-api-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="unicorn-binance-local-depth-cache-package">
+<h1>unicorn_binance_local_depth_cache package<a class="headerlink" href="#unicorn-binance-local-depth-cache-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-unicorn_binance_local_depth_cache.manager">
-<span id="unicorn-binance-websocket-api-unicorn-binance-websocket-api-manager-module"></span><h2>unicorn_binance_websocket_api.unicorn_binance_websocket_api_manager module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.manager" title="Permalink to this headline">¶</a></h2>
+<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-manager-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.manager" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.manager.</span></span><span class="sig-name descname"><span class="pre">BinanceLocalDepthCacheManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'binance.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_on_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubra_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">unicorn_binance_rest_api.manager.BinanceRestApiManager</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubwa_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">unicorn_binance_websocket_api.manager.BinanceWebSocketApiManager</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<p>A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy,
+fast, flexible, robust and fully-featured way.</p>
+<p>Binance API documentation:
+<a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exchange</strong> (<em>str</em>) – Select binance.com, binance.com-testnet, binance.com-margin, binance.com-margin-testnet,
+binance.com-isolated_margin, binance.com-isolated_margin-testnet, binance.com-futures,
+binance.com-futures-testnet, binance.com-coin_futures, binance.us, trbinance.com,
+jex.com, binance.org or binance.org-testnet (default: binance.com)</p></li>
+<li><p><strong>default_refresh_interval</strong> (<em>int</em>) – The default refresh interval in seconds, default is None.</p></li>
+<li><p><strong>default_update_interval</strong> (<em>int</em>) – Update speed of the depth webstream in milliseconds. More info:
+<a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals">https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals</a>
+This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_cache()</cite>.</p></li>
+<li><p><strong>warn_on_update</strong> (<em>bool</em>) – set to <cite>False</cite> to disable the update warning</p></li>
+<li><p><strong>ubra_manager</strong> (<em>BinanceRestApiManager</em>) – Provide a shared unicorn_binance_rest_api.manager instance</p></li>
+<li><p><strong>ubwa_manager</strong> (<em>BinanceWebSocketApiManager</em>) – Provide a shared unicorn_binance_websocket_api.manager instance</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">
 <span class="sig-name descname"><span class="pre">create_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache" title="Permalink to this definition">¶</a></dt>
@@ -236,6 +257,16 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-unicorn_binance_local_depth_cache.exceptions">
+<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-exceptions-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheOutOfSync</span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception if a DepthCache is out of sync</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-unicorn_binance_local_depth_cache">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-unicorn_binance_local_depth_cache" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -251,9 +282,10 @@
   <div>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">unicorn_binance_websocket_api package</a><ul>
+<li><a class="reference internal" href="#">unicorn_binance_local_depth_cache package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_websocket_api.unicorn_binance_websocket_api_manager module</a></li>
+<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module</a></li>
+<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a></li>
 <li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache">Module contents</a></li>
 </ul>
 </li>
@@ -351,7 +383,7 @@
     
 
           <li class="nav-item nav-item-1"><a href="modules.html" >unicorn_binance_local_depth_cache</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">unicorn_binance_websocket_api package</a></li>
+        <li class="nav-item nav-item-this"><a href="">unicorn_binance_local_depth_cache package</a></li>
     <li class="right">
         <a href="search.html" title="Search">search</a>
          |
@@ -362,7 +394,7 @@
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 04 2022 at 18:54 (CET).
+        Last updated on Mar 05 2022 at 20:33 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />

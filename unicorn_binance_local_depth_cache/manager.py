@@ -48,37 +48,38 @@ logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
+    """
+     A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy,
+     fast, flexible, robust and fully-featured way.
+
+     Binance API documentation:
+     https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
+
+     :param exchange: Select binance.com, binance.com-testnet, binance.com-margin, binance.com-margin-testnet,
+                      binance.com-isolated_margin, binance.com-isolated_margin-testnet, binance.com-futures,
+                      binance.com-futures-testnet, binance.com-coin_futures, binance.us, trbinance.com,
+                      jex.com, binance.org or binance.org-testnet (default: binance.com)
+     :type exchange: str
+     :param default_refresh_interval: The default refresh interval in seconds, default is None.
+     :type default_refresh_interval: int
+     :param default_update_interval: Update speed of the depth webstream in milliseconds. More info:
+                                     https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
+                                     This can be overwritten with `update_interval` of `create_depth_cache()`.
+     :type default_update_interval: int
+     :param warn_on_update: set to `False` to disable the update warning
+     :type warn_on_update: bool
+     :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
+     :type ubra_manager: BinanceRestApiManager
+     :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
+     :type ubwa_manager: BinanceWebSocketApiManager
+     """
+
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: Optional[int] = None,
                  default_update_interval: Optional[int] = None,
                  warn_on_update: bool = True,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
-        """
-        A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy,
-        fast, flexible, robust and fully-featured way.
-
-        Binance API documentation:
-        https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream
-
-        :param exchange: Select binance.com, binance.com-testnet, binance.com-margin, binance.com-margin-testnet,
-                         binance.com-isolated_margin, binance.com-isolated_margin-testnet, binance.com-futures,
-                         binance.com-futures-testnet, binance.com-coin_futures, binance.us, trbinance.com,
-                         jex.com, binance.org or binance.org-testnet (default: binance.com)
-        :type exchange: str
-        :param default_refresh_interval: The default refresh interval in seconds, default is None.
-        :type default_refresh_interval: int
-        :param default_update_interval: Update speed of the depth webstream in milliseconds. More info:
-                                        https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
-                                        This can be overwritten with `update_interval` of `create_depth_cache()`.
-        :type default_update_interval: int
-        :param warn_on_update: set to `False` to disable the update warning
-        :type warn_on_update: bool
-        :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
-        :type ubra_manager: BinanceRestApiManager
-        :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
-        :type ubwa_manager: BinanceWebSocketApiManager
-        """
         super().__init__()
         self.version = "0.4.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
