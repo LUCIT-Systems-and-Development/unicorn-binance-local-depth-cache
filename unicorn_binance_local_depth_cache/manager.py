@@ -39,6 +39,7 @@ from unicorn_binance_rest_api import BinanceRestApiManager
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from typing import Optional, Union
 import logging
+import platform
 import requests
 import time
 import threading
@@ -83,7 +84,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         super().__init__()
         self.version = "0.4.1.dev"
         self.name = "unicorn-binance-local-depth-cache"
-        logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
+        logger.info(f"New instance of {self.name} on "
+                    f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
         self.depth_caches = {}
         self.default_update_interval = default_update_interval
@@ -191,15 +193,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self._add_bid(bid, market=market.lower())
         return True
 
-    def _init_depth_cache(self, market: str = None):
+    def _get_order_book_from_depth_cache(self, market: str = None):
         """
-        Initialise the depth_cache with a rest snapshot.
+        Get the order_book of the chosen market.
 
         :param market: Specify the market symbol for the used depth_cache
         :type market: str
-        :return: bool
+        :return: order_book or False
         """
-        logger.info(f"_init_depth_cache() - Starting initialization of the cache with market {market.lower()}")
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
                 order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
@@ -218,6 +219,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return False
         logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth_cache with"
                      f" market {market.lower()}")
+        return order_book
+
+    def _init_depth_cache(self, market: str = None):
+        """
+        Initialise the depth_cache with a rest snapshot.
+
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
+        :return: bool
+        """
+        logger.info(f"_init_depth_cache() - Starting initialization of the cache with market {market.lower()}")
+        order_book = self._get_order_book_from_depth_cache(market=market.lower())
         self._reset_depth_cache(market=market.lower())
         self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
         self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
@@ -260,8 +273,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
                         f"cache with market {market.lower()}")
             if not self._init_depth_cache(market=market.lower()):
-                logger.info(f"_process_stream_data() - Not able to initiate depth_cache with market {market.lower()} - "
-                            f"lets try again")
+                logger.info(f"_process_stream_data() - Not able to initiate depth_cache with market {market.lower()}")
                 continue
             while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
                 if self.depth_caches[market.lower()]['refresh_request'] is True:

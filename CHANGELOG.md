@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.4.1.dev (development stage/unreleased/unstable)
 ### Added
 - `_reset_depth_cache()`
+- `_get_order_book_from_depth_cache()`
 ### Changed
 - Clear stream_buffer on disconnect 
 - Better error handling in `_init_depth_cache()`

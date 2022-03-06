@@ -59,6 +59,7 @@ while True:
     except DepthCacheOutOfSync:
         top_asks = ""
         top_bids = ""
-    depth = f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
+    depth = f"depth_cache is in sync: {ubldc.is_depth_cache_synchronized(market)}\r\n " \
+            f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
     ubwa.print_summary(add_string=depth)
     time.sleep(1)
