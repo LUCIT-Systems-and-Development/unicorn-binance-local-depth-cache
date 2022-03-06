@@ -266,6 +266,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 continue
             while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
                 if self.depth_caches[market.lower()]['refresh_request'] is True:
+                    self.depth_caches[market.lower()]['is_synchronized'] = False
+                    logger.info(f"_process_stream_data() - Catched refresh_request for depth_cache with market"
+                                f" {market.lower()} - lets try again")
                     break
                 stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
                 if stream_data and "'result': None" not in str(stream_data):
