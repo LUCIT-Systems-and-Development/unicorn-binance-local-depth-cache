@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.4.1.dev (development stage/unreleased/unstable)
 ### Changed
 - Clear stream_buffer on disconnect 
-- Better error handling in `_init_depth_cahce()`
+- Better error handling in `_init_depth_cache()`
 
 ## 0.4.1
 ### Added
