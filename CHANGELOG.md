@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.4.0.dev (development stage/unreleased/unstable)
 ### Added
 - Resetting asks and bits on stream_signal DISCONNECT
+### Fixing
+- `requests.exceptions.ConnectionError` exception while fetching the order_book
 
 ## 0.4.0
 ### Added

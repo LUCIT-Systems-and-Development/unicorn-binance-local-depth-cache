@@ -81,7 +81,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
         super().__init__()
-        self.version = "0.4.0.dev"
+        self.version = "0.4.1.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange
@@ -207,6 +207,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
             else:
                 return False
+        except requests.exceptions.ConnectionError as error_msg:
+            logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth_cache with "
+                         f"market {market.lower()} -> trying again till it works - error_msg: {error_msg}")
+
+            self._init_depth_cache(market=market.lower())
+            return True
         except requests.exceptions.ReadTimeout as error_msg:
             logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth_cache with "
                          f"market {market.lower()} -> trying again till it works - error_msg: {error_msg}")
