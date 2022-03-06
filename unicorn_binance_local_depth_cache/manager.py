@@ -211,13 +211,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth_cache with "
                          f"market {market.lower()} -> trying again till it works - error_msg: {error_msg}")
 
-            self._init_depth_cache(market=market.lower())
-            return True
+            return False
         except requests.exceptions.ReadTimeout as error_msg:
             logger.error(f"_init_depth_cache() - Can not download order_book snapshot for the depth_cache with "
                          f"market {market.lower()} -> trying again till it works - error_msg: {error_msg}")
-            self._init_depth_cache(market=market.lower())
-            return True
+            return False
         logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth_cache with"
                      f" market {market.lower()}")
         self.depth_caches[market.lower()]['asks'] = {}
@@ -262,7 +260,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 time.sleep(0.1)
             logger.info(f"_process_stream_data() - Collected enough depth events, starting the initialization of the "
                         f"cache with market {market.lower()}")
-            self._init_depth_cache(market=market.lower())
+            if not self._init_depth_cache(market=market.lower()):
+                logger.info(f"_process_stream_data() - Not able to initiate depth_cache with market {market.lower()} - "
+                            f"lets try again")
+                continue
             while self.stop_request is False and self.depth_caches[market.lower()]['stop_request'] is False:
                 if self.depth_caches[market.lower()]['refresh_request'] is True:
                     break
@@ -347,6 +348,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          f"market {market} to `DISCONNECT")
                             self.depth_caches[market]['is_synchronized'] = False
                             self.depth_caches[market]['stream_status'] = "DISCONNECT"
+                            self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
                             with self.threading_lock_ask:
                                 self.depth_caches[market.lower()]['asks'] = {}
                             with self.threading_lock_bid:
