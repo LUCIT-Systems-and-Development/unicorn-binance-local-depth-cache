@@ -337,19 +337,23 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 for market in self.depth_caches:
                     if self.depth_caches[market]['stream_id'] == stream_signal['stream_id']:
                         if stream_signal['type'] == "DISCONNECT":
-                            self.depth_caches[market]['is_synchronized'] = False
-                            self.depth_caches[market]['refresh_request'] = True
-                            self.depth_caches[market]['stream_status'] = "DISCONNECT"
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "
                                          f"market {market} to `DISCONNECT")
+                            self.depth_caches[market]['is_synchronized'] = False
+                            with self.threading_lock_ask:
+                                self.depth_caches[market.lower()]['asks'] = {}
+                            with self.threading_lock_bid:
+                                self.depth_caches[market.lower()]['bids'] = {}
+                            self.depth_caches[market]['refresh_request'] = True
+                            self.depth_caches[market]['stream_status'] = "DISCONNECT"
                         elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
-                            self.depth_caches[market]['stream_status'] = "RUNNING"
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "
                                          f"market {market} to `RUNNING")
+                            self.depth_caches[market]['stream_status'] = "RUNNING"
                         else:
-                            self.depth_caches[market]['stream_status'] = stream_signal['type']
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "
                                          f"market {market} to `{stream_signal['type']}")
+                            self.depth_caches[market]['stream_status'] = stream_signal['type']
             else:
                 time.sleep(0.01)
 
