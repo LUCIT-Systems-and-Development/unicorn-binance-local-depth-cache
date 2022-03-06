@@ -81,7 +81,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
         super().__init__()
-        self.version = "0.4.1"
+        self.version = "0.4.1.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} for exchange {exchange} started ...")
         self.exchange = exchange

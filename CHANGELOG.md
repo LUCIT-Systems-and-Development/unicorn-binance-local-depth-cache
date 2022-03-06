@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.4.0.dev (development stage/unreleased/unstable)
+## 0.4.1.dev (development stage/unreleased/unstable)
+
+## 0.4.1
 ### Added
 - Resetting asks and bits on stream_signal DISCONNECT
 ### Fixing
