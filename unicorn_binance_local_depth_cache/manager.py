@@ -118,19 +118,19 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         if market and stream_id:
-            self.depth_caches[market.lower()] = {"asks": {},
-                                                 "bids": {},
-                                                 "is_synchronized": False,
-                                                 "last_refresh_time": None,
-                                                 "last_update_id": None,
-                                                 "refresh_interval": refresh_interval or self.default_refresh_interval,
-                                                 "refresh_request": False,
-                                                 "stop_request": False,
-                                                 "stream_id": stream_id,
-                                                 "stream_status": None,
-                                                 "market": market.lower(),
-                                                 "thread": None,
-                                                 "thread_is_started": False}
+            self.depth_caches[market.lower()] = {'asks': {},
+                                                 'bids': {},
+                                                 'is_synchronized': False,
+                                                 'last_refresh_time': None,
+                                                 'last_update_id': None,
+                                                 'refresh_interval': refresh_interval or self.default_refresh_interval,
+                                                 'refresh_request': False,
+                                                 'stop_request': False,
+                                                 'stream_id': stream_id,
+                                                 'stream_status': None,
+                                                 'market': market.lower(),
+                                                 'thread': None,
+                                                 'thread_is_started': False}
             self.threading_lock_ask[market.lower()] = threading.Lock()
             self.threading_lock_bid[market.lower()] = threading.Lock()
             logger.debug(f"_add_depth_cache() - Added new entry for market {market.lower()} and stream_id {stream_id}")
@@ -151,10 +151,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         with self.threading_lock_ask[market.lower()]:
-            self.depth_caches[market.lower()]["asks"][ask[0]] = float(ask[1])
+            self.depth_caches[market.lower()]['asks'][ask[0]] = float(ask[1])
             if ask[1] == "0.00000000" or ask[1] == "0.000":
                 logger.debug(f"_add_ask() - Deleting depth position {ask[0]} on ask side for market {market.lower()}")
-                del self.depth_caches[market.lower()]["asks"][ask[0]]
+                del self.depth_caches[market.lower()]['asks'][ask[0]]
             return True
 
     def _add_bid(self, bid, market: str = None):
@@ -168,10 +168,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: bool
         """
         with self.threading_lock_bid[market.lower()]:
-            self.depth_caches[market.lower()]["bids"][bid[0]] = float(bid[1])
+            self.depth_caches[market.lower()]['bids'][bid[0]] = float(bid[1])
             if bid[1] == "0.00000000" or bid[1] == "0.000":
                 logger.debug(f"_add_bid() - Deleting depth position {bid[0]} on bid side for market {market.lower()}")
-                del self.depth_caches[market.lower()]["bids"][bid[0]]
+                del self.depth_caches[market.lower()]['bids'][bid[0]]
             return True
 
     def _apply_updates(self, order_book, market: str = None):
@@ -218,8 +218,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return False
         logger.debug(f"_init_depth_cache() - Downloaded order_book snapshot for the depth_cache with"
                      f" market {market.lower()}")
-        self.depth_caches[market.lower()]['asks'] = {}
-        self.depth_caches[market.lower()]['bids'] = {}
+        self._reset_depth_cache(market=market.lower())
         self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
         self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
         self.depth_caches[market.lower()]['last_update_id'] = int(order_book['lastUpdateId'])
@@ -352,10 +351,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                             self.depth_caches[market]['is_synchronized'] = False
                             self.depth_caches[market]['stream_status'] = "DISCONNECT"
                             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
-                            with self.threading_lock_ask:
-                                self.depth_caches[market.lower()]['asks'] = {}
-                            with self.threading_lock_bid:
-                                self.depth_caches[market.lower()]['bids'] = {}
+                            self._reset_depth_cache(market=market.lower())
                             self.depth_caches[market]['refresh_request'] = True
                         elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "
@@ -367,6 +363,19 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                             self.depth_caches[market]['stream_status'] = stream_signal['type']
             else:
                 time.sleep(0.01)
+
+    def _reset_depth_cache(self, market: str = None):
+        """
+        Reset a depth_cache (delete all asks and bids)
+
+        :param market: Specify the market symbol for the used depth_cache
+        :type market: str
+        :return:
+        """
+        with self.threading_lock_ask[market.lower()]:
+            self.depth_caches[market.lower()]['asks'] = {}
+        with self.threading_lock_bid[market.lower()]:
+            self.depth_caches[market.lower()]['bids'] = {}
 
     @staticmethod
     def _sort_depth_cache(items, reverse=False):
@@ -481,8 +490,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         logger.debug(f"get_latest_release_info() - Starting the request")
         try:
-            respond = requests.get('https://api.github.com/repos/LUCIT-Systems-and-Development/'
-                                   'unicorn-binance-local-depth-cache/releases/latest')
+            respond = requests.get(f"https://api.github.com/repos/LUCIT-Systems-and-Development/"
+                                   f"unicorn-binance-local-depth-cache/releases/latest")
             latest_release_info = respond.json()
             return latest_release_info
         except Exception:
@@ -501,7 +510,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.last_update_check_github['status'] = self.get_latest_release_info()
         if self.last_update_check_github['status']:
             try:
-                return self.last_update_check_github['status']["tag_name"]
+                return self.last_update_check_github['status']['tag_name']
             except KeyError:
                 return "unknown"
         else:

@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
 ## 0.4.1.dev (development stage/unreleased/unstable)
+### Added
+- `_reset_depth_cache()`
 ### Changed
 - Clear stream_buffer on disconnect 
 - Better error handling in `_init_depth_cache()`
