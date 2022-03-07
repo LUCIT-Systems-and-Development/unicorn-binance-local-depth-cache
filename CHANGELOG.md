@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
 ## 0.5.1.dev (development stage/unreleased/unstable)
+### Changed
+- close_timeout=5 in `create_stream()`
 
 ## 0.5.1
 ### Fixed

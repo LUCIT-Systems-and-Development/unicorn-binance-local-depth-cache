@@ -475,11 +475,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 channel = f"depth@{update_interval}ms"
             stream_id = self.ubwa.create_stream(channel, market,
                                                 stream_buffer_name=True,
-                                                stream_label=f"depth_{market.lower()}",
+                                                stream_label=f"ubldc_{market.lower()}",
                                                 output="dict",
                                                 ping_timeout=10,
-                                                close_timeout=10,
-                                                ping_interval=10)
+                                                ping_interval=10,
+                                                close_timeout=5)
             self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
             self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data,
                                                                            args=(market,))
