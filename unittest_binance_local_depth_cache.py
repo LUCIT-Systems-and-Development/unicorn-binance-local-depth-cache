@@ -50,6 +50,7 @@ print(f"Starting unittests:")
 UBLDC = BinanceLocalDepthCacheManager(exchange="binance.com")
 UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
 
+
 class TestUbldc(unittest.TestCase):
     def setUp(self):
         self.ubldc = UBLDC
