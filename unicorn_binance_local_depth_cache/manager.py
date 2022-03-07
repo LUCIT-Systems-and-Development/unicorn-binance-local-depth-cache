@@ -85,7 +85,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
         super().__init__()
-        self.version = "0.5.0"
+        self.version = "0.5.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
@@ -405,7 +405,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          f"`{stream_signal['type']}")
                             self.depth_caches[market]['stream_status'] = stream_signal['type']
             else:
-                time.sleep(0.01)
+                time.sleep(0.1)
 
     def _reset_depth_cache(self, market: str = None):
         """
