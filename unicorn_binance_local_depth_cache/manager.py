@@ -85,7 +85,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
         super().__init__()
-        self.version = "0.5.0.dev"
+        self.version = "0.5.1.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
@@ -293,7 +293,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             logger.info(f"BinanceLocalDepthCacheManager._process_stream_data() - Cleared stream_buffer: "
                         f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
             while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 2 and \
-                    self.is_stop_request(market=market.lower()):
+                    self.is_stop_request(market=market.lower()) is False:
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_data() - Waiting for enough depth "
                              f"events for depth_cache with market {market.lower()}")
                 time.sleep(0.1)
