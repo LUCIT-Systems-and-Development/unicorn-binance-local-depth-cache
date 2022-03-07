@@ -555,14 +555,17 @@ class TestUbldc(unittest.TestCase):
         self.ubldc.ubwa.add_to_stream_signal_buffer("DISCONNECT", "faked_stream_id", "debug msg")
 
     def test_create_depth_cache_true_futures(self):
-        self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
-        time.sleep(180)
+        self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT', update_interval=100))
+        time.sleep(120)
 
     def test_set_refresh_request(self):
         self.assertTrue(self.ubldc.set_refresh_request("BTCUSDT"))
+        for stream_id in self.ubldc.ubwa.get_stream_list():
+            self.ubldc.ubwa.set_restart_request(stream_id)
+        time.sleep(10)
 
-    def test_stop_depth_cache_false(self):
-        self.assertTrue(self.ubldc.stop_depth_cache("BTCUSDT"))
+    def test_stop_depth_cache_true(self):
+        self.assertTrue(self.ubldc.stop_depth_cache(str("BTCUSDT")))
 
     def test_create_depth_cache_false(self):
         self.assertFalse(self.ubldc.create_depth_cache())
