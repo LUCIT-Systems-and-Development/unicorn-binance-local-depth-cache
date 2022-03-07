@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.5.1.dev (development stage/unreleased/unstable)
 ### Changed
 - close_timeout=5 in `create_stream()`
+### Fixed
+- `_init_depth_cache()` returns False if `order_book` is False
 
 ## 0.5.1
 ### Fixed

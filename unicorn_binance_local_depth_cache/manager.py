@@ -255,6 +255,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         logger.info(f"BinanceLocalDepthCacheManager._init_depth_cache() - Starting initialization of the cache "
                     f"with market {market.lower()}")
         order_book = self._get_order_book_from_depth_cache(market=market.lower())
+        if order_book is False:
+            return False
         self._reset_depth_cache(market=market.lower())
         self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
         self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
