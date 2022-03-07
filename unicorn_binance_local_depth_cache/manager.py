@@ -673,9 +673,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         for market in markets:
             logger.debug(f"BinanceLocalDepthCacheManager.stop_depth_cache() - Setting stop_request for "
                          f"depth_cache {market.lower()}, stop its stream and clear the stream_buffer")
-            stream_id = copy.deepcopy(market.lower()['stream_id'])
+            stream_id = copy.deepcopy(self.depth_caches[market.lower()]['stream_id'])
             self.depth_caches[market.lower()]['stop_request'] = True
-            self.ubwa.stop_stream(stream_id=self.depth_caches[stream_id])
+            self.ubwa.stop_stream(stream_id=stream_id)
             time.sleep(10)
             self.ubwa.clear_stream_buffer(stream_buffer_name=stream_id)
         return True
