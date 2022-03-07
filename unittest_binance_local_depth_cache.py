@@ -556,7 +556,7 @@ class TestUbldc(unittest.TestCase):
 
     def test_create_depth_cache_true_futures(self):
         self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
-        time.sleep(60)
+        time.sleep(180)
 
     def test_set_refresh_request(self):
         self.assertTrue(self.ubldc.set_refresh_request("BTCUSDT"))
