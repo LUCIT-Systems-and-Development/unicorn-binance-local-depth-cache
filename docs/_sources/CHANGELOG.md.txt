@@ -7,15 +7,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.4.1.dev (development stage/unreleased/unstable)
+## 0.5.0.dev (development stage/unreleased/unstable)
+
+## 0.5.0
 ### Added
 - `_reset_depth_cache()`
 - `_get_order_book_from_depth_cache()`
+- `is_stop_request()`
 ### Changed
 - Clear stream_buffer on disconnect 
 - Better error handling in `_init_depth_cache()`
 ### Fixed
-- `stop_depth_cache()` did not stop its dependend stream and did not clear the stream_buffer
+- `stop_depth_cache()` did not stop its dependent stream and did not clear the stream_buffer
+- A few error handling's
 
 ## 0.4.1
 ### Added

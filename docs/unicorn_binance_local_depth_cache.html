@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 0.4.1 documentation</title>
+    <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 0.5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
@@ -48,7 +48,7 @@
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.4.1 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.5.0 documentation</a> &#187;
     
 
           <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">unicorn_binance_local_depth_cache</a> &#187;</li>
@@ -80,7 +80,8 @@
 <p>A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast,
 flexible, robust and fully-featured way.</p>
 <p>Binance API documentation:
-<a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a></p>
+<a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a>
+<a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams">https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -95,13 +96,14 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 <li><p><strong>warn_on_update</strong> (<em>bool</em>) – set to <cite>False</cite> to disable the update warning</p></li>
 <li><p><strong>ubra_manager</strong> (<em>BinanceRestApiManager</em>) – Provide a shared unicorn_binance_rest_api.manager instance</p></li>
 <li><p><strong>ubwa_manager</strong> (<em>BinanceWebSocketApiManager</em>) – Provide a shared unicorn_binance_websocket_api.manager instance. Use
-<cite>enable_stream_signal_buffer=True</cite> otherwise the depth_cache will not work as it should!</p></li>
+<a class="reference external" href="https://unicorn-binance-websocket-api.docs.lucit.tech/unicorn_binance_websocket_api.html?highlight=enable_stream_signal_buffer%20true#module-unicorn_binance_websocket_api.manager">enable_stream_signal_buffer=True</a>
+otherwise the depth_cache will not work as it should!</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">
-<span class="sig-name descname"><span class="pre">create_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create one or more depth_cache!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -121,7 +123,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">
-<span class="sig-name descname"><span class="pre">get_asks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_asks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current asks</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -135,7 +137,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">
-<span class="sig-name descname"><span class="pre">get_bids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_bids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current bids</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -149,7 +151,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_release_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_release_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get info about the latest available release</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -160,7 +162,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version">
-<span class="sig-name descname"><span class="pre">get_latest_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_latest_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the version of the latest available release (cache time 1 hour)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -171,7 +173,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches">
-<span class="sig-name descname"><span class="pre">get_list_of_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_list_of_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of existing depth caches</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -193,7 +195,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized">
-<span class="sig-name descname"><span class="pre">is_depth_cache_synchronized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_depth_cache_synchronized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is a specific depth_cache synchronized?</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -206,8 +208,22 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request">
+<span class="sig-name descname"><span class="pre">is_stop_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is there a stop request?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available">
-<span class="sig-name descname"><span class="pre">is_update_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_update_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is a new release of this package available?</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -218,7 +234,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request">
-<span class="sig-name descname"><span class="pre">set_refresh_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_refresh_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set refresh requests for one or more depth_caches!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -232,7 +248,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">
-<span class="sig-name descname"><span class="pre">stop_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">stop_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop and delete one or more depth_caches!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -246,7 +262,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches">
-<span class="sig-name descname"><span class="pre">stop_manager_with_all_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">stop_manager_with_all_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop unicorn-binance-local-depth-cache with all sub routines</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -380,7 +396,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.4.1 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.5.0 documentation</a> &#187;
     
 
           <li class="nav-item nav-item-1"><a href="modules.html" >unicorn_binance_local_depth_cache</a> &#187;</li>
@@ -395,7 +411,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 07 2022 at 02:15 (CET).
+        Last updated on Mar 07 2022 at 03:57 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
