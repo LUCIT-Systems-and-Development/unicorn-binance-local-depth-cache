@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 0.5.2.dev (development stage/unreleased/unstable)
 ### Changed
-- Log Levels
+- Log Levels (less noisy)
 ### Fixed
 - KeyError in `stop_depth_cache()`
 
