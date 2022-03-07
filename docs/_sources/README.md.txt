@@ -4,7 +4,7 @@
 [![Downloads](https://pepy.tech/badge/unicorn-binance-local-depth-cache)](https://pepy.tech/project/unicorn-binance-local-depth-cache)
 [![PyPI - Wheel](https://img.shields.io/pypi/wheel/unicorn-binance-local-depth-cache.svg?label=PyPI%20wheel)](https://pypi.org/project/unicorn-binance-local-depth-cache/)
 [![PyPI - Status](https://img.shields.io/pypi/status/unicorn-binance-local-depth-cache.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues) 
-[![Python application](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml)
+[![Unit Tests](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/context:python)
 [![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=Z6SEARA4W4)](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
@@ -99,7 +99,7 @@ local depth_cache is kept in sync in real time and also allows extremely fast ac
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
 is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
-If a depth cache is out of sync it gets refreshed automatically within a few seconds.
+- If a depth cache is out of sync it gets refreshed automatically within a few seconds.
 - 100% Websocket auto-reconnect!
 - Supported Exchanges
 
@@ -111,8 +111,7 @@ If a depth cache is out of sync it gets refreshed automatically within a few sec
 | [Binance USD-M Futures Testnet](https://testnet.binancefuture.com) | `BinanceLocalDepthCacheManager(exchange="binance.com-futures-testnet")` |
 | More are coming soon | - |
 
-- Create multiple depth caches within a single object instance. If a depth cache is out of sync it gets refreshed 
-automatically within a few seconds.
+- Create multiple depth caches within a single object instance. 
 - Each dept_cache is processed in a separate thread.
 - Start or stop multiple caches with just one command 
 [`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
@@ -136,10 +135,10 @@ Run in bash:
 
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 #### Windows
-Use the below command with the version (such as 0.1.0) you determined 
+Use the below command with the version (such as 0.5.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.1.0.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.5.0.tar.gz --upgrade`
 ### From the latest source (dev-stage) with PIP from [Github](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!
 

@@ -94,7 +94,8 @@ jex.com, binance.org or binance.org-testnet (default: binance.com)</p></li>
 This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_cache()</cite>.</p></li>
 <li><p><strong>warn_on_update</strong> (<em>bool</em>) – set to <cite>False</cite> to disable the update warning</p></li>
 <li><p><strong>ubra_manager</strong> (<em>BinanceRestApiManager</em>) – Provide a shared unicorn_binance_rest_api.manager instance</p></li>
-<li><p><strong>ubwa_manager</strong> (<em>BinanceWebSocketApiManager</em>) – Provide a shared unicorn_binance_websocket_api.manager instance</p></li>
+<li><p><strong>ubwa_manager</strong> (<em>BinanceWebSocketApiManager</em>) – Provide a shared unicorn_binance_websocket_api.manager instance. Use
+<cite>enable_stream_signal_buffer=True</cite> otherwise the depth_cache will not work as it should!</p></li>
 </ul>
 </dd>
 </dl>
@@ -394,7 +395,7 @@ This can be overwritten with <cite>update_interval</cite> of <cite>create_depth_
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 06 2022 at 01:12 (CET).
+        Last updated on Mar 07 2022 at 02:15 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />

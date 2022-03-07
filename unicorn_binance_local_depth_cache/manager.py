@@ -369,7 +369,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                             self.depth_caches[market]['is_synchronized'] = False
                             self.depth_caches[market]['stream_status'] = "DISCONNECT"
                             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
-                            #self._reset_depth_cache(market=market.lower())
                             self.depth_caches[market]['refresh_request'] = True
                         elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "

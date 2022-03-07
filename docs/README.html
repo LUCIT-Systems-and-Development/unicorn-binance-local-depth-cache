@@ -71,7 +71,7 @@
 <a class="reference external" href="https://pepy.tech/project/unicorn-binance-local-depth-cache"><img alt="Downloads" src="https://pepy.tech/badge/unicorn-binance-local-depth-cache" /></a>
 <a class="reference external" href="https://pypi.org/project/unicorn-binance-local-depth-cache/"><img alt="PyPI - Wheel" src="https://img.shields.io/pypi/wheel/unicorn-binance-local-depth-cache.svg?label=PyPI%20wheel" /></a>
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues"><img alt="PyPI - Status" src="https://img.shields.io/pypi/status/unicorn-binance-local-depth-cache.svg" /></a>
-<a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml"><img alt="Python application" src="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/python-app.yml/badge.svg" /></a>
+<a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml"><img alt="Unit Tests" src="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml/badge.svg" /></a>
 <a class="reference external" href="https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&amp;logoWidth=18" /></a>
 <a class="reference external" href="https://lgtm.com/projects/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/context:python"><img alt="Language grade: Python" src="https://img.shields.io/lgtm/grade/python/g/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?logo=lgtm&amp;logoWidth=18" /></a>
 <a class="reference external" href="https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache"><img alt="codecov" src="https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=Z6SEARA4W4" /></a>
@@ -166,8 +166,8 @@ local depth_cache is kept in sync in real time and also allows extremely fast ac
 <h3>What are the benefits of the UNICORN Binance Local Depth Cache?<a class="headerlink" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Always know if the cache is in sync! If the depth_cache is out of sync, the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
-is thrown or ask with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">is_depth_cache_synchronized()</span></code></a>.
-If a depth cache is out of sync it gets refreshed automatically within a few seconds.</p></li>
+is thrown or ask with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">is_depth_cache_synchronized()</span></code></a>.</p></li>
+<li><p>If a depth cache is out of sync it gets refreshed automatically within a few seconds.</p></li>
 <li><p>100% Websocket auto-reconnect!</p></li>
 <li><p>Supported Exchanges</p></li>
 </ul>
@@ -201,8 +201,7 @@ If a depth cache is out of sync it gets refreshed automatically within a few sec
 </tr>
 </tbody>
 </table><ul class="simple">
-<li><p>Create multiple depth caches within a single object instance. If a depth cache is out of sync it gets refreshed
-automatically within a few seconds.</p></li>
+<li><p>Create multiple depth caches within a single object instance.</p></li>
 <li><p>Each dept_cache is processed in a separate thread.</p></li>
 <li><p>Start or stop multiple caches with just one command
 <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches"><code class="docutils literal notranslate"><span class="pre">create_depth_cache()</span></code></a>
@@ -231,9 +230,9 @@ or <a class="reference external" href="https://unicorn-binance-local-depth-cache
 </div>
 <div class="section" id="windows">
 <h4>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h4>
-<p>Use the below command with the version (such as 0.1.0) you determined
+<p>Use the below command with the version (such as 0.5.0) you determined
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest">here</a>:</p>
-<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.1.0.tar.gz</span> <span class="pre">--upgrade</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.5.0.tar.gz</span> <span class="pre">--upgrade</span></code></p>
 </div>
 </div>
 <div class="section" id="from-the-latest-source-dev-stage-with-pip-from-github">
@@ -493,7 +492,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 06 2022 at 01:12 (CET).
+        Last updated on Mar 07 2022 at 02:15 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
