@@ -46,11 +46,9 @@ logging.basicConfig(level=logging.INFO,
                     style="{")
 
 market = 'BTCUSDT'
-# exchange = "binance.com"
-exchange = "binance.com-testnet"
+exchange = "binance.com"
 
-ubwa = BinanceWebSocketApiManager(exchange=exchange)
-ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange)
 ubldc.create_depth_cache(markets=market)
 
 while True:
@@ -61,6 +59,6 @@ while True:
         top_asks = ""
         top_bids = ""
     depth = f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
-    ubwa.print_summary(add_string=depth)
+    ubldc.ubwa.print_summary(add_string=depth)
     time.sleep(1)
 

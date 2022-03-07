@@ -56,7 +56,7 @@ spawn_depth_caches = 20
 update_interval_milliseconds = 100
 exchange = "binance.com"
 
-ubwa = BinanceWebSocketApiManager(exchange=exchange)
+ubwa = BinanceWebSocketApiManager(exchange=exchange, enable_stream_signal_buffer=True)
 ubra = BinanceRestApiManager("*", "*", exchange=exchange)
 ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
 
