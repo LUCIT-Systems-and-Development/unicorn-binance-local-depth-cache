@@ -48,11 +48,14 @@ logging.basicConfig(level=logging.DEBUG,
 market = 'BTCUSDT'
 exchange = "binance.com-futures"
 
-ubwa = BinanceWebSocketApiManager(exchange=exchange)
+ubwa = BinanceWebSocketApiManager(exchange=exchange, enable_stream_signal_buffer=True)
+
 ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
 ubldc.create_depth_cache(markets=market, update_interval=100)
 
 while True:
+    time.sleep(1)
+    #continue
     try:
         top_asks = ubldc.get_asks(market=market)[:3]
         top_bids = ubldc.get_bids(market=market)[:3]
@@ -62,4 +65,3 @@ while True:
     depth = f"depth_cache is in sync: {ubldc.is_depth_cache_synchronized(market)}\r\n " \
             f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
     ubwa.print_summary(add_string=depth)
-    time.sleep(1)

@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 - Clear stream_buffer on disconnect 
 - Better error handling in `_init_depth_cache()`
+### Fixed
+- `stop_depth_cache()` did not stop its dependend stream and did not clear the stream_buffer
 
 ## 0.4.1
 ### Added

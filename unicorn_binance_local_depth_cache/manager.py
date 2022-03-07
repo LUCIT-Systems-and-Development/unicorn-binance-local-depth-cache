@@ -71,7 +71,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
      :type warn_on_update: bool
      :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
      :type ubra_manager: BinanceRestApiManager
-     :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance
+     :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance. Use
+                          `enable_stream_signal_buffer=True` otherwise the depth_cache will not work as it should!
      :type ubwa_manager: BinanceWebSocketApiManager
      """
 
@@ -93,7 +94,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.last_update_check_github = {'timestamp': time.time(),
                                          'status': None}
         self.timeout = 60
-        self.ubra = ubra_manager or BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
+        try:
+            self.ubra = ubra_manager or BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
+        except requests.exceptions.ConnectionError as error_msg:
+            logger.critical(f"Can not initialize BinanceRestApiManager() - No internet connection? - {error_msg}")
+            # Todo: Throw exception!
+
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True)
@@ -363,7 +369,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                             self.depth_caches[market]['is_synchronized'] = False
                             self.depth_caches[market]['stream_status'] = "DISCONNECT"
                             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
-                            self._reset_depth_cache(market=market.lower())
+                            #self._reset_depth_cache(market=market.lower())
                             self.depth_caches[market]['refresh_request'] = True
                         elif stream_signal['type'] == "FIRST_RECEIVED_DATA":
                             logger.debug(f"_process_stream_signals() - Setting stream_status of depth_cache with "
@@ -607,8 +613,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if isinstance(markets, str):
             markets = [markets, ]
         for market in markets:
-            logger.debug(f"stop_depth_cache() - Setting stop_request for depth_cache {market.lower()}")
+            logger.debug(f"stop_depth_cache() - Setting stop_request for depth_cache {market.lower()}, stop its"
+                         f"stream and clear the stream_buffer")
             self.depth_caches[market.lower()]['stop_request'] = True
+            self.ubwa.stop_stream(stream_id=self.depth_caches[market.lower()]['stream_id'])
+            self.ubwa.clear_stream_buffer(stream_buffer_name=self.depth_caches[market.lower()]['stream_id'])
         return True
 
     def stop_manager_with_all_depth_caches(self):
