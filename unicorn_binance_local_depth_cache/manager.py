@@ -295,7 +295,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
             logger.debug(f"BinanceLocalDepthCacheManager._process_stream_data() - Cleared stream_buffer: "
                          f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
-            while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 2 and \
+            while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 1 and \
                     self.is_stop_request(market=market.lower()) is False:
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_data() - Waiting for enough depth "
                              f"events for depth_cache with market {market.lower()}")
