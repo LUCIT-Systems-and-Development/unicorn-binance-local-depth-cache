@@ -7,9 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.5.2.dev (development stage/unreleased/unstable)
+## 0.5.3.dev (development stage/unreleased/unstable)
+
+## 0.5.3
 ### Changed
-- Log Levels (less noisy)
+- Balanced log levels 
 ### Fixed
 - KeyError in `stop_depth_cache()`
 
