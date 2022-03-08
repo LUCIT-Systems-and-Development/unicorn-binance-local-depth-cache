@@ -48,7 +48,8 @@ logging.basicConfig(level=logging.INFO,
 market = 'BTCUSDT'
 exchange = "binance.com-futures"
 
-ubldc = BinanceLocalDepthCacheManager(exchange=exchange)
+ubwa = BinanceWebSocketApiManager(exchange=exchange, enable_stream_signal_buffer=True)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubwa_manager=ubwa)
 ubldc.create_depth_cache(markets=market)
 
 while True:
