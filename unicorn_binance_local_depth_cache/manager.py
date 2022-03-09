@@ -102,9 +102,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: int = None,
                  default_update_interval: int = None,
-                 default_websocket_close_timeout: int = 1,
+                 default_websocket_close_timeout: int = 0.1,
                  default_websocket_ping_interval: int = 1,
-                 default_websocket_ping_timeout: int = 1,
+                 default_websocket_ping_timeout: int = 2,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
                  warn_on_update: bool = True):
