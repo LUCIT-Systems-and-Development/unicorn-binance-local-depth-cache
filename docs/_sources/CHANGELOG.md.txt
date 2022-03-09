@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - `default_update_interval`, `default_websocket_close_timeout`, `default_websocket_ping_interval` and 
 `update_interval`, `websocket_close_timeout`, `websocket_ping_interval`
+### Changed
+- `default_update_interval`, `default_websocket_close_timeout`, `default_websocket_ping_interval` default values is 1,
+so websockets disconnect very fast and we recognize "out of sync" very fast.
 
 ## 0.5.3
 ### Changed
