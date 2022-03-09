@@ -69,6 +69,26 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                      https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
                                      This can be overwritten with `update_interval` of `create_depth_cache()`.
      :type default_update_interval: int
+     :param default_websocket_close_timeout: The `close_timeout` parameter defines a maximum wait time in seconds for
+                                             completing the closing handshake and terminating the TCP connection.
+                                             (default: 10) This parameter is passed through to the
+                                             `websockets.client.connect()<https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+     :type default_websocket_close_timeout: int
+     :param default_websocket_ping_interval: Once the connection is open, a `Ping frame` is sent every
+                                             `ping_interval` seconds. This serves as a keepalive. It helps keeping
+                                             the connection open, especially in the presence of proxies with short
+                                             timeouts on inactive connections. Set `ping_interval` to `None` to
+                                             disable this behavior. (default: 20)
+                                             This parameter is passed through to the `websockets.client.connect()
+                                             <https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+     :type default_websocket_ping_interval: int
+     :param default_websocket_ping_timeout: If the corresponding `Pong frame` isn't received within
+                                            `ping_timeout` seconds, the connection is considered unusable and is closed with
+                                            code 1011. This ensures that the remote endpoint remains responsive. Set
+                                            `ping_timeout` to `None` to disable this behavior. (default: 20)
+                                            This parameter is passed through to the `websockets.client.connect()
+                                            <https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+     :type default_websocket_ping_timeout: int
      :param warn_on_update: set to `False` to disable the update warning
      :type warn_on_update: bool
      :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
@@ -80,13 +100,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
      """
 
     def __init__(self, exchange: str = "binance.com",
-                 default_refresh_interval: Optional[int] = None,
-                 default_update_interval: Optional[int] = None,
-                 warn_on_update: bool = True,
+                 default_refresh_interval: int = None,
+                 default_update_interval: int = None,
+                 default_websocket_close_timeout: int = None,
+                 default_websocket_ping_interval: int = None,
+                 default_websocket_ping_timeout: int = None,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
-                 ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False):
+                 ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
+                 warn_on_update: bool = True):
         super().__init__()
-        self.version = "0.5.3.dev"
+        self.version = "0.6.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.name} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
@@ -94,6 +117,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.depth_caches = {}
         self.default_update_interval = default_update_interval
         self.default_refresh_interval = default_refresh_interval
+        self.default_websocket_close_timeout = default_websocket_close_timeout
+        self.default_websocket_ping_interval = default_websocket_ping_interval
+        self.default_websocket_ping_timeout = default_websocket_ping_timeout
         self.last_update_check_github = {'timestamp': time.time(),
                                          'status': None}
         self.timeout = 60
@@ -300,8 +326,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.ubwa.clear_stream_buffer(self.depth_caches[market.lower()]['stream_id'])
             logger.debug(f"BinanceLocalDepthCacheManager._process_stream_data() - Cleared stream_buffer: "
                          f"{self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id'])} items")
-            while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 1 and \
+            while self.ubwa.get_stream_buffer_length(self.depth_caches[market.lower()]['stream_id']) <= 2 and \
                     self.is_stop_request(market=market.lower()) is False:
+                # Proceeding as soon as the first update event is received. On new websockets the first received message
+                # is a "'result': None", so way wait for the second incoming message.
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_data() - Waiting for enough depth "
                              f"events for depth_cache with market {market.lower()}")
                 time.sleep(0.1)
@@ -452,7 +480,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def create_depth_cache(self,
                            markets: Optional[Union[str, list]] = None,
                            update_interval: Optional[int] = None,
-                           refresh_interval: int = None) -> bool:
+                           refresh_interval: int = None,
+                           websocket_close_timeout: int = None,
+                           websocket_ping_interval: int = None,
+                           websocket_ping_timeout: int = None) -> bool:
         """
         Create one or more depth_cache!
 
@@ -464,6 +495,26 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
                                  `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
+        :param websocket_close_timeout: The `close_timeout` parameter defines a maximum wait time in seconds for
+                                        completing the closing handshake and terminating the TCP connection.
+                                        (default: 10) This parameter is passed through to the
+                                        `websockets.client.connect()<https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+        :type websocket_close_timeout: int
+        :param websocket_ping_interval: Once the connection is open, a `Ping frame` is sent every
+                                        `ping_interval` seconds. This serves as a keepalive. It helps keeping
+                                        the connection open, especially in the presence of proxies with short
+                                        timeouts on inactive connections. Set `ping_interval` to `None` to
+                                        disable this behavior. (default: 20)
+                                        This parameter is passed through to the `websockets.client.connect()
+                                        <https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+        :type websocket_ping_interval: int
+        :param websocket_ping_timeout: If the corresponding `Pong frame` isn't received within
+                                       `ping_timeout` seconds, the connection is considered unusable and is closed with
+                                       code 1011. This ensures that the remote endpoint remains responsive. Set
+                                       `ping_timeout` to `None` to disable this behavior. (default: 20)
+                                       This parameter is passed through to the `websockets.client.connect()
+                                       <https://websockets.readthedocs.io/en/stable/api.html?highlight=ping_interval#websockets.client.connect>`_
+        :type websocket_ping_timeout: int
         :return: bool
         """
         if markets is None:
@@ -488,9 +539,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                 stream_buffer_name=True,
                                                 stream_label=f"ubldc_{market.lower()}",
                                                 output="dict",
-                                                ping_timeout=10,
-                                                ping_interval=10,
-                                                close_timeout=5)
+                                                close_timeout=websocket_close_timeout or self.default_websocket_close_timeout,
+                                                ping_timeout=websocket_ping_interval or self.default_websocket_ping_interval,
+                                                ping_interval=websocket_ping_timeout or self.default_websocket_ping_timeout)
             self._add_depth_cache(market=market.lower(), stream_id=stream_id, refresh_interval=refresh_interval)
             self.depth_caches[market.lower()]['thread'] = threading.Thread(target=self._process_stream_data,
                                                                            args=(market,))

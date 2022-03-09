@@ -91,10 +91,7 @@ update event) or if the websocket connection is interrupted. As soon as this hap
 to "out of sync" and when accessing the cache the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) is thrown.
 
 ### Why a local depth_cache?
-A local depth_cache is the fastest way to access current order book depth. A REST snapshot takes a long time and the 
-amount of data transferred is relatively large. A local depth_cache is initialized once with a REST snapshot and then 
-applies depth updates of the websocket connection. Thus, by transferring a small amount of data (only the changes), a 
-local depth_cache is kept in sync in real time and also allows extremely fast access to the data. 
+A local depth_cache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the [Binance request weight limits](https://www.binance.com/en/support/faq/360004492232).
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 

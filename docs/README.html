@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UNICORN Binance Local Depth Cache &#8212; unicorn-binance-local-depth-cache 0.5.3 documentation</title>
+    <title>UNICORN Binance Local Depth Cache &#8212; unicorn-binance-local-depth-cache 0.6.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
@@ -48,7 +48,7 @@
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.5.3 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.6.0 documentation</a> &#187;
     
 
         <li class="nav-item nav-item-this"><a href="">UNICORN Binance Local Depth Cache</a></li>
@@ -157,10 +157,7 @@ update event) or if the websocket connection is interrupted. As soon as this hap
 to “out of sync” and when accessing the cache the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a> is thrown.</p>
 <div class="section" id="why-a-local-depth-cache">
 <h3>Why a local depth_cache?<a class="headerlink" href="#why-a-local-depth-cache" title="Permalink to this headline">¶</a></h3>
-<p>A local depth_cache is the fastest way to access current order book depth. A REST snapshot takes a long time and the
-amount of data transferred is relatively large. A local depth_cache is initialized once with a REST snapshot and then
-applies depth updates of the websocket connection. Thus, by transferring a small amount of data (only the changes), a
-local depth_cache is kept in sync in real time and also allows extremely fast access to the data.</p>
+<p>A local depth_cache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the <a class="reference external" href="https://www.binance.com/en/support/faq/360004492232">Binance request weight limits</a>.</p>
 </div>
 <div class="section" id="what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">
 <h3>What are the benefits of the UNICORN Binance Local Depth Cache?<a class="headerlink" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache" title="Permalink to this headline">¶</a></h3>
@@ -478,7 +475,7 @@ contribute follow
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.5.3 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.6.0 documentation</a> &#187;
     
 
         <li class="nav-item nav-item-this"><a href="">UNICORN Binance Local Depth Cache</a></li>
@@ -492,7 +489,7 @@ contribute follow
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 08 2022 at 12:10 (CET).
+        Last updated on Mar 09 2022 at 09:47 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />

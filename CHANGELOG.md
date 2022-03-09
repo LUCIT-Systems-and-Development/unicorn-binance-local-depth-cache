@@ -7,9 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.5.3.dev (development stage/unreleased/unstable)
-### Changed
-- Take snapshot as soon as websocket is established and received first `result` message.
+## 0.6.0.dev (development stage/unreleased/unstable)
+
+## 0.6.0
+### Added
+- `default_update_interval`, `default_websocket_close_timeout`, `default_websocket_ping_interval` and 
+`update_interval`, `websocket_close_timeout`, `websocket_ping_interval`
 
 ## 0.5.3
 ### Changed
