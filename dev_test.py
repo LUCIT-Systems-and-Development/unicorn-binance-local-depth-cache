@@ -58,8 +58,8 @@ while True:
         top_asks = ubldc.get_asks(market=market)[:3]
         top_bids = ubldc.get_bids(market=market)[:3]
     except DepthCacheOutOfSync:
-        top_asks = ""
-        top_bids = ""
+        top_asks = "Out of sync!"
+        top_bids = "Out of sync!"
     depth = f"depth_cache is in sync: {ubldc.is_depth_cache_synchronized(market)}\r\n " \
             f"top 3 asks: {top_asks}\r\n top 3 bids: {top_bids}"
     ubwa.print_summary(add_string=depth)
