@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.6.0.dev (development stage/unreleased/unstable)
 ### Changed
 - `default_websocket_close_timeout` default values is 0.1
-- `default_websocket_ping_timeout` default values is 2
+- `default_websocket_ping_timeout` default values is 1
 
 ## 0.6.0
 ### Added

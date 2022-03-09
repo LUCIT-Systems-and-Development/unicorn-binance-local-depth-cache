@@ -104,7 +104,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  default_update_interval: int = None,
                  default_websocket_close_timeout: int = 0.1,
                  default_websocket_ping_interval: int = 1,
-                 default_websocket_ping_timeout: int = 2,
+                 default_websocket_ping_timeout: int = 5,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
                  warn_on_update: bool = True):
@@ -406,7 +406,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         self._apply_updates(stream_data['data'], market=market.lower())
                     self.depth_caches[market.lower()]['last_update_id'] = stream_data['data']['u']
                     self.depth_caches[market.lower()]['last_update_time'] = int(time.time())
-                time.sleep(0.01)
+                else:
+                    time.sleep(0.001)
         # Exiting ...
         del self.depth_caches[market.lower()]
         logger.info(f"BinanceLocalDepthCacheManager._process_stream_data() - depth_cache `{market.lower()}` was "
