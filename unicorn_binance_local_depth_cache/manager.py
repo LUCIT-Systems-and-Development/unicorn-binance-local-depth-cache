@@ -114,7 +114,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         super().__init__()
         self.version = "0.6.0.dev"
         self.name = "unicorn-binance-local-depth-cache"
-        logger.info(f"New instance of {self.name} on "
+        logger.info(f"New instance of {self.get_user_agent()} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
         self.depth_caches = {}
@@ -650,6 +650,15 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             depth_cache_list.append(depth_cache)
         return depth_cache_list
 
+    def get_user_agent(self):
+        """
+        Get the user_agent string "lib name + lib version + python version"
+
+        :return:
+        """
+        user_agent = f"{self.name}_{str(self.get_version())}-python_{str(platform.python_version())}"
+        return user_agent
+
     def is_depth_cache_synchronized(self, market: str = None) -> bool:
         """
         Is a specific depth_cache synchronized?
@@ -710,7 +719,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         return self.version
 
     def print_summary(self, add_string=None):
-        self.ubwa.print_summary(add_string=add_string, title=f"{self.name}_{self.version}")
+        """
+        Print an overview of all streams
+
+        :param add_string: text to add to the output
+        :type add_string: str
+        """
+        self.ubwa.print_summary(add_string=add_string, title=self.get_user_agent())
 
     def set_refresh_request(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
