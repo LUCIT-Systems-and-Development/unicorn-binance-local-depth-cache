@@ -89,6 +89,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                             This parameter is passed through to the `websockets.client.connect()
                                             <https://websockets.readthedocs.io/en/stable/topics/timeouts.html?highlight=ping_interval#keepalive-in-websockets>`_
      :type default_websocket_ping_timeout: int
+     :param disable_colorama: set to True to disable the use of `colorama <https://pypi.org/project/colorama/>`_
+     :type disable_colorama: bool
      :param warn_on_update: set to `False` to disable the update warning
      :type warn_on_update: bool
      :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
@@ -105,6 +107,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  default_websocket_close_timeout: int = 0.1,
                  default_websocket_ping_interval: int = 1,
                  default_websocket_ping_timeout: int = 5,
+                 disable_colorama: bool = False,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
                  warn_on_update: bool = True):
@@ -120,11 +123,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.default_websocket_close_timeout = default_websocket_close_timeout
         self.default_websocket_ping_interval = default_websocket_ping_interval
         self.default_websocket_ping_timeout = default_websocket_ping_timeout
+        self.disable_colorama = disable_colorama
         self.last_update_check_github = {'timestamp': time.time(),
                                          'status': None}
         self.timeout = 60
         try:
-            self.ubra = ubra_manager or BinanceRestApiManager("*", "*", exchange=self.exchange, disable_colorama=True)
+            self.ubra = ubra_manager or BinanceRestApiManager("*", "*",
+                                                              exchange=self.exchange,
+                                                              disable_colorama=disable_colorama)
         except requests.exceptions.ConnectionError as error_msg:
             error_msg = f"Can not initialize BinanceLocalDepthCacheManager() - No internet connection? - {error_msg}"
             logger.critical(error_msg)
@@ -140,7 +146,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise RuntimeWarning(error_msg)
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
                                                                enable_stream_signal_buffer=True,
-                                                               disable_colorama=True)
+                                                               disable_colorama=True,
+                                                               high_performance=True)
         self.stop_request = False
         self.threading_lock_ask = {}
         self.threading_lock_bid = {}
@@ -701,6 +708,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         logger.debug(f"BinanceLocalDepthCacheManager.get_version() - Returning the version")
         return self.version
+
+    def print_summary(self, add_string=None):
+        self.ubwa.print_summary(add_string=add_string, title=f"{self.name}_{self.version}")
 
     def set_refresh_request(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
