@@ -124,8 +124,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.default_websocket_ping_interval = default_websocket_ping_interval
         self.default_websocket_ping_timeout = default_websocket_ping_timeout
         self.disable_colorama = disable_colorama
-        self.last_update_check_github = {'timestamp': time.time(),
-                                         'status': None}
+        self.last_update_check_github = {'timestamp': time.time(), 'status': None}
         self.timeout = 60
         try:
             self.ubra = ubra_manager or BinanceRestApiManager("*", "*",
