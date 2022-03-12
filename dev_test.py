@@ -34,7 +34,6 @@
 # IN THE SOFTWARE.
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 import logging
 import os
 import time
