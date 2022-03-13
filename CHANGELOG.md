@@ -7,20 +7,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-## 0.6.1.dev (development stage/unreleased/unstable)
+## 0.7.0.dev (development stage/unreleased/unstable)
 
-## 0.6.1
+## 0.7.0
 ### Added 
-- Exception handling for REST calls
-- More logging
-### Changed
-- websocket reconnect intervals
-
-### Added
 - Active `high_performance` of UBWA.
+- Exception handling for REST calls
+- Improved logging
 ### Changed
-- `default_websocket_close_timeout` default values is 0.1
-- `default_websocket_ping_timeout` default values is 5
+- Websocket reconnect intervals
+- Reduced calls of `market.lower()`
+### Removed
+- Obsolete variable `self.timeout`
 
 ## 0.6.0
 ### Added
