@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>unicorn-binance-local-depth-cache Change Log &#8212; unicorn-binance-local-depth-cache 0.6.0 documentation</title>
+    <title>unicorn-binance-local-depth-cache Change Log &#8212; unicorn-binance-local-depth-cache 0.6.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
@@ -48,7 +48,7 @@
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.6.0 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.6.1 documentation</a> &#187;
     
 
         <li class="nav-item nav-item-this"><a href="">unicorn-binance-local-depth-cache Change Log</a></li>
@@ -72,29 +72,58 @@
 <a class="reference external" href="http://semver.org/">Semantic Versioning</a>.</p>
 <p><a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases">Discussions about unicorn-binance-websocket-api releases!</a></p>
 <div class="section" id="dev-development-stage-unreleased-unstable">
-<h2>0.6.0.dev (development stage/unreleased/unstable)<a class="headerlink" href="#dev-development-stage-unreleased-unstable" title="Permalink to this headline">¶</a></h2>
+<h2>0.6.1.dev (development stage/unreleased/unstable)<a class="headerlink" href="#dev-development-stage-unreleased-unstable" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="id1">
-<h2>0.6.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>0.6.1<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="added">
 <h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">default_update_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_interval</span></code> and
-<code class="docutils literal notranslate"><span class="pre">update_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_ping_interval</span></code></p></li>
+<li><p>Exception handling for REST calls</p></li>
+<li><p>More logging</p></li>
 </ul>
 </div>
 <div class="section" id="changed">
 <h3>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">default_update_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_interval</span></code> default values is 1,
+<li><p>websocket reconnect intervals</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Added<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Active <code class="docutils literal notranslate"><span class="pre">high_performance</span></code> of UBWA.</p></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3>Changed<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">default_websocket_close_timeout</span></code> default values is 0.1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">default_websocket_ping_timeout</span></code> default values is 5</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>0.6.0<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>Added<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">default_websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_timeout</span></code> and
+<code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_ping_interval</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h3>Changed<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">default_websocket_close_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">default_websocket_ping_timeout</span></code> default values is 1,
 so websockets disconnect very fast and we recognize “out of sync” very fast.</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id2">
-<h2>0.5.3<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id3">
-<h3>Changed<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h2>0.5.3<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Changed<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Balanced log levels</p></li>
 </ul>
@@ -106,59 +135,59 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
 </ul>
 </div>
 </div>
-<div class="section" id="id4">
-<h2>0.5.2<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id5">
-<h3>Changed<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h2>0.5.2<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h3>Changed<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>close_timeout=5 in <code class="docutils literal notranslate"><span class="pre">create_stream()</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h3>Fixed<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Fixed<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">_init_depth_cache()</span></code> returns False if <code class="docutils literal notranslate"><span class="pre">order_book</span></code> is False</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id7">
-<h2>0.5.1<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id8">
-<h3>Fixed<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h2>0.5.1<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id13">
+<h3>Fixed<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Wrong proof of <code class="docutils literal notranslate"><span class="pre">is_stop_request()</span></code></p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id9">
-<h2>0.5.0<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id10">
-<h3>Added<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h2>0.5.0<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id15">
+<h3>Added<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">_reset_depth_cache()</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">_get_order_book_from_depth_cache()</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">is_stop_request()</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h3>Changed<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Changed<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Clear stream_buffer on disconnect</p></li>
 <li><p>Better error handling in <code class="docutils literal notranslate"><span class="pre">_init_depth_cache()</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id12">
-<h3>Fixed<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>Fixed<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">stop_depth_cache()</span></code> did not stop its dependent stream and did not clear the stream_buffer</p></li>
 <li><p>A few error handling’s</p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id13">
-<h2>0.4.1<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id14">
-<h3>Added<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id18">
+<h2>0.4.1<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id19">
+<h3>Added<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Resetting asks and bits on stream_signal DISCONNECT</p></li>
 </ul>
@@ -170,10 +199,10 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
 </ul>
 </div>
 </div>
-<div class="section" id="id15">
-<h2>0.4.0<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id16">
-<h3>Added<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id20">
+<h2>0.4.0<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id21">
+<h3>Added<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">default_update_interval</span></code></p></li>
 </ul>
@@ -185,31 +214,31 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
 </ul>
 </div>
 </div>
-<div class="section" id="id17">
-<h2>0.3.0<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id18">
-<h3>Added<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id22">
+<h2>0.3.0<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id23">
+<h3>Added<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>threading.Lock(): <code class="docutils literal notranslate"><span class="pre">self.threading_lock_ask</span></code> and <code class="docutils literal notranslate"><span class="pre">self.threading_lock_bid</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id19">
-<h3>Added<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id24">
+<h3>Added<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">set_refresh_request()</span></code></p></li>
 </ul>
 </div>
 </div>
-<div class="section" id="id20">
-<h2>0.2.0<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id21">
-<h3>Added<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id25">
+<h2>0.2.0<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id26">
+<h3>Added<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Binance Futures support (exchange=”binance.com-futures”)</p></li>
 </ul>
 </div>
-<div class="section" id="id22">
-<h3>Changed<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id27">
+<h3>Changed<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">create_depth_cache()</span></code> renamed parameter <code class="docutils literal notranslate"><span class="pre">market</span></code> to <code class="docutils literal notranslate"><span class="pre">markets</span></code>. <code class="docutils literal notranslate"><span class="pre">markets</span></code> can be a str or a list of one or more market symbols</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">stop_depth_cache()</span></code> renamed parameter <code class="docutils literal notranslate"><span class="pre">market</span></code> to <code class="docutils literal notranslate"><span class="pre">markets</span></code>. <code class="docutils literal notranslate"><span class="pre">markets</span></code> can be a str or a list of one or more market symbols</p></li>
@@ -224,8 +253,8 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
 </ul>
 </div>
 </div>
-<div class="section" id="id23">
-<h2>0.1.0<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id28">
+<h2>0.1.0<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h2>
 <p>Initial Release!</p>
 </div>
 </div>
@@ -241,54 +270,61 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">unicorn-binance-local-depth-cache Change Log</a><ul>
-<li><a class="reference internal" href="#dev-development-stage-unreleased-unstable">0.6.0.dev (development stage/unreleased/unstable)</a></li>
-<li><a class="reference internal" href="#id1">0.6.0</a><ul>
+<li><a class="reference internal" href="#dev-development-stage-unreleased-unstable">0.6.1.dev (development stage/unreleased/unstable)</a></li>
+<li><a class="reference internal" href="#id1">0.6.1</a><ul>
 <li><a class="reference internal" href="#added">Added</a></li>
 <li><a class="reference internal" href="#changed">Changed</a></li>
+<li><a class="reference internal" href="#id2">Added</a></li>
+<li><a class="reference internal" href="#id3">Changed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">0.5.3</a><ul>
-<li><a class="reference internal" href="#id3">Changed</a></li>
+<li><a class="reference internal" href="#id4">0.6.0</a><ul>
+<li><a class="reference internal" href="#id5">Added</a></li>
+<li><a class="reference internal" href="#id6">Changed</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">0.5.3</a><ul>
+<li><a class="reference internal" href="#id8">Changed</a></li>
 <li><a class="reference internal" href="#fixed">Fixed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id4">0.5.2</a><ul>
-<li><a class="reference internal" href="#id5">Changed</a></li>
-<li><a class="reference internal" href="#id6">Fixed</a></li>
+<li><a class="reference internal" href="#id9">0.5.2</a><ul>
+<li><a class="reference internal" href="#id10">Changed</a></li>
+<li><a class="reference internal" href="#id11">Fixed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id7">0.5.1</a><ul>
-<li><a class="reference internal" href="#id8">Fixed</a></li>
+<li><a class="reference internal" href="#id12">0.5.1</a><ul>
+<li><a class="reference internal" href="#id13">Fixed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id9">0.5.0</a><ul>
-<li><a class="reference internal" href="#id10">Added</a></li>
-<li><a class="reference internal" href="#id11">Changed</a></li>
-<li><a class="reference internal" href="#id12">Fixed</a></li>
+<li><a class="reference internal" href="#id14">0.5.0</a><ul>
+<li><a class="reference internal" href="#id15">Added</a></li>
+<li><a class="reference internal" href="#id16">Changed</a></li>
+<li><a class="reference internal" href="#id17">Fixed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id13">0.4.1</a><ul>
-<li><a class="reference internal" href="#id14">Added</a></li>
+<li><a class="reference internal" href="#id18">0.4.1</a><ul>
+<li><a class="reference internal" href="#id19">Added</a></li>
 <li><a class="reference internal" href="#fixing">Fixing</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id15">0.4.0</a><ul>
-<li><a class="reference internal" href="#id16">Added</a></li>
+<li><a class="reference internal" href="#id20">0.4.0</a><ul>
+<li><a class="reference internal" href="#id21">Added</a></li>
 <li><a class="reference internal" href="#changes">Changes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id17">0.3.0</a><ul>
-<li><a class="reference internal" href="#id18">Added</a></li>
-<li><a class="reference internal" href="#id19">Added</a></li>
+<li><a class="reference internal" href="#id22">0.3.0</a><ul>
+<li><a class="reference internal" href="#id23">Added</a></li>
+<li><a class="reference internal" href="#id24">Added</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id20">0.2.0</a><ul>
-<li><a class="reference internal" href="#id21">Added</a></li>
-<li><a class="reference internal" href="#id22">Changed</a></li>
+<li><a class="reference internal" href="#id25">0.2.0</a><ul>
+<li><a class="reference internal" href="#id26">Added</a></li>
+<li><a class="reference internal" href="#id27">Changed</a></li>
 <li><a class="reference internal" href="#removed">Removed</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id23">0.1.0</a></li>
+<li><a class="reference internal" href="#id28">0.1.0</a></li>
 </ul>
 </li>
 </ul>
@@ -381,7 +417,7 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
     <li><a href="https://www.lucit.tech/unicorn-binance-local-depth-cache.html">unicorn-binance-local-depth-cache</a> &#187;</li>
     
     
-    <a href="index.html">unicorn-binance-local-depth-cache 0.6.0 documentation</a> &#187;
+    <a href="index.html">unicorn-binance-local-depth-cache 0.6.1 documentation</a> &#187;
     
 
         <li class="nav-item nav-item-this"><a href="">unicorn-binance-local-depth-cache Change Log</a></li>
@@ -395,7 +431,7 @@ so websockets disconnect very fast and we recognize “out of sync” very fast.
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on Mar 09 2022 at 10:13 (CET).
+        Last updated on Mar 13 2022 at 02:08 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />

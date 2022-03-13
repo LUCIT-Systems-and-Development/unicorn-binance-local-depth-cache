@@ -35,8 +35,9 @@
 
 from .exceptions import DepthCacheOutOfSync
 from operator import itemgetter
-from unicorn_binance_rest_api import BinanceRestApiManager
-from unicorn_binance_websocket_api import BinanceWebSocketApiManager
+from unicorn_binance_rest_api.manager import BinanceRestApiManager
+from unicorn_binance_rest_api.exceptions import BinanceAPIException
+from unicorn_binance_websocket_api.manager import BinanceWebSocketApiManager
 from typing import Optional, Union
 import copy
 import logging
@@ -104,15 +105,15 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: int = None,
                  default_update_interval: int = None,
-                 default_websocket_close_timeout: int = 0.1,
-                 default_websocket_ping_interval: int = 1,
-                 default_websocket_ping_timeout: int = 5,
+                 default_websocket_close_timeout: int = 2,
+                 default_websocket_ping_interval: int = 5,
+                 default_websocket_ping_timeout: int = 10,
                  disable_colorama: bool = False,
                  ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
                  ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
                  warn_on_update: bool = True):
         super().__init__()
-        self.version = "0.6.0.dev"
+        self.version = "0.6.1.dev"
         self.name = "unicorn-binance-local-depth-cache"
         logger.info(f"New instance of {self.get_user_agent()} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
@@ -125,7 +126,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.default_websocket_ping_timeout = default_websocket_ping_timeout
         self.disable_colorama = disable_colorama
         self.last_update_check_github = {'timestamp': time.time(), 'status': None}
-        self.timeout = 60
         try:
             self.ubra = ubra_manager or BinanceRestApiManager("*", "*",
                                                               exchange=self.exchange,
@@ -261,20 +261,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
-                order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
+                try:
+                    order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
+                except BinanceAPIException as error_msg:
+                    logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book "
+                                 f"snapshot for the depth_cache with market {market.lower()} - BinanceAPIException - "
+                                 f"error_msg: {error_msg}")
+                    return None
             elif self.exchange == "binance.com-futures":
-                order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
+                try:
+                    order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
+                except BinanceAPIException as error_msg:
+                    logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book "
+                                 f"snapshot for the depth_cache with market {market.lower()} - BinanceAPIException - "
+                                 f"error_msg: {error_msg}")
+                    return None
             else:
                 return None
         except requests.exceptions.ConnectionError as error_msg:
             logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book snapshot "
-                         f"for the depth_cache with market {market.lower()} -> trying again till it works - "
+                         f"for the depth_cache with market {market.lower()} - requests.exceptions.ConnectionError - "
                          f"error_msg: {error_msg}")
 
             return None
         except requests.exceptions.ReadTimeout as error_msg:
             logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book snapshot "
-                         f"for the depth_cache with market {market.lower()} -> trying again till it works - "
+                         f"for the depth_cache with market {market.lower()} - requests.exceptions.ReadTimeout - "
                          f"error_msg: {error_msg}")
             return None
         logger.debug(f"BinanceLocalDepthCacheManager._init_depth_cache() - Downloaded order_book snapshot for "
@@ -293,6 +305,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     f"with market {market.lower()}")
         order_book = self._get_order_book_from_depth_cache(market=market.lower())
         if order_book is False:
+            logger.info(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not get order_book of the cache "
+                        f"with market {market.lower()}")
             return False
         self._reset_depth_cache(market=market.lower())
         self.depth_caches[market.lower()]['last_refresh_time'] = int(time.time())
@@ -416,6 +430,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     time.sleep(0.001)
         # Exiting ...
         del self.depth_caches[market.lower()]
+        del self.threading_lock_ask[market.lower()]
+        del self.threading_lock_bid[market.lower()]
         logger.info(f"BinanceLocalDepthCacheManager._process_stream_data() - depth_cache `{market.lower()}` was "
                     f"stopped and cleared")
 
@@ -626,6 +642,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         logger.debug(f"BinanceLocalDepthCacheManager.get_latest_version() - Starting the request")
         # Do a fresh request if status is None or last timestamp is older 1 hour
+
         if self.last_update_check_github['status'] is None or \
                 (self.last_update_check_github['timestamp'] + (60 * 60) < time.time()):
             self.last_update_check_github['status'] = self.get_latest_release_info()
