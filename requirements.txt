@@ -1,3 +1,8 @@
+# Changes must also be made in the following files:
+# ./environment.yml
+# ./setup.py
+# https://github.com/conda-forge/unicorn-binance-local-depth-cache-feedstock/blob/main/recipe/meta.yaml
+
 requests
 unicorn-binance-rest-api
 unicorn-binance-websocket-api>=1.40.5
