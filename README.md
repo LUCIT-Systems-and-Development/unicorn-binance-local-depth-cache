@@ -1,4 +1,5 @@
-[![GitHub Release](https://img.shields.io/github/release/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
+[![GitHub Release](https://img.shields.io/github/release/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?label=github)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
+[![GitHub Downloads](https://img.shields.io/github/downloads/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/total?color=blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
 [![Conda Release](https://img.shields.io/conda/vn/conda-forge/unicorn-binance-local-depth-cache.svg?color=blue)](https://anaconda.org/conda-forge/unicorn-binance-local-depth-cache)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/unicorn-binance-local-depth-cache.svg?color=blue)](https://anaconda.org/conda-forge/unicorn-binance-local-depth-cache)
 [![PyPi Release](https://img.shields.io/pypi/v/unicorn-binance-local-depth-cache?color=blue)](https://pypi.org/project/unicorn-binance-local-depth-cache/)
