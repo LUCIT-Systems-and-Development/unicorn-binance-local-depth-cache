@@ -323,7 +323,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self._reset_depth_cache(market=market)
         self.depth_caches[market]['last_refresh_time'] = int(time.time())
         self.depth_caches[market]['last_update_time'] = int(time.time())
-        self.depth_caches[market]['last_update_id'] = int(order_book['lastUpdateId'])
+        try:
+            self.depth_caches[market]['last_update_id'] = int(order_book['lastUpdateId'])
+        except TypeError as error_msg:
+            logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - TypeError - error_msg: {error_msg}")
+            return False
         self._apply_updates(order_book, market=market)
         for bid in order_book['bids']:
             self._add_bid(bid, market=market)

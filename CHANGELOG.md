@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
 ## 0.7.2.dev (development stage/unreleased/unstable)
-
+### Fixed 
+- TypeError exception in `_init_depth_cache`
+- 
 ## 0.7.2
 Codebase equal to 0.7.0, testing azure pipe
 
