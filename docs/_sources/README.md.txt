@@ -15,11 +15,11 @@
 [![Read the Docs](https://img.shields.io/badge/read-%20docs-yellow)](https://unicorn-binance-local-depth-cache.docs.lucit.tech/)
 [![Github](https://img.shields.io/badge/source-github-yellow)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 [![Telegram](https://img.shields.io/badge/chat-telegram-yellow)](https://t.me/unicorndevs)
+ [![Gitter](https://badges.gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache.svg)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # UNICORN Binance Local Depth Cache 
 
-[Description](#description) | [Installation](#installation-and-upgrade) | [Documentation](#documentation) | [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) | [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | [Contributing](#contributing)|
-[Commercial Support](#commercial-support)
+[Description](#description) | [Installation](#installation-and-upgrade) | [Documentation](#documentation) | [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) | [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | [Contributing](#contributing) | [Disclaimer](#disclaimer) | [Commercial Support](#commercial-support)
 
 A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
 robust and fully-featured way.
@@ -232,11 +232,23 @@ contribute follow
 
 We ![love](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/heart.png) open source!
 
+## Disclaimer
+This project is for informational purposes only. You should not construe this information or any other material as 
+legal, tax, investment, financial or other advice. Nothing contained herein constitutes a solicitation, recommendation, 
+endorsement or offer by us or any third party provider to buy or sell any securities or other financial instruments in 
+this or any other jurisdiction in which such solicitation or offer would be unlawful under the securities laws of such 
+jurisdiction.
+
+***If you intend to use real money, use it at your own risk.***
+
+Under no circumstances will we be responsible or liable for any claims, damages, losses, expenses, costs or liabilities 
+of any kind, including but not limited to direct or indirect damages for loss of profits.
+
 ## Commercial Support
 [![LUCIT](https://www.lucit.tech/files/images/logos/LUCIT-LOGO.png)](https://www.lucit.tech)
 
 ***Do you need a developer, operator or consultant?***
 
 Contact [me](https://about.me/oliver-zehentleitner) for a non-binding initial consultation via my company 
-[LUCIT](https://www.lucit.tech) from Vienna (Austria) or via [Telegram](https://t.me/LUCIT_OZ).
+[LUCIT](https://www.lucit.tech) from Vienna (Austria) or via [Telegram](https://t.me/LUCIT_OZ)/[WhatsApp](https://wa.me/436602456535).
 
