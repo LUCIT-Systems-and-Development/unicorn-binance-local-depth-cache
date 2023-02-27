@@ -17,7 +17,7 @@
 [![Telegram](https://img.shields.io/badge/chat-telegram-yellow)](https://t.me/unicorndevs)
  [![Gitter](https://badges.gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache.svg)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![LUCIT-UBS-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-suite.html)
+[![LUCIT-UBLDC-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/master/images/logo/LUCIT-UBLDC-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-local-depth-cache.html)
 
 # UNICORN Binance Local Depth Cache 
 

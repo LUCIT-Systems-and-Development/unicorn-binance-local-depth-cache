@@ -1,19 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 0.7.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,6 +42,10 @@
         <li class="right" >
           <a href="modules.html" title="unicorn_binance_local_depth_cache"
              accesskey="P">previous</a> |</li>
+    <script
+        src='//eu.fw-cdn.com/10659511/361973.js'
+        chat='true'>
+    </script>
     
         
         
@@ -71,23 +74,23 @@
           <div class="body" role="main">
             
   <section id="unicorn-binance-local-depth-cache-package">
-<h1>unicorn_binance_local_depth_cache package<a class="headerlink" href="#unicorn-binance-local-depth-cache-package" title="Permalink to this headline">¶</a></h1>
+<h1>unicorn_binance_local_depth_cache package<a class="headerlink" href="#unicorn-binance-local-depth-cache-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-unicorn_binance_local_depth_cache.manager">
-<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-manager-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.manager" title="Permalink to this headline">¶</a></h2>
+<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-manager-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.manager" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.manager.</span></span><span class="sig-name descname"><span class="pre">BinanceLocalDepthCacheManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'binance.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_close_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_ping_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_ping_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_colorama</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubra_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">unicorn_binance_rest_api.manager.BinanceRestApiManager</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubwa_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">unicorn_binance_websocket_api.manager.BinanceWebSocketApiManager</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_on_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.manager.</span></span><span class="sig-name descname"><span class="pre">BinanceLocalDepthCacheManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exchange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'binance.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_close_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_ping_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_websocket_ping_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_colorama</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubra_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinanceRestApiManager</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubwa_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinanceWebSocketApiManager</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_on_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></p>
 <p>A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast,
 flexible, robust and fully-featured way.</p>
 <p>Binance API documentation:
 <a class="reference external" href="https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream">https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#diff-depth-stream</a>
 <a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams">https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>exchange</strong> (<em>str</em>) – Select binance.com, binance.com-testnet, binance.com-margin, binance.com-margin-testnet,
 binance.com-isolated_margin, binance.com-isolated_margin-testnet, binance.com-futures,
@@ -124,10 +127,10 @@ otherwise the depth_cache will not work as it should!</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">
-<span class="sig-name descname"><span class="pre">create_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_close_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_ping_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_ping_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_close_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_ping_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">websocket_ping_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create one or more depth_cache!</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>markets</strong> (<em>str</em><em> or </em><em>list</em>) – Specify the market symbols for caches to be created</p></li>
 <li><p><strong>update_interval</strong> (<em>int</em>) – Update speed of the depth webstream in milliseconds. More info:
@@ -153,7 +156,7 @@ This parameter is passed through to the <a class="reference external" href="http
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -161,13 +164,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">
-<span class="sig-name descname"><span class="pre">get_asks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_asks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current list of asks with price and quantity.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -175,13 +178,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">
-<span class="sig-name descname"><span class="pre">get_bids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_bids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current list of bids with price and quantity.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -189,10 +192,10 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_release_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_release_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get info about the latest available release</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or None</p>
 </dd>
 </dl>
@@ -203,7 +206,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">get_latest_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the version of the latest available release (cache time 1 hour)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -214,7 +217,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">get_list_of_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of existing depth caches</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -225,7 +228,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">get_user_agent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the user_agent string “lib name + lib version + python version”</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p>
 </dd>
 </dl>
@@ -236,7 +239,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the package/module version</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -244,13 +247,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized">
-<span class="sig-name descname"><span class="pre">is_depth_cache_synchronized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_depth_cache_synchronized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is a specific depth_cache synchronized?</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -258,13 +261,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request">
-<span class="sig-name descname"><span class="pre">is_stop_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">is_stop_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is there a stop request?</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>market</strong> (<em>str</em>) – Specify the market symbol for the used depth_cache</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -275,7 +278,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">is_update_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is a new release of this package available?</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -286,7 +289,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">print_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">add_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.print_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print an overview of all streams</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>add_string</strong> (<em>str</em>) – text to add to the output</p>
 </dd>
 </dl>
@@ -294,13 +297,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request">
-<span class="sig-name descname"><span class="pre">set_refresh_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_refresh_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set refresh requests for one or more depth_caches!</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>markets</strong> (<em>str</em><em> or </em><em>list</em>) – Specify the market symbols for the depth_caches to be refreshed</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -308,13 +311,13 @@ This parameter is passed through to the <a class="reference external" href="http
 
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">
-<span class="sig-name descname"><span class="pre">stop_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">stop_depth_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">markets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop and delete one or more depth_caches!</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>markets</strong> (<em>str</em><em> or </em><em>list</em>) – Specify the market symbols for the depth_caches to be stopped and deleted</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -325,7 +328,7 @@ This parameter is passed through to the <a class="reference external" href="http
 <span class="sig-name descname"><span class="pre">stop_manager_with_all_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop unicorn-binance-local-depth-cache with all sub routines</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -335,7 +338,7 @@ This parameter is passed through to the <a class="reference external" href="http
 
 </section>
 <section id="module-unicorn_binance_local_depth_cache.exceptions">
-<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-exceptions-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.exceptions" title="Permalink to this headline">¶</a></h2>
+<span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-exceptions-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.exceptions" title="Permalink to this heading">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheOutOfSync</span></span><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync" title="Permalink to this definition">¶</a></dt>
@@ -345,7 +348,7 @@ This parameter is passed through to the <a class="reference external" href="http
 
 </section>
 <section id="module-unicorn_binance_local_depth_cache">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-unicorn_binance_local_depth_cache" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-unicorn_binance_local_depth_cache" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -361,8 +364,31 @@ This parameter is passed through to the <a class="reference external" href="http
     <ul>
 <li><a class="reference internal" href="#">unicorn_binance_local_depth_cache package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module</a></li>
-<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a></li>
+<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module</a><ul>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager</span></code></a><ul>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.create_depth_cache()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_asks()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_bids()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_release_info()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_version()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depth_caches()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_user_agent()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_version()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_depth_cache_synchronized()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_stop_request()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_update_available()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.print_summary"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.print_summary()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.set_refresh_request()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.stop_depth_cache()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a><ul>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync"><code class="docutils literal notranslate"><span class="pre">DepthCacheOutOfSync</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache">Module contents</a></li>
 </ul>
 </li>
@@ -428,7 +454,7 @@ This parameter is passed through to the <a class="reference external" href="http
     <br>
     <a href="https://www.lucit.tech"><img src="https://www.lucit.tech/files/images/logos/LUCIT-LOGO.png"></a>
     <p>
-        <a href="https://www.lucit.tech/trading-tools.html" style="font-size: 0.85em;font-weight: 900">Get customized trading software!</a>
+        <a href="https://www.lucit.tech/trading-tools.html" style="font-size: 0.85em;font-weight: 900">Tailored Bots for Your Unique Trading Needs</a>
     </p>
 </div>
         </div>
@@ -450,6 +476,10 @@ This parameter is passed through to the <a class="reference external" href="http
         <li class="right" >
           <a href="modules.html" title="unicorn_binance_local_depth_cache"
              >previous</a> |</li>
+    <script
+        src='//eu.fw-cdn.com/10659511/361973.js'
+        chat='true'>
+    </script>
     
         
         
@@ -474,15 +504,16 @@ This parameter is passed through to the <a class="reference external" href="http
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on May 27 2022 at 14:36 (CET).
+        Last updated on Feb 27 2023 at 15:34 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
 
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 4.4.0
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 6.1.3
         with <a href="https://github.com/LUCIT-Systems-and-Development/python-docs-theme-technopathy">python-docs-theme-technopathy</a>
         by <a href="https://www.lucit.tech">LUCIT Systems and Development</a>
     </div>
+    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.lucit.co/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />
 
   </body>
 </html>

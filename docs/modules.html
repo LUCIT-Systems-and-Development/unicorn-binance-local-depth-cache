@@ -1,19 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
     <title>unicorn_binance_local_depth_cache &#8212; unicorn-binance-local-depth-cache 0.7.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,6 +42,10 @@
         <li class="right" >
           <a href="README.html" title="UNICORN Binance Local Depth Cache"
              accesskey="P">previous</a> |</li>
+    <script
+        src='//eu.fw-cdn.com/10659511/361973.js'
+        chat='true'>
+    </script>
     
         
         
@@ -70,13 +73,36 @@
           <div class="body" role="main">
             
   <section id="unicorn-binance-local-depth-cache">
-<h1>unicorn_binance_local_depth_cache<a class="headerlink" href="#unicorn-binance-local-depth-cache" title="Permalink to this headline">¶</a></h1>
+<h1>unicorn_binance_local_depth_cache<a class="headerlink" href="#unicorn-binance-local-depth-cache" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="unicorn_binance_local_depth_cache.html">unicorn_binance_local_depth_cache package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.manager">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_manager module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.create_depth_cache()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_asks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_bids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_release_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depth_caches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_user_agent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_depth_cache_synchronized()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_stop_request"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_stop_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.is_update_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.print_summary"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.print_summary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.set_refresh_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.stop_depth_cache()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync"><code class="docutils literal notranslate"><span class="pre">DepthCacheOutOfSync</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache">Module contents</a></li>
 </ul>
 </li>
@@ -150,7 +176,7 @@
     <br>
     <a href="https://www.lucit.tech"><img src="https://www.lucit.tech/files/images/logos/LUCIT-LOGO.png"></a>
     <p>
-        <a href="https://www.lucit.tech/trading-tools.html" style="font-size: 0.85em;font-weight: 900">Get customized trading software!</a>
+        <a href="https://www.lucit.tech/trading-tools.html" style="font-size: 0.85em;font-weight: 900">Tailored Bots for Your Unique Trading Needs</a>
     </p>
 </div>
         </div>
@@ -172,6 +198,10 @@
         <li class="right" >
           <a href="README.html" title="UNICORN Binance Local Depth Cache"
              >previous</a> |</li>
+    <script
+        src='//eu.fw-cdn.com/10659511/361973.js'
+        chat='true'>
+    </script>
     
         
         
@@ -195,15 +225,16 @@
     <div class="footer">
         <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues">Found a bug</a>?
         <br />
-        Last updated on May 27 2022 at 14:36 (CET).
+        Last updated on Feb 27 2023 at 15:34 (CET).
         <br />
         &copy; <a href="copyright.html">Copyright</a> 2022-2022, LUCIT Systems and Development and Oliver Zehentleitner.
         <br />
 
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 4.4.0
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 6.1.3
         with <a href="https://github.com/LUCIT-Systems-and-Development/python-docs-theme-technopathy">python-docs-theme-technopathy</a>
         by <a href="https://www.lucit.tech">LUCIT Systems and Development</a>
     </div>
+    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.lucit.co/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />
 
   </body>
 </html>
