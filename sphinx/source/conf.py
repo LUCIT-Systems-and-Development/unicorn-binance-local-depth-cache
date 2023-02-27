@@ -70,7 +70,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -89,6 +89,8 @@ pygments_style = None
 html_theme = 'python_docs_theme_technopathy'
 html_context = {'github_user_name': 'LUCIT-Systems-and-Development',
                 'github_repo_name': 'unicorn-binance-local-depth-cache',
+                'matomo_url': "https://matomo.lucit.co/matomo.php?idsite=6&amp;rec=1",
+                'freshchat_src': "//eu.fw-cdn.com/10659511/361973.js",
                 'project_name': project,
                 'lucit': True}
 
