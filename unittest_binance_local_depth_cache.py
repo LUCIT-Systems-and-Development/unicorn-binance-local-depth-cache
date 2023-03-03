@@ -47,8 +47,9 @@ logging.basicConfig(level=logging.DEBUG,
 
 print(f"Starting unittests:")
 
-UBLDC = BinanceLocalDepthCacheManager(exchange="binance.com")
-UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
+UBLDC = BinanceLocalDepthCacheManager(exchange="binance.us")
+#UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
+UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.us")
 
 
 class TestUbldc(unittest.TestCase):
