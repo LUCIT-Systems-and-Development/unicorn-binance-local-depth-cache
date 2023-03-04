@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/github/license/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?color=blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/LICENSE)
 [![Supported Python Version](https://img.shields.io/pypi/pyversions/unicorn_binance_local_depth_cache.svg)](https://www.python.org/downloads/)
 [![PyPI - Status](https://img.shields.io/pypi/status/unicorn_binance_local_depth_cache.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues)
+[![CodeQL](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/codeql.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/codeql.yml)
 [![Unit Tests](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml)
 [![Azure Pipelines](https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/unicorn-binance-local-depth-cache-feedstock?branchName=main)](https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=15699&branchName=main)
 [![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=5I03AZ3F5S)](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
@@ -17,7 +18,7 @@
 [![Telegram](https://img.shields.io/badge/chat-telegram-yellow)](https://t.me/unicorndevs)
  [![Gitter](https://badges.gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache.svg)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![LUCIT-UBS-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-suite.html)
+[![LUCIT-UBLDC-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/master/images/logo/LUCIT-UBLDC-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-local-depth-cache.html)
 
 # UNICORN Binance Local Depth Cache 
 
@@ -127,6 +128,10 @@ or [`stop_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.t
 - Powered by [UNICORN Binance REST API](https://www.lucit.tech/unicorn-binance-rest-api.html) and 
 [UNICORN Binance WebSocket API](https://www.lucit.tech/unicorn-binance-websocket-api.html).
 
+If you like the project, please 
+[![star](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/star.png)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/stargazers) it on 
+[GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
+
 ## Installation and Upgrade
 The module requires Python 3.7 or above.
 
@@ -160,7 +165,7 @@ This is not a release version and can not be considered to be stable!
 
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tarball/master --upgrade`
 
-### [Conda environment](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html), [Virtualenv](https://virtualenv.pypa.io/en/latest/) or plain [Python](https://docs.python.org/2/install/)
+### [Conda environment](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html), [Virtualenv](https://virtualenv.pypa.io/en/latest/) or plain [Python](https://www.python.org)
 Download the [latest release](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest) 
 or the [current master branch](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/master.zip)
  and use:
