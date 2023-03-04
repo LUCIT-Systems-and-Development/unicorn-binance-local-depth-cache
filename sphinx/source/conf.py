@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'unicorn-binance-local-depth-cache'
-copyright = '2022-2022, LUCIT Systems and Development and Oliver Zehentleitner'
+copyright = '2022-2023, LUCIT Systems and Development and Oliver Zehentleitner'
 author = 'LUCIT Systems and Development'
 
 # The short X.Y version
