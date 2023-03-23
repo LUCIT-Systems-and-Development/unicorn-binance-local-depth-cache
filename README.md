@@ -179,7 +179,7 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 
 ## Documentation
 - [General](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache)
-- [Modules](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/unicorn_binance_local_depth_cache.html)
+- [Modules](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/modules.html)
 
 ## Examples
 - [example_depth_cache.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_depth_cache.py)
