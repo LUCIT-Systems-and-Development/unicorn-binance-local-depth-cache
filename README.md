@@ -32,6 +32,8 @@
 A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
 robust and fully-featured way.
 
+[Looking for the best performing Binance Depth Cache implementation?](https://www.lucit.tech/unicorn-binance-local-depth-cache-pro.html)
+
 Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
 
 ### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
