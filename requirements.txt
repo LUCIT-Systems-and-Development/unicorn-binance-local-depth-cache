@@ -4,6 +4,7 @@
 # ./pyproject.toml
 # ./setup.py
 
+Cython
 lucit-licensing-python>=1.8.1
 requests
 unicorn-binance-rest-api>=2.1.2

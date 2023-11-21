@@ -24,20 +24,11 @@ repository = "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-w
 
 [tool.poetry.dependencies]
 python = ">=3.7.0"
-cheroot = "*"
-colorama = "*"
 Cython = "*"
-flask = "*"
-flask_restful = "*"
-lucit-licensing-python = "*"
-psutil = "*"
-PySocks = "*"
+lucit-licensing-python = ">=1.8.1"
 requests = "*"
-ujson = "*"
-unicorn-fy = "*"
-unicorn-binance-rest-api = "*"
-websocket-client = "*"
-websockets = "10.4"
+unicorn-binance-rest-api = ">=2.1.2"
+unicorn-binance-websocket-api = ">=2.1.1"
 
 [tool.poetry.dev-dependencies]
 
