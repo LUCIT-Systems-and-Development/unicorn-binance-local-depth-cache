@@ -72,11 +72,6 @@ ubldc.stop_depth_cache("BTCUSDT")
 ubldc.stop_manager()
 ```
 
-### Get the right logger:
-```
-logging.getLogger("unicorn_binance_local_depth_cache")
-```
-
 [Discover more possibilities.](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html)
 
 ## Description

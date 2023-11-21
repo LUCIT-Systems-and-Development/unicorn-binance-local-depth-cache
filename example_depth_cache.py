@@ -19,6 +19,7 @@
 # All rights reserved.
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from lucit_licensing_python.exceptions import NoValidatedLucitLicense
 import logging
 import os
 import time
@@ -31,18 +32,20 @@ logging.basicConfig(level=logging.DEBUG,
 
 market = 'BTCUSDT'
 
-# ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
-# ubldc = BinanceLocalDepthCacheManager(exchange="binance.com-testnet")
-ubldc = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
-
-ubldc.create_depth_cache(markets=market)
-
-while True:
-    time.sleep(1)
-    print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")
-    try:
-        print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
-        print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
-    except DepthCacheOutOfSync as error_msg:
-        print(f"ERROR: {error_msg}")
+try:
+    with BinanceLocalDepthCacheManager(exchange="binance.com") as ubldc:
+        ubldc.create_depth_cache(markets=market)
+        while True:
+            time.sleep(0.2)
+            print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")
+            try:
+                print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
+                print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
+            except DepthCacheOutOfSync as error_msg:
+                print(f"Please wait ... ")
+                time.sleep(1)
+except NoValidatedLucitLicense as error_msg:
+    print(f"ERROR: {error_msg}")
+except KeyboardInterrupt:
+    print("Gracefully stopping ...")
 

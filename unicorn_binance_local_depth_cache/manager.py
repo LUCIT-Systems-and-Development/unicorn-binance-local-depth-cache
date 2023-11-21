@@ -20,6 +20,8 @@
 
 from .exceptions import DepthCacheOutOfSync
 from operator import itemgetter
+from lucit_licensing_python.manager import LucitLicensingManager
+from lucit_licensing_python.exceptions import NoValidatedLucitLicense
 from unicorn_binance_rest_api.manager import BinanceRestApiManager
 from unicorn_binance_rest_api.exceptions import BinanceAPIException
 from unicorn_binance_websocket_api.manager import BinanceWebSocketApiManager
@@ -31,6 +33,8 @@ import requests
 import time
 import threading
 
+__app_name__: str = "unicorn-binance-local-depth-cache"
+__version__: str = "1.0.0.dev"
 
 logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
@@ -79,6 +83,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
      :type disable_colorama: bool
      :param warn_on_update: set to `False` to disable the update warning
      :type warn_on_update: bool
+     :param lucit_api_secret: The `api_secret` of your UNICORN Binance Suite license from
+                              https://shop.lucit.services/software/unicorn-binance-suite
+     :type lucit_api_secret:  str
+     :param lucit_license_ini: Specify the path including filename to the config file (ex: `~/license_a.ini`). If not
+                               provided lucitlicmgr tries to load a `lucit_license.ini` from `/home/oliver/.lucit/`.
+     :type lucit_license_ini:  str
+     :param lucit_license_profile: The license profile to use. Default is 'LUCIT'.
+     :type lucit_license_profile:  str
+     :param lucit_license_token: The `license_token` of your UNICORN Binance Suite license from
+                                 https://shop.lucit.services/software/unicorn-binance-suite
+     :type lucit_license_token:  str
      :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
      :type ubra_manager: BinanceRestApiManager
      :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance. Use
@@ -94,12 +109,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  default_websocket_ping_interval: int = 5,
                  default_websocket_ping_timeout: int = 10,
                  disable_colorama: bool = False,
-                 ubra_manager: Optional[Union[BinanceRestApiManager, bool]] = False,
-                 ubwa_manager: Optional[Union[BinanceWebSocketApiManager, bool]] = False,
+                 lucit_api_secret: str = None,
+                 lucit_license_ini: str = None,
+                 lucit_license_profile: str = None,
+                 lucit_license_token: str = None,
+                 ubra_manager: Optional[BinanceRestApiManager] = None,
+                 ubwa_manager: Optional[BinanceWebSocketApiManager] = None,
                  warn_on_update: bool = True):
         super().__init__()
-        self.version = "1.0.0.dev"
-        self.name = "unicorn-binance-local-depth-cache"
+        self.name = __app_name__
+        self.version = __version__
         logger.info(f"New instance of {self.get_user_agent()} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
@@ -111,10 +130,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.default_websocket_ping_timeout = default_websocket_ping_timeout
         self.disable_colorama = disable_colorama
         self.last_update_check_github = {'timestamp': time.time(), 'status': None}
+
+        self.lucit_api_secret = lucit_api_secret
+        self.lucit_license_ini = lucit_license_ini
+        self.lucit_license_profile = lucit_license_profile
+        self.lucit_license_token = lucit_license_token
+        self.ubra = ubra_manager
+        self.ubwa = ubwa_manager
+        self.llm = LucitLicensingManager(api_secret=self.lucit_api_secret,
+                                         license_ini=self.lucit_license_ini,
+                                         license_profile=self.lucit_license_profile,
+                                         license_token=self.lucit_license_token,
+                                         parent_shutdown_function=self.stop_manager,
+                                         program_used=self.name,
+                                         needed_license_type="UNICORN-BINANCE-SUITE",
+                                         start=True)
+        licensing_exception = self.llm.get_license_exception()
+        if licensing_exception is not None:
+            raise NoValidatedLucitLicense(licensing_exception)
+
         try:
-            self.ubra = ubra_manager or BinanceRestApiManager("*", "*",
-                                                              exchange=self.exchange,
-                                                              disable_colorama=disable_colorama)
+            self.ubra = ubra_manager or BinanceRestApiManager(exchange=self.exchange,
+                                                              disable_colorama=disable_colorama,
+                                                              lucit_api_secret=self.lucit_api_secret,
+                                                              lucit_license_ini=self.lucit_license_ini,
+                                                              lucit_license_profile=self.lucit_license_profile,
+                                                              lucit_license_token=self.lucit_license_token)
         except requests.exceptions.ConnectionError as error_msg:
             error_msg = f"Can not initialize BinanceLocalDepthCacheManager() - No internet connection? - {error_msg}"
             logger.critical(error_msg)
@@ -131,7 +172,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.ubwa = ubwa_manager or BinanceWebSocketApiManager(exchange=self.exchange,
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True,
-                                                               high_performance=True)
+                                                               high_performance=True,
+                                                               lucit_api_secret=self.lucit_api_secret,
+                                                               lucit_license_ini=self.lucit_license_ini,
+                                                               lucit_license_profile=self.lucit_license_profile,
+                                                               lucit_license_token=self.lucit_license_token)
         self.stop_request = False
         self.threading_lock_ask = {}
         self.threading_lock_bid = {}
@@ -143,11 +188,21 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.thread_stream_signals = threading.Thread(target=self._process_stream_signals)
         self.thread_stream_signals.start()
 
+    def __enter__(self):
+        logger.debug(f"Entering 'with-context' ...")
+        return self
+
+    def __exit__(self, exc_type, exc_value, error_traceback):
+        logger.debug(f"Leaving 'with-context' ...")
+        self.stop_manager()
+        if exc_type:
+            logger.critical(f"An exception occurred: {exc_type} - {exc_value} - {error_traceback}")
+
     def _add_depth_cache(self, market: str = None, stream_id: str = None, refresh_interval: int = None) -> bool:
         """
         Add a depth_cache to the depth_caches stack.
 
-        :param market: Specify the market market for the used depth_cache
+        :param market: Specify the market for the used depth_cache
         :type market: str
         :param stream_id: Provide a stream_id
         :type stream_id: str
@@ -800,7 +855,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.ubwa.clear_stream_buffer(stream_buffer_name=stream_id)
         return True
 
-    def stop_manager(self) -> bool:
+    def stop_manager(self, close_api_session: bool = True) -> bool:
         """
         Stop unicorn-binance-local-depth-cache with all sub routines
 
@@ -808,7 +863,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         logger.debug(f"BinanceLocalDepthCacheManager.stop_manager() - Stop initiated!")
         self.stop_request = True
-        self.ubwa.stop_manager_with_all_streams()
+        if self.ubwa is not None:
+            self.ubwa.stop_manager()
+        if self.ubra is not None:
+            self.ubra.stop_manager()
+        # close lucit license manger and the api session
+        if close_api_session is True:
+            self.llm.close()
         return True
 
     def stop_manager_with_all_depth_caches(self) -> bool:

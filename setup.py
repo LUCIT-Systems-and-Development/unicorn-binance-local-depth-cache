@@ -41,14 +41,8 @@ with open("README.md", "r") as fh:
 setup(
      ext_modules=cythonize(
         ['unicorn_binance_local_depth_cache/__init__.py',
-         'unicorn_binance_local_depth_cache/api.py',
-         'unicorn_binance_local_depth_cache/connection.py',
-         'unicorn_binance_local_depth_cache/connection_settings.py',
          'unicorn_binance_local_depth_cache/exceptions.py',
-         'unicorn_binance_local_depth_cache/manager.py',
-         'unicorn_binance_local_depth_cache/restclient.py',
-         'unicorn_binance_local_depth_cache/restserver.py',
-         'unicorn_binance_local_depth_cache/sockets.py'],
+         'unicorn_binance_local_depth_cache/manager.py'],
         annotate=False),
      name='unicorn-binance-local-depth-cache',
      version="1.0.0",
