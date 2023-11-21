@@ -34,14 +34,14 @@ import time
 import threading
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "1.0.0.dev"
+__version__: str = "1.0.0"
 
 logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
     """
-     A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast,
+     A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in an easy, fast,
      flexible, robust and fully-featured way.
 
      Binance API documentation:
@@ -242,7 +242,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         :param ask: Add asks to the depth_cache
         :type ask: list
-        :param market: Specify the market market for the used depth_cache
+        :param market: Specify the market for the used depth_cache
         :type market: str
         :return: bool
         """
@@ -419,7 +419,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             while self.is_stop_request(market=market) is False:
                 if self.depth_caches[market]['refresh_request'] is True:
                     self.depth_caches[market]['is_synchronized'] = False
-                    logger.info(f"BinanceLocalDepthCacheManager._process_stream_data() - Catched refresh_request "
+                    logger.info(f"BinanceLocalDepthCacheManager._process_stream_data() - Caught refresh_request "
                                 f"for depth_cache with market {market}")
                     break
                 stream_data = self.ubwa.pop_stream_data_from_stream_buffer(self.depth_caches[market]['stream_id'])
