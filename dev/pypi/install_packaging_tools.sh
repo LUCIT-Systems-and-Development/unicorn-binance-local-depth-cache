@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 #
-# File: unicorn_binance_local_depth_cache/exceptions.py
+# File: pypi/install_packaging_tools.sh
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
@@ -18,8 +18,4 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-class DepthCacheOutOfSync(Exception):
-    """
-    Exception if a DepthCache is out of sync
-    """
-    pass
+python3 -m pip install --user --upgrade pip setuptools wheel twine tqdm

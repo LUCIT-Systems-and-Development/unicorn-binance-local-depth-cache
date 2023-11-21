@@ -32,25 +32,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-import setuptools
-from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager
-
-ubldc = BinanceLocalDepthCacheManager()
+from setuptools import setup
+from Cython.Build import cythonize
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setuptools.setup(
+setup(
+     ext_modules=cythonize(
+        ['unicorn_binance_local_depth_cache/__init__.py',
+         'unicorn_binance_local_depth_cache/api.py',
+         'unicorn_binance_local_depth_cache/connection.py',
+         'unicorn_binance_local_depth_cache/connection_settings.py',
+         'unicorn_binance_local_depth_cache/exceptions.py',
+         'unicorn_binance_local_depth_cache/manager.py',
+         'unicorn_binance_local_depth_cache/restclient.py',
+         'unicorn_binance_local_depth_cache/restserver.py',
+         'unicorn_binance_local_depth_cache/sockets.py'],
+        annotate=False),
      name='unicorn-binance-local-depth-cache',
-     version=str(ubldc.get_version()),
+     version="1.0.0",
      author="LUCIT Systems and Development",
      author_email='info@lucit.tech',
      url="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache",
      description="",
      long_description=long_description,
      long_description_content_type="text/markdown",
-     license='MIT License',
-     install_requires=['requests', 'unicorn-binance-websocket-api>=1.40.5', 'unicorn-binance-rest-api'],
+     license='LSOSL - LUCIT Synergetic Open Source License',
+     install_requires=['lucit-licensing-python', 'requests', 'unicorn-binance-websocket-api>=2.1.1',
+                       'unicorn-binance-rest-api'],
      keywords='binance, depth cache',
      project_urls={
          'Documentation': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech',
@@ -61,9 +71,11 @@ setuptools.setup(
          'Chat': 'https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache',
          'Telegram': 'https://t.me/unicorndevs',
          'Get Support': 'https://www.lucit.tech/get-support.html',
+         'LUCIT Online Shop': 'https://shop.lucit.services/software',
      },
      python_requires='>=3.7.0',
-     packages=setuptools.find_packages(exclude=["tools", "images", "pypi", "sphinx", "docs", ".github"]),
+     package_data={'': ['unicorn_binance_local_depth_cache/*.so',
+                        'unicorn_binance_local_depth_cache/*.dll']},
      classifiers=[
          "Development Status :: 5 - Production/Stable",
          "Programming Language :: Python :: 3.7",
@@ -71,7 +83,8 @@ setuptools.setup(
          "Programming Language :: Python :: 3.9",
          "Programming Language :: Python :: 3.10",
          "Programming Language :: Python :: 3.11",
-         "License :: OSI Approved :: MIT License",
+         "Programming Language :: Python :: 3.12",
+         "License :: Other/Proprietary License",
          'Intended Audience :: Developers',
          "Intended Audience :: Financial and Insurance Industry",
          "Intended Audience :: Information Technology",
@@ -81,5 +94,3 @@ setuptools.setup(
          'Topic :: Software Development :: Libraries :: Python Modules',
      ],
 )
-
-ubldc.stop_manager_with_all_depth_caches()

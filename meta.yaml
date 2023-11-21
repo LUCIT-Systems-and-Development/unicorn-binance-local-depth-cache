@@ -1,0 +1,63 @@
+{% set name = "unicorn-binance-local-depth-cache" %}
+{% set version = "1.0.0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  path: .
+
+build:
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  number: 0
+
+channels:
+  - lucit
+  - conda-forge
+  - default
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+  host:
+    - python
+    - lucit::lucit-licensing-python
+    - lucit::unicorn-binance-rest-api
+    - lucit::unicorn-binance-websocket-api
+    - requests
+  run:
+    - python
+    - lucit::lucit-licensing-python
+    - lucit::unicorn-binance-rest-api
+    - lucit::unicorn-binance-websocket-api
+    - requests
+
+dependencies:
+  - anaconda-client
+  - conda-build
+
+test:
+  imports:
+    - unicorn_binance_local_depth_cache
+  commands:
+    - pip check
+  requires:
+    - pip
+
+about:
+  summary: | 
+    A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, 
+    fast, flexible, robust and fully-featured way.
+  description: |
+   
+
+  dev_url: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
+  doc_url: https://unicorn-binance-local-depth-cache.docs.lucit.tech
+  home: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
+  license: LSOSL
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - oliver-zehentleitner

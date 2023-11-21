@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to 
 [Semantic Versioning](http://semver.org/).
 
-[Discussions about unicorn-binance-websocket-api releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
+[Discussions about unicorn-binance-local-depth-cache releases!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions/categories/releases)
 
-[How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/README.html#installation-and-upgrade)
+[How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
 ## 0.7.3.dev (development stage/unreleased/unstable)
 

@@ -10,6 +10,17 @@ body:
         Please post here only issues concerning this repository and follow the [Issue-Guidelines](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-suite/wiki/Issue-Guidelines). 
         
         Most of these fields are not mandatory, but please provide as much information as possible.
+
+  - type: checkboxes
+    id: Confirmation
+    attributes:
+      label: Solution to Issue cannot be found in the documentation or other Issues and also occurs in the latest version of this library.
+      description: |
+        I have searched for other Issues with the same problem or similar feature requests and have looked in the documentation. This issue also affects the latest version of this library.
+      options:
+        - label: I checked the documentation and other Issues. I am using the latest version of this library.
+          required: true
+
   - type: textarea
     id: Version
     attributes:
@@ -18,16 +29,6 @@ body:
         Please control what version you are using with [this script](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-suite/blob/master/tools/get_versions_of_unicorn_packages.py) and post the output:
     validations:
       required: true
-      
-  - type: checkboxes
-    id: Confirmation
-    attributes:
-      label: Solution to Issue cannot be found in the documentation or other Issues and also occurs in the latest version of this library.
-      description: |
-        I have searched for other Issues with the same problem or similar feature requests and have looked in the documentation. This issue also affects the latest version of this library. 
-      options:
-        - label: I checked the documentation and other Issues. I am using the latest version of this library.
-          required: true
 
   - type: dropdown
     id: Hardware
@@ -67,8 +68,21 @@ body:
         - Python3.8
         - Python3.9
         - Python3.10
+        - Python3.11
+        - Python3.12
     validations:
       required: true
+
+  - type: textarea
+    id: WheelInfo
+    attributes:
+      label: Installed wheel files
+      description: |
+        Please share your installed wheel files of this library. Run `pip show unicorn-binance-rest-api --files | 
+        grep '  '` or `conda list -f unicorn-binance-rest-api | grep '  '` and post the result:
+      render: shell
+    validations:
+      required: false
       
   - type: textarea
     id: Packages
@@ -76,8 +90,6 @@ body:
       label: Installed packages
       description: |
         Please share your installed packages by running `pip list` or `conda list` and entering the output below:
-        _Note:_ This will be automatically formatted as code.
-      placeholder: "`pip list` or `conda list`"
       render: shell
     validations:
       required: false
@@ -114,7 +126,6 @@ body:
         - binance.org
         - binance.org-testnet 
         - binance.us
-        - jex.com
         - trbinance.com
     validations:
       required: true

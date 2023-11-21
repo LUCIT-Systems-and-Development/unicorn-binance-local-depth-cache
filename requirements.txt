@@ -1,8 +1,10 @@
 # Changes must also be made in the following files:
 # ./environment.yml
+# ./meta.yaml
+# ./pyproject.toml
 # ./setup.py
-# https://github.com/conda-forge/unicorn-binance-local-depth-cache-feedstock/blob/main/recipe/meta.yaml
 
+lucit-licensing-python>=1.8.1
 requests
-unicorn-binance-rest-api
-unicorn-binance-websocket-api>=1.40.5
+unicorn-binance-rest-api>=2.1.2
+unicorn-binance-websocket-api>=2.1.1

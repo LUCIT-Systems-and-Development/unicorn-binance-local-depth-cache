@@ -1,29 +1,30 @@
-[![Get professional and fast support](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/support/LUCIT-get-professional-and-fast-support.png)](https://www.lucit.tech/get-support.html)
+[![Get a UNICORN Binance Suite License](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-License-Offer.png)](https://shop.lucit.services)
 
 [![Github](https://img.shields.io/badge/source-github-cbc2c8)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 [![GitHub Release](https://img.shields.io/github/release/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?label=github)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
 [![GitHub Downloads](https://img.shields.io/github/downloads/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/total?color=blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
-[![Conda Release](https://img.shields.io/conda/vn/conda-forge/unicorn-binance-local-depth-cache.svg?color=blue)](https://anaconda.org/conda-forge/unicorn-binance-local-depth-cache)
-[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/unicorn-binance-local-depth-cache.svg?color=blue)](https://anaconda.org/conda-forge/unicorn-binance-local-depth-cache)
+[![Anaconda Release](https://anaconda.org/lucit/unicorn-binance-local-depth-cache/badges/version.svg)](https://anaconda.org/lucit/unicorn-binance-local-depth-cache)
+[![Anaconda Downloads](https://anaconda.org/lucit/unicorn-binance-local-depth-cache/badges/downloads.svg)](https://anaconda.org/lucit/unicorn-binance-local-depth-cache)
 [![PyPi Release](https://img.shields.io/pypi/v/unicorn-binance-local-depth-cache?color=blue)](https://pypi.org/project/unicorn-binance-local-depth-cache/)
 [![PyPi Downloads](https://pepy.tech/badge/unicorn-binance-local-depth-cache)](https://pepy.tech/project/unicorn-binance-local-depth-cache)
-[![License](https://img.shields.io/github/license/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?color=blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-LSOSL-blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/LICENSE)
 [![Supported Python Version](https://img.shields.io/pypi/pyversions/unicorn_binance_local_depth_cache.svg)](https://www.python.org/downloads/)
 [![PyPI - Status](https://img.shields.io/pypi/status/unicorn_binance_local_depth_cache.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues)
+[![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=5I03AZ3F5S)](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 [![CodeQL](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/codeql.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/codeql.yml)
 [![Unit Tests](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/unit-tests.yml)
-[![Azure Pipelines](https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/unicorn-binance-local-depth-cache-feedstock?branchName=main)](https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=15699&branchName=main)
-[![codecov](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/branch/master/graph/badge.svg?token=5I03AZ3F5S)](https://codecov.io/gh/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
+[![Build and Publish GH+PyPi](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_wheels.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_wheels.yml)
+[![Build and Publish Anaconda](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_conda.yml/badge.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_conda.yml)
 [![Read the Docs](https://img.shields.io/badge/read-%20docs-yellow)](https://unicorn-binance-local-depth-cache.docs.lucit.tech/)
 [![Read How To`s](https://img.shields.io/badge/read-%20howto-yellow)](https://medium.lucit.tech)
 [![Telegram](https://img.shields.io/badge/chat-telegram-41ab8c)](https://t.me/unicorndevs)
- [![Gitter](https://badges.gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache.svg)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache.svg)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![LUCIT-UBLDC-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/master/images/logo/LUCIT-UBLDC-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-local-depth-cache.html)
 
 # UNICORN Binance Local Depth Cache 
 
-[Description](#description) | [Installation](#installation-and-upgrade) | [Documentation](#documentation) | 
+[Description](#description) | [Installation](#installation-and-upgrade) | [How To](#howto) | [Documentation](#documentation) | 
 [Examples](#examples) | [Change Log](#change-log) | [Wiki](#wiki) | [Social](#social) | 
 [Notifications](#receive-notifications) | [Bugs](#how-to-report-bugs-or-suggest-improvements) | 
 [Contributing](#contributing) | [Leave a review](#you-want-to-say-thank-you) |[Disclaimer](#disclaimer) | 
@@ -32,11 +33,13 @@
 A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
 robust and fully-featured way.
 
-[Looking for the best performing Binance Depth Cache implementation?](https://www.lucit.tech/unicorn-binance-local-depth-cache-pro.html)
+Part of '[UNICORN Binance Suite](https://www.lucit.tech/unicorn-binance-suite.html)'.
 
-Part of ['UNICORN Binance Suite'](https://www.lucit.tech/unicorn-binance-suite.html).
+## Get a UNICORN Binance Suite License
 
-### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
+To run modules of the *UNICORN Binance Suite* you need a [valid license](https://medium.lucit.tech/how-to-obtain-and-use-a-unicorn-binance-suite-license-key-and-run-the-ubs-module-according-to-best-87b0088124a8#4ca4)!
+
+## [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
 ```
 import unicorn_binance_local_depth_cache
 
@@ -44,13 +47,13 @@ ubldc = unicorn_binance_local_depth_cache.BinanceLocalDepthCacheManager(exchange
 ubldc.create_depth_cache("BTCUSDT")
 ```
 
-### Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids) depth with:
+## Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids) depth with:
 ```
 asks = ubldc.get_asks("BTCUSDT")
 bids = ubldc.get_bids("BTCUSDT")
 ```
 
-### Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data:
+## Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data:
 ```
 try:
     print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
@@ -59,14 +62,14 @@ except DepthCacheOutOfSync as error_msg:
     print(f"ERROR: {error_msg}")
 ```
 
-### [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
+## [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
 ```
 ubldc.stop_depth_cache("BTCUSDT")
 ```
 
 ### [Stop the full instance](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_manager_with_all_depth_caches#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches):
 ```
-ubldc.stop_manager_with_all_depth_caches()
+ubldc.stop_manager()
 ```
 
 ### Get the right logger:
@@ -136,34 +139,69 @@ If you like the project, please
 [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
 
 ## Installation and Upgrade
-The module requires Python 3.7 or above.
+The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent 
+processing. 
 
-The current dependencies are listed 
-[here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt).
+For the PyPy interpreter we offer packages only from Python version 3.9 and higher.
+
+Anaconda packages are available from Python version 3.8 and higher.
+
+The current dependencies are listed [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt).
 
 If you run into errors during the installation take a look [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/Installation).
 
-### A wheel and a source file of the latest release with `pip` from [PyPI](https://pypi.org/project/unicorn-binance-local-depth-cache/)
+### A Cython binary, PyPy or source code based CPython wheel of the latest version with `pip` from [PyPI](https://pypi.org/project/unicorn-binance-rest-api/)
+Our [Cython](https://cython.org/) and [PyPy](https://www.pypy.org/) Wheels are available on [PyPI](https://pypi.org/), 
+these wheels offer significant advantages for Python developers:
+- ***Performance Boost with Cython Wheels:*** 
+  Cython is a programming language that supplements Python with static typing and C-level performance. By compiling 
+  Python code into C, Cython Wheels can significantly enhance the execution speed of Python code, especially in 
+  computationally intensive tasks. This means faster runtimes and more efficient processing for users of our package. 
+- ***PyPy Wheels for Enhanced Efficiency:*** 
+  PyPy is an alternative Python interpreter known for its speed and efficiency. It uses Just-In-Time (JIT) compilation, 
+  which can dramatically improve the performance of Python code. Our PyPy Wheels are tailored for compatibility with 
+  PyPy, allowing users to leverage this speed advantage seamlessly.
+
+Both Cython and PyPy Wheels on PyPI make the installation process simpler and more straightforward. They ensure that 
+you get the optimized version of our package with minimal setup, allowing you to focus on development rather than 
+configuration.
+
+#### Installation
+`pip install unicorn-binance-local-depth-cache`
+
+#### Update
 `pip install unicorn-binance-local-depth-cache --upgrade`
 
-### A conda package of the latest release with `conda` from [Anaconda](https://anaconda.org/conda-forge/unicorn-binance-local-depth-cache) via [CONDA-FORGE](https://conda-forge.org).
-`conda install -c conda-forge unicorn-binance-local-depth-cache`
+### A Conda Package of the latest version with `conda` from [Anaconda](https://anaconda.org/lucit)
+The `unicorn-binance-local-depth-cache` package is available with [Conda](https://docs.conda.io/en/latest/) through the 
+[`lucit` channel](https://anaconda.org/lucit). 
 
-`conda update -c conda-forge unicorn-binance-local-depth-cache`
+For optimal compatibility and performance, it is recommended to source the necessary dependencies from the 
+[`conda-forge` channel](https://anaconda.org/conda-forge). 
 
-### From source of the latest release with PIP from [Github](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
+#### Installation
+```
+conda config --add channels conda-forge
+conda config --add channels lucit
+conda install -c lucit unicorn-binance-local-depth-cache
+```
+
+#### Update
+`conda update -c lucit unicorn-binance-local-depth-cache`
+
+### From source of the latest release with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 #### Linux, macOS, ...
 Run in bash:
 
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 
 #### Windows
-Use the below command with the version (such as 0.5.0) you determined 
+Use the below command with the version (such as 1.0.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/0.5.0.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/1.0.0.tar.gz --upgrade`
 
-### From the latest source (dev-stage) with PIP from [Github](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
+### From the latest source (dev-stage) with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!
 
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tarball/master --upgrade`
@@ -174,11 +212,12 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
  and use:
  
 - ./environment.yml
+- ./pyproject.toml
 - ./requirements.txt
 - ./setup.py
 
 ## Change Log
-[https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/CHANGELOG.html](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/CHANGELOG.html)
+[https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/changelog.html](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/changelog.html)
 
 ## Documentation
 - [General](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache)
@@ -192,6 +231,9 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 - [example_update_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_update_interval.py)
 - [example_version_of_this_package.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py)
 
+## Howto
+- [How to Obtain and Use a Unicorn Binance Suite License Key and Run the UBS Module According to Best Practice](https://medium.lucit.tech/how-to-obtain-and-use-a-unicorn-binance-suite-license-key-and-run-the-ubs-module-according-to-best-87b0088124a8)
+
 ## Project Homepage
 [https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 
@@ -200,6 +242,7 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 
 ## Social
 - [Discussions](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/discussions)
+- [Gitter](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache)
 - [https://t.me/unicorndevs](https://t.me/unicorndevs)
 - [https://dev.binance.vision](https://dev.binance.vision)
 - [https://community.binance.org](https://community.binance.org)
@@ -225,8 +268,7 @@ To receive news (like inspection windows/maintenance) about the Binance API`s su
 - [https://t.me/BinanceExchange](https://t.me/BinanceExchange)
 
 ## How to report Bugs or suggest Improvements?
-[List of planned features](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) - 
-click ![thumbs-up](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/thumbup.png) if you need one of them or suggest a new feature!
+[List of planned features](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) - click ![thumbs-up](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/thumbup.png) if you need one of them or suggest a new feature!
 
 Before you report a bug, [try the latest release](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache#installation-and-upgrade). If the issue still exists, provide the error trace, OS 
 and Python version and explain how to reproduce the error. A demo script is appreciated.

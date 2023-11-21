@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "unicorn-binance-websocket-api"
+version = "1.0.0"
+description = "An unofficial Python API to use the Binance REST API’s in a easy, fast, flexible, robust and fully-featured way."
+authors = ["LUCIT Systems and Development <info@lucit.tech>"]
+license = "LSOSL - LUCIT Synergetic Open Source License"
+readme = "README.md"
+homepage = "https://www.lucit.tech/unicorn-binance-websocket-api.html"
+documentation = "https://unicorn-binance-websocket-api.docs.lucit.tech"
+repository = "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api"
+
+[tool.poetry.urls]
+'Howto' = 'https://www.lucit.tech/unicorn-binance-websocket-api.html#howto'
+'Documentation' = 'https://unicorn-binance-websocket-api.docs.lucit.tech'
+'Wiki' = 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api/wiki'
+'Author' = 'https://www.lucit.tech'
+'Changes' = 'https://unicorn-binance-websocket-api.docs.lucit.tech/changelog.html'
+'License' = 'https://unicorn-binance-websocket-api.docs.lucit.tech/license.html'
+'Issue Tracker' = 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api/issues'
+'Telegram' = 'https://t.me/unicorndevs'
+'Chat' = 'https://app.gitter.im/#/room/#unicorn-binance-websocket-api:gitter.im'
+'Get Support' = 'https://www.lucit.tech/get-support.html'
+'LUCIT Online Shop' = 'https://shop.lucit.services/software/unicorn-binance-suite'
+
+[tool.poetry.dependencies]
+python = ">=3.7.0"
+cheroot = "*"
+colorama = "*"
+Cython = "*"
+flask = "*"
+flask_restful = "*"
+lucit-licensing-python = "*"
+psutil = "*"
+PySocks = "*"
+requests = "*"
+ujson = "*"
+unicorn-fy = "*"
+unicorn-binance-rest-api = "*"
+websocket-client = "*"
+websockets = "10.4"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["setuptools", "wheel", "Cython", "pip"]
+build-backend = "setuptools.build_meta"
+
+[tool.poetry.package_data]
+unicorn_binance_websocket_api = ["*.so", "*.dll"]

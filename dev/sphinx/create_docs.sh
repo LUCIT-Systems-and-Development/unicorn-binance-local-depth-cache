@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 #
-# File: unicorn_binance_local_depth_cache/exceptions.py
+# File: sphinx/create_docs.sh
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
@@ -18,8 +18,25 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-class DepthCacheOutOfSync(Exception):
-    """
-    Exception if a DepthCache is out of sync
-    """
-    pass
+rm dev/sphinx/source/changelog.md
+rm dev/sphinx/source/code_of_conduct.md
+rm dev/sphinx/source/contributing.md
+rm dev/sphinx/source/license.rst
+rm dev/sphinx/source/readme.md
+rm dev/sphinx/source/security.md
+
+cp CHANGELOG.md dev/sphinx/source/changelog.md
+cp CODE_OF_CONDUCT.md dev/sphinx/source/code_of_conduct.md
+cp CONTRIBUTING.md dev/sphinx/source/contributing.md
+cp LICENSE dev/sphinx/source/license.rst
+cp README.md dev/sphinx/source/readme.md
+cp SECURITY.md dev/sphinx/source/security.md
+
+mkdir -vp dev/sphinx/build
+
+cd dev/sphinx
+rm build/html
+ln -s ../../../docs build/html
+make html -d
+echo "Creating CNAME file for GitHub."
+echo "unicorn-binance-local-depth-cache.docs.lucit.tech" >> build/html/CNAME

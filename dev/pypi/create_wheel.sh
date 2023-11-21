@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
-#
-# File: unicorn_binance_local_depth_cache/exceptions.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
@@ -18,8 +16,27 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-class DepthCacheOutOfSync(Exception):
-    """
-    Exception if a DepthCache is out of sync
-    """
-    pass
+security-check() {
+    echo -n "Did you change the version in \`CHANGELOG.md\` and used \`dev/set_version.py\`? [yes|NO] "
+    local SURE
+    read SURE
+    if [ "$SURE" != "yes" ]; then
+        exit 1
+    fi
+    echo "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_wheels.yml"
+    echo "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_conda.yml"
+}
+
+compile-check() {
+    echo -n "Compile local? [yes|NO] "
+    local SURE
+    read SURE
+    if [ "$SURE" != "yes" ]; then
+        exit 1
+    fi
+    echo "ok, lets go ..."
+    python3 setup.py bdist_wheel sdist
+}
+
+security-check
+compile-check
