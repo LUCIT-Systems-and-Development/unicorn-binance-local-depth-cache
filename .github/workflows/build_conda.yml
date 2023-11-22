@@ -17,6 +17,8 @@ jobs:
         exclude:
           - os: windows-2019
             python-version: "3.12"
+          - os: macos-11
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - name: Conda environment creation and activation
