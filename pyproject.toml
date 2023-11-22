@@ -27,6 +27,7 @@ python = ">=3.7.0"
 Cython = "*"
 lucit-licensing-python = ">=1.8.1"
 requests = "*"
+unicorn-fy = ">=0.13.1"
 unicorn-binance-rest-api = ">=2.1.2"
 unicorn-binance-websocket-api = ">=2.1.1"
 
