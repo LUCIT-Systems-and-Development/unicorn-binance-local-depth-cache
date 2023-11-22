@@ -123,8 +123,6 @@ body:
         - binance.com-margin
         - binance.com-margin-testnet
         - binance.com-testnet
-        - binance.org
-        - binance.org-testnet 
         - binance.us
         - trbinance.com
     validations:

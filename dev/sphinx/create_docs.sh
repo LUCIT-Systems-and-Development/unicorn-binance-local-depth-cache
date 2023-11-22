@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 #
-# File: sphinx/create_docs.sh
+# File: dev/sphinx/create_docs.sh
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
