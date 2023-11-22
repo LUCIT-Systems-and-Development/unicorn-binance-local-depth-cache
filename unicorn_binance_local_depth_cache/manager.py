@@ -34,7 +34,7 @@ import time
 import threading
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "1.0.0"
+__version__: str = "1.0.0.dev"
 
 logger = logging.getLogger("unicorn_binance_local_depth_cache")
 
@@ -181,8 +181,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.threading_lock_ask = {}
         self.threading_lock_bid = {}
         if warn_on_update and self.is_update_available():
-            update_msg = f"Release {self.name}_" + self.get_latest_version() + " is available, " \
-                         f"please consider updating! (Changelog: https://unicorn-binance-local-depth-cache.docs.lucit.tech/CHANGELOG.html)"
+            update_msg = (f"Release {self.name}_{self.get_latest_version()} is available, please consider updating! "
+                          f"(Changelog: https://unicorn-binance-local-depth-cache.docs.lucit.tech/CHANGELOG.html)")
             print(update_msg)
             logger.warning(update_msg)
         self.thread_stream_signals = threading.Thread(target=self._process_stream_signals)

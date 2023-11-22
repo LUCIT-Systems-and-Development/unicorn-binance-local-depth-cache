@@ -43,7 +43,9 @@ Part of '[UNICORN Binance Suite](https://www.lucit.tech/unicorn-binance-suite.ht
 
 To run modules of the *UNICORN Binance Suite* you need a [valid license](https://medium.lucit.tech/how-to-obtain-and-use-a-unicorn-binance-suite-license-key-and-run-the-ubs-module-according-to-best-87b0088124a8#4ca4)!
 
-## [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
+## Using a DepthCache
+
+### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
 ```
 import unicorn_binance_local_depth_cache
 
@@ -51,13 +53,13 @@ ubldc = unicorn_binance_local_depth_cache.BinanceLocalDepthCacheManager(exchange
 ubldc.create_depth_cache("BTCUSDT")
 ```
 
-## Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids) depth with:
+### Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids) depth with:
 ```
 asks = ubldc.get_asks("BTCUSDT")
 bids = ubldc.get_bids("BTCUSDT")
 ```
 
-## Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data:
+### Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data:
 ```
 try:
     print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
@@ -66,12 +68,12 @@ except DepthCacheOutOfSync as error_msg:
     print(f"ERROR: {error_msg}")
 ```
 
-## [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
+### [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
 ```
 ubldc.stop_depth_cache("BTCUSDT")
 ```
 
-### [Stop the full instance](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_manager_with_all_depth_caches#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches):
+## Stop `ubldc` after usage to avoid memory leaks
 ```
 ubldc.stop_manager()
 ```
