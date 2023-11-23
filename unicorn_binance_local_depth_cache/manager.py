@@ -26,6 +26,7 @@ from unicorn_binance_rest_api.manager import BinanceRestApiManager
 from unicorn_binance_rest_api.exceptions import BinanceAPIException
 from unicorn_binance_websocket_api.manager import BinanceWebSocketApiManager
 from typing import Optional, Union
+import cython
 import copy
 import logging
 import platform
@@ -119,7 +120,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         super().__init__()
         self.name = __app_name__
         self.version = __version__
-        logger.info(f"New instance of {self.get_user_agent()} on "
+        logger.info(f"New instance of {self.get_user_agent()}-{'compiled' if cython.compiled else 'source'} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
         self.depth_caches = {}
@@ -152,6 +153,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         try:
             self.ubra = ubra_manager or BinanceRestApiManager(exchange=self.exchange,
                                                               disable_colorama=disable_colorama,
+                                                              warn_on_update=warn_on_update,
                                                               lucit_api_secret=self.lucit_api_secret,
                                                               lucit_license_ini=self.lucit_license_ini,
                                                               lucit_license_profile=self.lucit_license_profile,
@@ -173,6 +175,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                                enable_stream_signal_buffer=True,
                                                                disable_colorama=True,
                                                                high_performance=True,
+                                                               warn_on_update = warn_on_update,
                                                                lucit_api_secret=self.lucit_api_secret,
                                                                lucit_license_ini=self.lucit_license_ini,
                                                                lucit_license_profile=self.lucit_license_profile,
@@ -182,7 +185,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.threading_lock_bid = {}
         if warn_on_update and self.is_update_available():
             update_msg = (f"Release {self.name}_{self.get_latest_version()} is available, please consider updating! "
-                          f"(Changelog: https://unicorn-binance-local-depth-cache.docs.lucit.tech/CHANGELOG.html)")
+                          f"(Changelog: https://unicorn-binance-local-depth-cache.docs.lucit.tech/changelog.html)")
             print(update_msg)
             logger.warning(update_msg)
         self.thread_stream_signals = threading.Thread(target=self._process_stream_signals)

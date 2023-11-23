@@ -30,8 +30,8 @@
 [Contributing](#contributing) | [Leave a review](#you-want-to-say-thank-you) |[Disclaimer](#disclaimer) | 
 [Commercial Support](#commercial-support)
 
-A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, flexible, 
-robust and fully-featured way.
+A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, 
+flexible, robust and fully-featured way.
 
 The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 
 full stack of the UBS modules (REST, WebSocket and DepthCache) can be downloaded and installed by PyPi and Anaconda 
@@ -256,7 +256,8 @@ the repository on [GitHub](https://github.com/LUCIT-Systems-and-Development/unic
 with using 
 [`is_update_available()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_update_available#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available).
 
-Follow us on [Twitter](https://twitter.com/LUCIT_SysDev) or on [Facebook](https://www.facebook.com/lucit.systems.and.development) for general news about the [unicorn-binance-suite](https://www.lucit.tech/unicorn-binance-suite.html)!
+Follow us on [LinkedIn](https://www.linkedin.com/company/lucit-systems-and-development), 
+[X](https://twitter.com/LUCIT_SysDev) or [Facebook](https://www.facebook.com/lucit.systems.and.development)!
 
 To receive news (like inspection windows/maintenance) about the Binance API`s subscribe to their telegram groups: 
 
@@ -265,7 +266,6 @@ To receive news (like inspection windows/maintenance) about the Binance API`s su
 - [https://t.me/Binance_JEX_EN](https://t.me/Binance_JEX_EN)
 - [https://t.me/Binance_USA](https://t.me/Binance_USA)
 - [https://t.me/TRBinanceTR](https://t.me/TRBinanceTR)
-- [https://t.me/BinanceDEXchange](https://t.me/BinanceDEXchange)
 - [https://t.me/BinanceExchange](https://t.me/BinanceExchange)
 
 ## How to report Bugs or suggest Improvements?
