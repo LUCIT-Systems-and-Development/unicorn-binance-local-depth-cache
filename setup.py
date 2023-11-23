@@ -48,6 +48,7 @@ setup(
          'Wiki': 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki',
          'Author': 'https://www.lucit.tech',
          'Changes': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech/changelog.html',
+         'License': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech/license.html',
          'Issue Tracker': 'https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues',
          'Chat': 'https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache',
          'Telegram': 'https://t.me/unicorndevs',
