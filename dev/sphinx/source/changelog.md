@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Integration of the `lucit-licensing-python` library for verifying the UNICORN Binance Suite license. A license can be 
   purchased in the LUCIT Online Shop: https://shop.lucit.services/software/unicorn-binance-suite
 - License change from MIT to LSOSL - LUCIT Synergetic Open Source License:
-  https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api/blob/master/LICENSE
+  https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/LICENSE
 - Conversion to a C++ compiled Cython package with precompiled as well as PyPy and source code wheels.
 - Setup of a "Trusted Publisher" deployment chain. The source code is transparently packaged into wheels directly from
   the GitHub repository by a GitHub action for all possible platforms and published directly as a new release on GitHub
