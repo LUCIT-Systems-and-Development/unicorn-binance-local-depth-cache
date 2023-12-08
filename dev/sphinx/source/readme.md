@@ -32,8 +32,8 @@
 [Contributing](#contributing) |[Disclaimer](#disclaimer) | 
 [Commercial Support](#commercial-support)
 
-A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in a easy, fast, 
-flexible, robust and fully-featured way.
+A local Binance DepthCache Manager for Python by [LUCIT](https://www.lucit.tech) that supports multiple depth caches in one instance in a 
+easy, fast, flexible, robust and fully-featured way.
 
 The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 
 full stack of the UBS modules (REST, WebSocket and DepthCache) can be downloaded and installed by PyPi and Anaconda 
