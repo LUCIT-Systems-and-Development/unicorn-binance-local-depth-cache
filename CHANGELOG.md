@@ -9,12 +9,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
-## 1.0.0.dev (development stage/unreleased/unstable)
+## 2.0.0.dev (development stage/unreleased/unstable)
+
+## 2.0.0
+The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one stream up 
+to the max subscription limit of the endpoint and use the new UBWA interface `get_stream_data_from_asyncio_queue()`. And 
+we avoid bans by complying with Binance weight costs.
 ### Added
 - Since UBLDC is delivered as a compiled C extension, IDEs such as Pycharm and Visual Code cannot use information about 
   available methods, parameters and their types for autocomplete and other intellisense functions. As a solution, from 
   now on stub files (PYI) will be created in the build process and attached to the packages. The IDEs can automatically 
   obtain the required information from these.
+### Changed
+- The parameter `ubwa_manager` was removed from `BinanceLocalDepthCacheManager()`, because UBLDC has to claim the 
+  callback function of the `stream_signals` for itself and has to initialize the instance itself. It is possible to 
+  request the active `BinanceWebSocketApiManager()` instance with the new method `ubldc.get_ubwa_manager()`. 
+  `ubwa.create_stream()` can be used normally, only the `stream_signals` are only accessible for UBLDC.
+### Fixed
+- Ip ban when using `create_depth_cache` with many symbols [issue#30](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/30)
 
 ## 1.0.0
 ### Added
@@ -58,7 +70,7 @@ Codebase equal to 0.7.0, just preparing conda-forge packaging
 `websocket_close_timeout`, `websocket_close_timeout`, `websocket_ping_interval`
 ### Changed
 - `default_websocket_close_timeout`, `default_websocket_ping_interval`, `default_websocket_ping_timeout` default values is 1,
-so websockets disconnect very fast and we recognize "out of sync" very fast.
+so websockets disconnect very fast, and we recognize "out of sync" very fast.
 
 ## 0.5.3
 ### Changed

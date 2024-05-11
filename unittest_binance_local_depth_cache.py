@@ -510,11 +510,8 @@ class TestUbldc(unittest.TestCase):
                             [0.0021758, 0.22], [0.0021759, 5.86], [0.002176, 1.06], [0.0021761, 0.09], [0.0021762, 1.2],
                             [0.0021763, 2.35]]
 
-    def test_add_depth_cache_missing_stream_id(self):
-        self.assertFalse(self.ubldc._add_depth_cache(market="BTCUSDT"))
-
     def test_add_depth_cache_missing_market(self):
-        self.assertFalse(self.ubldc._add_depth_cache(stream_id="AAAAAAAAAAAAAAAAA"))
+        self.assertFalse(self.ubldc._add_depth_cache())
 
     def test_div(self):
         self.ubldc.get_latest_release_info()
@@ -547,8 +544,6 @@ class TestUbldc(unittest.TestCase):
 
     def test_set_refresh_request(self):
         self.assertTrue(self.ubldc.set_refresh_request("BTCUSDT"))
-        for stream_id in self.ubldc.ubwa.get_stream_list():
-            self.ubldc.ubwa.set_restart_request(stream_id)
         time.sleep(10)
 
     def test_stop_depth_cache_true(self):
@@ -585,8 +580,8 @@ class TestUbldc(unittest.TestCase):
             pass
 
     def test_stop_manager(self):
-        self.ubldc.stop_manager_with_all_depth_caches()
-        self.ubldc_futures.stop_manager_with_all_depth_caches()
+        self.ubldc.stop_manager()
+        self.ubldc_futures.stop_manager()
 
 
 if __name__ == '__main__':

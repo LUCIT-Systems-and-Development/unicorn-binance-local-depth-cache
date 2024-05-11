@@ -27,7 +27,6 @@ from unicorn_binance_websocket_api.manager import BinanceWebSocketApiManager
 from operator import itemgetter
 from typing import Optional, Union
 import cython
-import copy
 import logging
 import platform
 import requests
@@ -55,10 +54,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :type exchange: str
     :param default_refresh_interval: The default refresh interval in seconds, default is None.
     :type default_refresh_interval: int
-    :param default_update_interval: Update speed of the depth webstream in milliseconds. More info:
-                                    https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
-                                    This can be overwritten with `update_interval` of `create_depth_cache()`.
-    :type default_update_interval: int
+    :param update_interval: Update speed of the depth stream in milliseconds. More info:
+                            https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
+    :type update_interval: int
     :param websocket_close_timeout: The `close_timeout` parameter defines a maximum wait time in seconds for
                                     completing the closing handshake and terminating the TCP connection.
                                     This parameter is passed through to the `websockets.client.connect()
@@ -96,17 +94,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :type lucit_license_token:  str
     :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance
     :type ubra_manager: BinanceRestApiManager
-    :param ubwa_manager: Provide a shared unicorn_binance_websocket_api.manager instance. Use
-                         `enable_stream_signal_buffer=True <https://unicorn-binance-websocket-api.docs.lucit.tech/unicorn_binance_websocket_api.html?highlight=enable_stream_signal_buffer%20true#module-unicorn_binance_websocket_api.manager>`_
-                         otherwise the depth_cache will not work as it should!
-    :type ubwa_manager: BinanceWebSocketApiManager
     :param print_stream_signals: Show `stream_signals` received from UBWA.
     :type print_stream_signals:  bool
     """
 
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: int = None,
-                 default_update_interval: int = None,
+                 update_interval: int = None,
                  websocket_close_timeout: int = 2,
                  websocket_ping_interval: int = 5,
                  websocket_ping_timeout: int = 10,
@@ -117,7 +111,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  lucit_license_token: str = None,
                  warn_on_update: bool = True,
                  ubra_manager: BinanceRestApiManager = None,
-                 ubwa_manager: BinanceWebSocketApiManager = None,
                  print_stream_signals: bool = False):
         super().__init__()
         self.name = __app_name__
@@ -126,7 +119,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
         self.depth_caches = {}
-        self.default_update_interval = default_update_interval
+        self.update_interval = update_interval
         self.default_refresh_interval = default_refresh_interval
         self.websocket_close_timeout = websocket_close_timeout
         self.websocket_ping_interval = websocket_ping_interval
@@ -134,7 +127,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.print_stream_signals = print_stream_signals
         self.disable_colorama = disable_colorama
         self.last_update_check_github = {'timestamp': time.time(), 'status': {'tag_name': ""}}
-
         self.lucit_api_secret = lucit_api_secret
         self.lucit_license_ini = lucit_license_ini
         self.lucit_license_profile = lucit_license_profile
@@ -167,24 +159,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise ConnectionRefusedError(error_msg)
         else:
             self.ubra = ubra_manager
-
-        if ubwa_manager is None:
-            self.ubwa = BinanceWebSocketApiManager(exchange=self.exchange,
-                                                   enable_stream_signal_buffer=True,
-                                                   disable_colorama=disable_colorama,
-                                                   process_stream_signals=self._process_stream_signals,
-                                                   output_default="dict",
-                                                   process_asyncio_queue=self._manage_depth_cache_async,
-                                                   close_timeout_default=self.websocket_close_timeout,
-                                                   ping_timeout_default=self.websocket_ping_interval,
-                                                   ping_interval_default=self.websocket_ping_timeout,
-                                                   warn_on_update=warn_on_update,
-                                                   lucit_api_secret=self.lucit_api_secret,
-                                                   lucit_license_ini=self.lucit_license_ini,
-                                                   lucit_license_profile=self.lucit_license_profile,
-                                                   lucit_license_token=self.lucit_license_token)
-        else:
-            self.ubwa = ubwa_manager
+        self.ubwa = BinanceWebSocketApiManager(exchange=self.exchange,
+                                               enable_stream_signal_buffer=True,
+                                               disable_colorama=disable_colorama,
+                                               process_stream_signals=self._process_stream_signals,
+                                               close_timeout_default=self.websocket_close_timeout,
+                                               ping_timeout_default=self.websocket_ping_interval,
+                                               ping_interval_default=self.websocket_ping_timeout,
+                                               warn_on_update=warn_on_update,
+                                               lucit_api_secret=self.lucit_api_secret,
+                                               lucit_license_ini=self.lucit_license_ini,
+                                               lucit_license_profile=self.lucit_license_profile,
+                                               lucit_license_token=self.lucit_license_token)
         self.stop_request = False
         self.stream_id = None
         self.threading_lock_ask = {}
@@ -207,16 +193,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
     def _add_depth_cache(self,
                          market: str = None,
-                         update_interval: int = None,
                          refresh_interval: int = None) -> bool:
         """
         Add a depth_cache to the depth_caches stack.
 
         :param market: Specify the market for the used depth_cache
         :type market: str
-        :param update_interval: Update speed of the depth webstream in milliseconds. More info:
-                                https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
-        :type update_interval: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
                                  `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
@@ -231,7 +213,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          'last_refresh_time': None,
                                          'last_update_id': None,
                                          'market': market,
-                                         'update_interval': update_interval or self.default_update_interval,
                                          'refresh_interval': refresh_interval or self.default_refresh_interval,
                                          'refresh_request': True,
                                          'stop_request': False,
@@ -582,37 +563,33 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         return new_items
 
     def _subscribe_depth(self,
-                         markets: Optional[Union[str, list]] = None,
-                         update_interval: Optional[int] = None) -> bool:
+                         markets: Optional[Union[str, list]] = None) -> bool:
         if markets is None:
             return False
         if isinstance(markets, str):
             markets = [markets, ]
-        update_interval = update_interval or self.default_update_interval
-        if update_interval is None:
+        if self.update_interval is None:
             channel = f"depth"
         else:
-            channel = f"depth@{update_interval}ms"
+            channel = f"depth@{self.update_interval}ms"
 
         if self.get_stream_id() is None:
-            self.stream_id = self.ubwa.create_stream(channels=channel, markets=markets, stream_label=f"ubldc_depth")
+            self.stream_id = self.ubwa.create_stream(channels=channel,
+                                                     markets=markets,
+                                                     stream_label=f"ubldc_depth",
+                                                     output="dict",
+                                                     process_asyncio_queue=self._manage_depth_cache_async)
         else:
-            payload = self.ubwa.create_payload(stream_id=self.stream_id, method="subscribe",
-                                               channels=channel, markets=markets)
-            self.ubwa.send_with_stream(stream_id=self.stream_id, payload=payload)
+            self.ubwa.subscribe_to_stream(stream_id=self.stream_id, markets=markets)
 
     def create_depth_cache(self,
                            markets: Optional[Union[str, list]] = None,
-                           update_interval: Optional[int] = None,
                            refresh_interval: int = None) -> bool:
         """
         Create one or more depth_cache!
 
         :param markets: Specify the market symbols for caches to be created
         :type markets: str or list
-        :param update_interval: Update speed of the depth webstream in milliseconds. More info:
-                                https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
-        :type update_interval: int
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
                                  `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
         :type refresh_interval: int
@@ -624,10 +601,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
         if type(markets) is list:
             for market in markets:
-                self._add_depth_cache(market=market, update_interval=update_interval, refresh_interval=refresh_interval)
+                self._add_depth_cache(market=market, refresh_interval=refresh_interval)
         else:
-            self._add_depth_cache(market=markets, update_interval=update_interval, refresh_interval=refresh_interval)
-        self._subscribe_depth(markets=markets, update_interval=update_interval)
+            self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
+        self._subscribe_depth(markets=markets)
         return True
 
     def get_asks(self, market: str = None) -> list:
@@ -725,6 +702,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         for depth_cache in self.depth_caches:
             depth_cache_list.append(depth_cache)
         return depth_cache_list
+
+    def get_ubwa_manager(self):
+        """
+        Get the used BinanceWebSocketApiManager() instance of BinanceLocalDepthCacheManager()
+
+        :return: BinanceWebSocketApiManager
+        """
+        return self.ubwa
 
     def get_user_agent(self):
         """
@@ -858,12 +843,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             market = market.lower()
             logger.info(f"BinanceLocalDepthCacheManager.stop_depth_cache() - Setting stop_request for "
                         f"depth_cache {market}, stop its stream and clear the stream_buffer")
-            stream_id = copy.deepcopy(self.depth_caches[market]['stream_id'])
             self.depth_caches[market]['stop_request'] = True
             # Todo: unsubscribe from multiplex stream
-            # self.ubwa.stop_stream(stream_id=stream_id)
+
             time.sleep(10)
-            # self.ubwa.clear_stream_buffer(stream_buffer_name=stream_id)
         return True
 
     def stop_manager(self, close_api_session: bool = True) -> bool:
