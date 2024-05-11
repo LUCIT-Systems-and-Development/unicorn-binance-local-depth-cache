@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
 ## 1.0.0.dev (development stage/unreleased/unstable)
+### Added
+- Since UBLDC is delivered as a compiled C extension, IDEs such as Pycharm and Visual Code cannot use information about 
+  available methods, parameters and their types for autocomplete and other intellisense functions. As a solution, from 
+  now on stub files (PYI) will be created in the build process and attached to the packages. The IDEs can automatically 
+  obtain the required information from these.
 
 ## 1.0.0
 ### Added

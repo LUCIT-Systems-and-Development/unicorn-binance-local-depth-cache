@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# File: example_depth_cache.py
+# File: test_plain.py
 #
 # Part of ‘UNICORN Binance Local Depth Cache’
 # Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
@@ -20,9 +20,10 @@
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 from lucit_licensing_python.exceptions import NoValidatedLucitLicense
+import asyncio
 import logging
 import os
-import time
+import sys
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -30,22 +31,19 @@ logging.basicConfig(level=logging.DEBUG,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'BTCUSDT'
+
+async def worker(ubldc):
+    market = 'BTCUSDT'
+    ubldc.create_depth_cache(markets=market)
+    while ubldc.is_stop_request() is False:
+        await asyncio.sleep(1)
 
 try:
-    with BinanceLocalDepthCacheManager(exchange="binance.com") as ubldc:
-        ubldc.create_depth_cache(markets=market)
-        while True:
-            time.sleep(0.2)
-            print(f"is_synchronized: {ubldc.is_depth_cache_synchronized(market)}")
-            try:
-                print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
-                print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
-            except DepthCacheOutOfSync as error_msg:
-                print(f"Please wait ... ")
-                time.sleep(1)
+    with BinanceLocalDepthCacheManager(exchange="binance.com") as ubldc_manager:
+        try:
+            asyncio.run(worker(ubldc_manager))
+        except KeyboardInterrupt:
+            print("\r\nGracefully stopping ...")
 except NoValidatedLucitLicense as error_msg:
     print(f"ERROR: {error_msg}")
-except KeyboardInterrupt:
-    print("Gracefully stopping ...")
-
+    sys.exit(1)

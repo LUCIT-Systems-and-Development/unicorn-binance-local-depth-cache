@@ -32,8 +32,8 @@ unicorn-binance-websocket-api = ">=2.1.1"
 [tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["setuptools", "wheel", "Cython", "pip"]
+requires = ["setuptools", "wheel", "Cython", "pip", "mypy"]
 build-backend = "setuptools.build_meta"
 
 [tool.poetry.package_data]
-unicorn_binance_websocket_api = ["*.so", "*.dll"]
+unicorn_binance_websocket_api = ["*.so", "*.dll", "*.py", "*.pyd", "*.pyi"]

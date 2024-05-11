@@ -18,19 +18,44 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-from setuptools import setup
 from Cython.Build import cythonize
+from setuptools import setup, find_packages, Extension
+import os
+import shutil
+import subprocess
+
+name = "unicorn-binance-local-depth-cache"
+source_dir = "unicorn_binance_local_depth_cache"
+
+stubs_dir = "stubs"
+extensions = [
+    Extension("*", [f"{source_dir}/*.py"]),
+]
+
+# Setup
+print("Generating stub files ...")
+os.makedirs(stubs_dir, exist_ok=True)
+for filename in os.listdir(source_dir):
+    if filename.endswith('.py'):
+        source_path = os.path.join(source_dir, filename)
+        subprocess.run(['stubgen', '-o', stubs_dir, source_path], check=True)
+for stub_file in os.listdir(os.path.join(stubs_dir, source_dir)):
+    if stub_file.endswith('.pyi'):
+        source_stub_path = os.path.join(stubs_dir, source_dir, stub_file)
+        if os.path.exists(os.path.join(source_dir, stub_file)):
+            print(f"Skipped moving {source_stub_path} because {os.path.join(source_dir, stub_file)} already exists!")
+        else:
+            shutil.move(source_stub_path, source_dir)
+            print(f"Moved {source_stub_path} to {source_dir}!")
+shutil.rmtree(os.path.join(stubs_dir))
+print("Stub files generated and moved successfully.")
 
 with open("README.md", "r") as fh:
+    print("Using README.md content as `long_description` ...")
     long_description = fh.read()
 
 setup(
-     ext_modules=cythonize(
-        ['unicorn_binance_local_depth_cache/__init__.py',
-         'unicorn_binance_local_depth_cache/exceptions.py',
-         'unicorn_binance_local_depth_cache/manager.py'],
-        annotate=False),
-     name='unicorn-binance-local-depth-cache',
+     name=name,
      version="1.0.0",
      author="LUCIT Systems and Development",
      author_email='info@lucit.tech',
@@ -55,9 +80,11 @@ setup(
          'Get Support': 'https://www.lucit.tech/get-support.html',
          'LUCIT Online Shop': 'https://shop.lucit.services/software',
      },
+     packages=find_packages(exclude=[f"dev/{source_dir}"], include=[source_dir]),
+     ext_modules=cythonize(extensions, compiler_directives={'language_level': "3"}),
      python_requires='>=3.7.0',
-     package_data={'': ['unicorn_binance_local_depth_cache/*.so',
-                        'unicorn_binance_local_depth_cache/*.dll']},
+     package_data={'': ['*.so', '*.dll', '*.py', '*.pyd', '*.pyi']},
+     include_package_data=True,
      classifiers=[
          "Development Status :: 5 - Production/Stable",
          "Programming Language :: Python :: 3.7",

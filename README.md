@@ -53,9 +53,9 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 
 ### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
 ```
-import unicorn_binance_local_depth_cache
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 
-ubldc = unicorn_binance_local_depth_cache.BinanceLocalDepthCacheManager(exchange="binance.com")
+ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
 ubldc.create_depth_cache("BTCUSDT")
 ```
 
@@ -80,6 +80,16 @@ ubldc.stop_depth_cache("BTCUSDT")
 ```
 
 ## Stop `ubldc` after usage to avoid memory leaks
+
+When you instantiate UBLDC with `with`, `ubldc.stop_manager()` is automatically executed upon exiting the `with`-block.
+
+```
+with BinanceWebSocketApiManager() as ubldc:
+    ubldc.create_depth_cache("BTCUSDT")
+```
+
+Without `with`, you must explicitly execute `ubldc.stop_manager()` yourself.
+
 ```
 ubldc.stop_manager()
 ```
@@ -156,6 +166,17 @@ Anaconda packages are available from Python version 3.8 and higher.
 The current dependencies are listed [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt).
 
 If you run into errors during the installation take a look [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-suite/wiki/Installation).
+
+### Packages are created automatically with GitHub Actions
+When a new release is to be created, we start two GitHubActions: 
+
+- [Build and Publish Anaconda](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_conda.yml)
+- [Build and Publish GH+PyPi](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/actions/workflows/build_wheels.yml) 
+
+Both start virtual Windows/Linux/Mac servers provided by GitHub in the cloud with preconfigured environments and 
+create the respective compilations and stub files, pack them into wheels and conda packages and then publish them on 
+GitHub, PYPI and Anaconda. This is a transparent method that makes it possible to trace the source code behind a 
+compilation.
 
 ### A Cython binary, PyPy or source code based CPython wheel of the latest version with `pip` from [PyPI](https://pypi.org/project/unicorn-binance-rest-api/)
 Our [Cython](https://cython.org/) and [PyPy](https://www.pypy.org/) Wheels are available on [PyPI](https://pypi.org/), 
