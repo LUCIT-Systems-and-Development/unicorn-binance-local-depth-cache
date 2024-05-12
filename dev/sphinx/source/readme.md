@@ -32,7 +32,7 @@
 [Contributing](#contributing) |[Disclaimer](#disclaimer) | 
 [Commercial Support](#commercial-support)
 
-A Python SDK from [LUCIT](https://www.lucit.tech) to manage and access multiple local Binance DepthCache's with Python 
+A Python SDK from [LUCIT](https://www.lucit.tech) to access and manage multiple local Binance DepthCaches with Python 
 in a simple, fast, flexible, robust and fully-featured way. 
 
 The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 

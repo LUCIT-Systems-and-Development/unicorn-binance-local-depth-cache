@@ -40,7 +40,7 @@ logger = __logger__
 
 class BinanceLocalDepthCacheManager(threading.Thread):
     """
-    A Python SDK from LUCIT to manage and access multiple local Binance DepthCache's with Python in a simple, fast,
+    A Python SDK from LUCIT  to access and manage multiple local Binance DepthCaches with Python in a simple, fast,
     flexible, robust and fully-featured way.
 
     Binance API documentation:

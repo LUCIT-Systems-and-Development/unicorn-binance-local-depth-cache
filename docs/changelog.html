@@ -259,9 +259,9 @@
 </section>
 <section id="id1">
 <h2>2.0.0<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p>The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one stream up
-to the max subscription limit of the endpoint and use the new UBWA interface <code class="docutils literal notranslate"><span class="pre">get_stream_data_from_asyncio_queue()</span></code>. And
-we avoid bans by complying with Binance weight costs.</p>
+<p>Scaling. The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one
+stream up to the max subscription limit of the endpoint and use the new UBWA interface
+<code class="docutils literal notranslate"><span class="pre">get_stream_data_from_asyncio_queue()</span></code>. And we avoid bans by complying with Binance weight costs on init.</p>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -278,12 +278,15 @@ obtain the required information from these.</p></li>
 callback function of the <code class="docutils literal notranslate"><span class="pre">stream_signals</span></code> for itself and has to initialize the instance itself. It is possible to
 request the active <code class="docutils literal notranslate"><span class="pre">BinanceWebSocketApiManager()</span></code> instance with the new method <code class="docutils literal notranslate"><span class="pre">ubldc.get_ubwa_manager()</span></code>.
 <code class="docutils literal notranslate"><span class="pre">ubwa.create_stream()</span></code> can be used normally, only the <code class="docutils literal notranslate"><span class="pre">stream_signals</span></code> are only accessible for UBLDC.</p></li>
+<li><p>Updated description text in all files.</p></li>
 </ul>
 </section>
 <section id="fixed">
 <h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Ip ban when using <code class="docutils literal notranslate"><span class="pre">create_depth_cache</span></code> with many symbols <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/30">issue#30</a></p></li>
+<li><p>Import in <code class="docutils literal notranslate"><span class="pre">licensing_manager.py</span></code>.</p></li>
+<li><p>Type of global <code class="docutils literal notranslate"><span class="pre">logger</span></code> variable.</p></li>
 </ul>
 </section>
 </section>
@@ -709,7 +712,7 @@ so websockets disconnect very fast, and we recognize “out of sync” very fast
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on May 12 2024 at 11:28 (CET).
+    Last updated on May 12 2024 at 12:23 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
