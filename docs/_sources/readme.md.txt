@@ -20,7 +20,6 @@
 [![Telegram](https://img.shields.io/badge/community-telegram-41ab8c)](https://t.me/unicorndevs)
 [![Gitter](https://img.shields.io/badge/community-gitter-41ab8c)](https://gitter.im/unicorn-binance-suite/unicorn-binance-local-depth-cache?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Get Free Professional Support](https://img.shields.io/badge/chat-lucit%20support-004166)](https://www.lucit.tech/get-support.html)
-[![ChatGPT UNICORN Binance Suite Assistant](https://img.shields.io/badge/chatgpt-%20ubs%20assistant-DA70D6)](https://chat.openai.com/g/g-VjCOjRhCJ-unicorn-binance-suite-assistant)
 
 [![LUCIT-UBLDC-Banner](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/master/images/logo/LUCIT-UBLDC-Banner-Readme.png)](https://www.lucit.tech/unicorn-binance-local-depth-cache.html)
 
@@ -41,9 +40,7 @@ as a Python C extension for maximum performance.
 
 Part of '[UNICORN Binance Suite](https://www.lucit.tech/unicorn-binance-suite.html)'.
 
-Get help with the integration of the `UNICORN Binance Suite` modules from the 
-[`UNICORN Binance Suite Assistant` GPT](https://chat.openai.com/g/g-VjCOjRhCJ-unicorn-binance-suite-assistant) or 
-[a real human LUCIT employee](https://www.lucit.tech/get-support.html).
+[Get help](https://www.lucit.tech/get-support.html) with the integration of the `UNICORN Binance Suite` modules!
 
 ## Get a UNICORN Binance Suite License
 
@@ -253,12 +250,7 @@ or the [current master branch](https://github.com/LUCIT-Systems-and-Development/
 - [Modules](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/modules.html)
 
 ## Examples
-- [example_depth_cache.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_depth_cache.py)
-- [example_log_to_console.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_log_to_console.py)
-- [example_refresh_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_refresh_interval.py)
-- [example_shared_ubwa_instance.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_shared_ubwa_instance.py)
-- [example_update_interval.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_update_interval.py)
-- [example_version_of_this_package.py](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py)
+- [Look here!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tree/master/examples/)
 
 ## Howto
 - [How to Obtain and Use a Unicorn Binance Suite License Key and Run the UBS Module According to Best Practice](https://medium.lucit.tech/how-to-obtain-and-use-a-unicorn-binance-suite-license-key-and-run-the-ubs-module-according-to-best-87b0088124a8)
