@@ -20,6 +20,8 @@ stream up to the max subscription limit of the endpoint and use the new UBWA int
   available methods, parameters and their types for autocomplete and other intellisense functions. As a solution, from 
   now on stub files (PYI) will be created in the build process and attached to the packages. The IDEs can automatically 
   obtain the required information from these.
+- `ubldc.get_ubwa_manager()` returns the UBWA instance of UBLDC
+- `ubldc.get_ubra_manager()` returns the UBRA instance of UBLDC
 ### Changed
 - The parameter `ubwa_manager` was removed from `BinanceLocalDepthCacheManager()`, because UBLDC has to claim the 
   callback function of the `stream_signals` for itself and has to initialize the instance itself. It is possible to 

@@ -560,8 +560,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
         return new_items
 
-    def _subscribe_depth(self,
-                         markets: Optional[Union[str, list]] = None) -> bool:
+    def _subscribe_depth(self, markets: Optional[Union[str, list]] = None) -> bool:
         if markets is None:
             return False
         if isinstance(markets, str):
@@ -701,6 +700,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             depth_cache_list.append(depth_cache)
         return depth_cache_list
 
+    def get_ubra_manager(self):
+        """
+        Get the used BinanceRestApiManager() instance of BinanceLocalDepthCacheManager()
+
+        :return: BinanceRestApiManager
+        """
+        return self.ubra
+
     def get_ubwa_manager(self):
         """
         Get the used BinanceWebSocketApiManager() instance of BinanceLocalDepthCacheManager()
@@ -795,14 +802,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         logger.debug(f"BinanceLocalDepthCacheManager.get_version() - Returning the version")
         return self.version
 
-    def print_summary(self, add_string=None):
+    def print_summary(self, add_string=None, title=None):
         """
         Print an overview of all streams
 
         :param add_string: text to add to the output
         :type add_string: str
+        :param title: title of the output
+        :type title: str
         """
-        self.ubwa.print_summary(add_string=add_string, title=self.get_user_agent())
+        if title is None:
+            title = self.get_user_agent()
+        self.ubwa.print_summary(add_string=add_string, title=title)
 
     def set_refresh_request(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
@@ -842,9 +853,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             logger.info(f"BinanceLocalDepthCacheManager.stop_depth_cache() - Setting stop_request for "
                         f"depth_cache {market}, stop its stream and clear the stream_buffer")
             self.depth_caches[market]['stop_request'] = True
-            # Todo: unsubscribe from multiplex stream
-
-            time.sleep(10)
+            self.ubwa.unsubscribe_from_stream(stream_id=self.get_stream_id(), markets=market)
         return True
 
     def stop_manager(self, close_api_session: bool = True) -> bool:
@@ -860,12 +869,3 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if close_api_session is True:
             self.llm.close()
         return True
-
-    def stop_manager_with_all_depth_caches(self) -> bool:
-        """
-        Alias of `stop_manager()`.
-
-        :return: bool
-        """
-        logger.debug(f"BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches() - Stop initiated!")
-        return self.stop_manager()

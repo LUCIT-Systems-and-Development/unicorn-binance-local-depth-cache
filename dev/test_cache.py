@@ -1,27 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-# File: test_cache.py
-#
-# Part of ‘UNICORN Binance Local Depth Cache’
-# Project website: https://www.lucit.tech/unicorn-binance-local-depth-cache.html
-# Github: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
-# Documentation: https://unicorn-binance-local-depth-cache.docs.lucit.tech
-# PyPI: https://pypi.org/project/unicorn-binance-local-depth-cache
-# LUCIT Online Shop: https://shop.lucit.services/software
-#
-# License: LSOSL - LUCIT Synergetic Open Source License
-# https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/LICENSE
-#
-# Author: LUCIT Systems and Development
-#
-# Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
-# All rights reserved.
+# ¯\_(ツ)_/¯
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_rest_api import BinanceRestApiManager
+import asyncio
 import logging
 import os
 import time
+
+exchange = "binance.com-futures"
+update_interval_ms = 100
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -29,21 +18,49 @@ logging.basicConfig(level=logging.DEBUG,
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
-market = 'BTCUSDT'
-exchange = "binance.com-futures"
 
-ubldc = BinanceLocalDepthCacheManager(exchange=exchange, update_interval=100)
-ubldc.create_depth_cache(markets=market)
+async def main():
+    all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
+    used_markets: list = []
 
-while True:
+    markets = all_markets[0:1]
+    used_markets.extend(markets)
+    print(f"Starting DepthCache for market: {markets}")
+    ubldc.create_depth_cache(markets=markets)
+    markets = all_markets[1:3]
+    used_markets.extend(markets)
+    print(f"Starting DepthCaches for markets: {markets}")
+    ubldc.create_depth_cache(markets=markets)
+
+    time.sleep(10)
+
+    ubldc.stop_depth_cache(markets=used_markets)
+    while ubldc.is_stop_request() is False:
+        add_string = (f"used_weight={ubra.get_used_weight()}\r\n "
+                      f"---------------------------------------------------------------------------------------------")
+        for market in used_markets:
+            try:
+                top_asks = ubldc.get_asks(market=market)[:4]
+                top_bids = ubldc.get_bids(market=market)[:4]
+            except DepthCacheOutOfSync:
+                top_asks = "Out of sync!"
+                top_bids = "Out of sync!"
+            depth = (f"depth_cache '{market}' is in sync: {ubldc.is_depth_cache_synchronized(market=market)}\r\n " 
+                     f"top 4 asks: {top_asks}\r\n "
+                     f"top 4 bids: {top_bids}")
+            add_string = f"{add_string}\r\n {depth}"
+        ubldc.print_summary(add_string=add_string)
+        time.sleep(0.5)
+
+
+ubra = BinanceRestApiManager(exchange=exchange)
+with BinanceLocalDepthCacheManager(exchange=exchange,
+                                   ubra_manager=ubra,
+                                   update_interval=update_interval_ms) as ubldc:
     try:
-        top_asks = ubldc.get_asks(market=market)[:4]
-        top_bids = ubldc.get_bids(market=market)[:4]
-    except DepthCacheOutOfSync:
-        top_asks = "Out of sync!"
-        top_bids = "Out of sync!"
-    depth = (f"depth_cache is in sync: {ubldc.is_depth_cache_synchronized(market)}\r\n " 
-             f"top 4 asks: {top_asks}\r\n "
-             f"top 4 bids: {top_bids}")
-    ubldc.print_summary(add_string=depth)
-    time.sleep(0.2)
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\r\nGracefully stopping ...")
+    except Exception as e:
+        print(f"\r\nERROR: {e}")
+        print("Gracefully stopping ...")
