@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "unicorn-binance-local-depth-cache"
 version = "1.0.0"
-description = "A local Binance DepthCache Manager for Python by LUCIT that supports multiple depth caches in one instance in a easy, fast, flexible, robust and fully-featured way."
+description = "A Python SDK from LUCIT to manage and access multiple local Binance DepthCache's with Python in a simple, fast, flexible, robust and fully-featured way."
 authors = ["LUCIT Systems and Development <info@lucit.tech>"]
 license = "LSOSL - LUCIT Synergetic Open Source License"
 readme = "README.md"

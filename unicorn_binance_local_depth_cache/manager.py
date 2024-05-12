@@ -19,11 +19,9 @@
 # All rights reserved.
 
 from .exceptions import DepthCacheOutOfSync
-from .licensing_manager import LucitLicensingManager
-from .licensing_exceptions import NoValidatedLucitLicense
-from unicorn_binance_rest_api.manager import BinanceRestApiManager
-from unicorn_binance_rest_api.exceptions import BinanceAPIException
-from unicorn_binance_websocket_api.manager import BinanceWebSocketApiManager
+from .licensing_manager import LucitLicensingManager, NoValidatedLucitLicense
+from unicorn_binance_rest_api import BinanceRestApiManager, BinanceAPIException
+from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from operator import itemgetter
 from typing import Optional, Union
 import cython
@@ -36,13 +34,13 @@ import threading
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
 __version__: str = "1.0.0.dev"
-
-logger = logging.getLogger("unicorn_binance_local_depth_cache")
+__logger__: logging = logging.getLogger("unicorn_binance_local_depth_cache")
+logger = __logger__
 
 
 class BinanceLocalDepthCacheManager(threading.Thread):
     """
-    A local Binance DepthCache Manager for Python that supports multiple depth caches in one instance in an easy, fast,
+    A Python SDK from LUCIT to manage and access multiple local Binance DepthCache's with Python in a simple, fast,
     flexible, robust and fully-featured way.
 
     Binance API documentation:
@@ -60,7 +58,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :param websocket_close_timeout: The `close_timeout` parameter defines a maximum wait time in seconds for
                                     completing the closing handshake and terminating the TCP connection.
                                     This parameter is passed through to the `websockets.client.connect()
-                                    <https://websockets.readthedocs.io/en/stable/topics/design.html?highlight=close_timeout#closing-handshake>`_
+                                    <https://websockets.readthedocs.io/en/stable/topics/design.html?highlight=close_timeout#closing-handshake>`__
     :type websocket_close_timeout: int
     :param websocket_ping_interval: Once the connection is open, a `Ping frame` is sent every
                                     `ping_interval` seconds. This serves as a keepalive. It helps keeping
@@ -68,7 +66,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                     timeouts on inactive connections. Set `ping_interval` to `None` to
                                     disable this behavior.
                                     This parameter is passed through to the `websockets.client.connect()
-                                    <https://websockets.readthedocs.io/en/stable/topics/timeouts.html?highlight=ping_interval#keepalive-in-websockets>`_
+                                    <https://websockets.readthedocs.io/en/stable/topics/timeouts.html?highlight=ping_interval#keepalive-in-websockets>`__
     :type websocket_ping_interval: int
     :param websocket_ping_timeout: If the corresponding `Pong frame` isn't received within
                                    `ping_timeout` seconds, the connection is considered unusable and is closed with

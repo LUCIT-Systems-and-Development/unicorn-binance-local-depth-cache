@@ -12,9 +12,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.0.0.dev (development stage/unreleased/unstable)
 
 ## 2.0.0
-The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one stream up 
-to the max subscription limit of the endpoint and use the new UBWA interface `get_stream_data_from_asyncio_queue()`. And 
-we avoid bans by complying with Binance weight costs.
+Scaling. The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one 
+stream up to the max subscription limit of the endpoint and use the new UBWA interface 
+`get_stream_data_from_asyncio_queue()`. And we avoid bans by complying with Binance weight costs on init.
 ### Added
 - Since UBLDC is delivered as a compiled C extension, IDEs such as Pycharm and Visual Code cannot use information about 
   available methods, parameters and their types for autocomplete and other intellisense functions. As a solution, from 
@@ -25,8 +25,11 @@ we avoid bans by complying with Binance weight costs.
   callback function of the `stream_signals` for itself and has to initialize the instance itself. It is possible to 
   request the active `BinanceWebSocketApiManager()` instance with the new method `ubldc.get_ubwa_manager()`. 
   `ubwa.create_stream()` can be used normally, only the `stream_signals` are only accessible for UBLDC.
+- Updated description text in all files.
 ### Fixed
 - Ip ban when using `create_depth_cache` with many symbols [issue#30](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/30)
+- Import in `licensing_manager.py`.
+- Type of global `logger` variable.
 
 ## 1.0.0
 ### Added
