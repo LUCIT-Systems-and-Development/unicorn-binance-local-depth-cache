@@ -41,7 +41,9 @@ update_interval_milliseconds = 100
 exchange = "binance.com"
 
 ubra = BinanceRestApiManager("*", "*", exchange=exchange)
-ubldc = BinanceLocalDepthCacheManager(exchange=exchange, ubra_manager=ubra)
+ubldc = BinanceLocalDepthCacheManager(exchange=exchange,
+                                      ubra_manager=ubra,
+                                      update_interval=update_interval_milliseconds)
 
 markets = []
 data = ubra.get_all_tickers()
@@ -49,7 +51,7 @@ for item in data:
     markets.append(item['symbol'])
 
 print(f"Starting {spawn_depth_caches} new depth caches with update_interval={update_interval_milliseconds}")
-ubldc.create_depth_cache(markets=markets[:spawn_depth_caches], update_interval=update_interval_milliseconds)
+ubldc.create_depth_cache(markets=markets[:spawn_depth_caches])
 
 while True:
     try:

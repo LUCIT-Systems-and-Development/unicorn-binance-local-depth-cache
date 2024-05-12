@@ -45,7 +45,7 @@ ubldc = BinanceLocalDepthCacheManager(exchange=exchange)
 
 print(f"Create Depth Caches ...")
 for market in markets:
-    ubldc.create_depth_cache(markets=market, update_interval=1000)
+    ubldc.create_depth_cache(markets=market)
     time.sleep(10)
 print(f"Running ...")
 

@@ -34,12 +34,12 @@ logging.basicConfig(level=logging.DEBUG,
 market = 'BTCUSDT'
 
 try:
-    ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+    ubldc = BinanceLocalDepthCacheManager(exchange="binance.com", update_interval=100)
 except NoValidatedLucitLicense as error_msg:
     print(f"ERROR: {error_msg}")
     sys.exit(1)
 
-ubldc.create_depth_cache(markets=market, update_interval=100)
+ubldc.create_depth_cache(markets=market)
 
 try:
     while True:

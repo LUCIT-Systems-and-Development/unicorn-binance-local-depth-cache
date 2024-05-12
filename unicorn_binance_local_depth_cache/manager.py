@@ -202,7 +202,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type refresh_interval: int
         :return: bool
         """
-        logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Adding new entry for market {market} ...")
+        logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Adding new entry for market '{market}' ...")
         if market is not None:
             market = market.lower()
             self.depth_caches[market] = {'asks': {},
@@ -218,11 +218,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          'thread': None}
             self.threading_lock_ask[market] = threading.Lock()
             self.threading_lock_bid[market] = threading.Lock()
-            logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market {market}!")
+            logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market '{market}'!")
             return True
         else:
             logger.critical(f"BinanceLocalDepthCacheManager._add_depth_cache() - Not able to add entry for market "
-                            f"{market}!")
+                            f"'{market}'!")
             return False
 
     def _add_ask(self, ask, market: str = None) -> bool:
@@ -241,7 +241,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.depth_caches[market]['asks'][ask[0]] = float(ask[1])
             if ask[1] == "0.00000000" or ask[1] == "0.000":
                 logger.debug(f"BinanceLocalDepthCacheManager._add_ask() - Deleting depth position {ask[0]} on ask "
-                             f"side for market {market}")
+                             f"side for market '{market}'")
                 del self.depth_caches[market]['asks'][ask[0]]
             return True
 
@@ -261,7 +261,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.depth_caches[market]['bids'][bid[0]] = float(bid[1])
             if bid[1] == "0.00000000" or bid[1] == "0.000":
                 logger.debug(f"BinanceLocalDepthCacheManager._add_bid() - Deleting depth position {bid[0]} on bid "
-                             f"side for market {market}")
+                             f"side for market '{market}'")
                 del self.depth_caches[market]['bids'][bid[0]]
             return True
 
@@ -746,7 +746,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         if market is not None:
             market = market.lower()
-        logger.debug(f"BinanceLocalDepthCacheManager.is_stop_request() - Returning the status for market {market}")
+        logger.debug(f"BinanceLocalDepthCacheManager.is_stop_request() - Returning the status for market '{market}'")
         if market is None:
             if self.stop_request is False:
                 return False
