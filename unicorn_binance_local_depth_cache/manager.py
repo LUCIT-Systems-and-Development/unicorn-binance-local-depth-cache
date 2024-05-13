@@ -198,7 +198,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param market: Specify the market for the used depth_cache
         :type market: str
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
+                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/
+                                 unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#
+                                 unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
         :type refresh_interval: int
         :return: bool
         """
@@ -297,6 +299,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         if market is not None:
             market = market.lower()
+        print(f"binance_api_status={self.ubra.get_used_weight()}")
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
                 try:
@@ -372,8 +375,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         Process depth stream_data and manage the depth cache
 
         The logic is described here:
-        - Binance Spot: https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly
-        - Binance Futures: https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams
+        - `Binance Spot <https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#
+        how-to-manage-a-local-order-book-correctly>`__
+        - `Binance Futures <https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams>`__
 
         :param stream_id:
         :type stream_id: str
@@ -588,7 +592,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param markets: Specify the market symbols for caches to be created
         :type markets: str or list
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`_.
+                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/
+                                 unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#
+                                 unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
         :type refresh_interval: int
 
         :return: bool
@@ -665,7 +671,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                    f"unicorn-binance-local-depth-cache/releases/latest")
             latest_release_info = respond.json()
             return latest_release_info
-        except Exception:
+        except Exception as error_msg:
+            logger.error(f"BinanceLocalDepthCacheManager.get_latest_release_info() - Exception - "
+                         f"error_msg: {error_msg}")
             return None
 
     def get_latest_version(self) -> str:

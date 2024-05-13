@@ -36,7 +36,7 @@ async def main():
 
     ubldc.stop_depth_cache(markets=used_markets)
     while ubldc.is_stop_request() is False:
-        add_string = (f"used_weight={ubra.get_used_weight()}\r\n "
+        add_string = (f"binance_api_status={ubra.get_used_weight()}\r\n "
                       f"---------------------------------------------------------------------------------------------")
         for market in used_markets:
             try:

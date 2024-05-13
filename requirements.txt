@@ -5,7 +5,7 @@
 # ./setup.py
 
 Cython
-lucit-licensing-python>=1.8.1
-requests
-unicorn-binance-rest-api>=2.1.2
-unicorn-binance-websocket-api>=2.1.1
+lucit-licensing-python>=1.8.2
+requests>=2.31.0
+unicorn-binance-rest-api>=2.4.0
+unicorn-binance-websocket-api>=2.7.0

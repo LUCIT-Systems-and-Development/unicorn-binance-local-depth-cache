@@ -65,8 +65,8 @@ setup(
      long_description=long_description,
      long_description_content_type="text/markdown",
      license='LSOSL - LUCIT Synergetic Open Source License',
-     install_requires=['lucit-licensing-python>=1.8.1', 'Cython', 'requests', 'unicorn-binance-websocket-api>=2.1.1',
-                       'unicorn-binance-rest-api>=2.1.2'],
+     install_requires=['lucit-licensing-python>=1.8.2', 'Cython', 'requests>=2.31.0',
+                       'unicorn-binance-websocket-api>=2.7.0', 'unicorn-binance-rest-api>=2.4.0'],
      keywords='binance, depth cache',
      project_urls={
          'Documentation': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech',

@@ -27,20 +27,18 @@ requirements:
     - python
     - pip
     - mypy
-    - lucit::lucit-licensing-python
-    - lucit::unicorn-fy
-    - lucit::unicorn-binance-rest-api
-    - lucit::unicorn-binance-websocket-api
+    - lucit::lucit-licensing-python >=1.8.2
+    - lucit::unicorn-binance-rest-api >=2.4.0
+    - lucit::unicorn-binance-websocket-api >=2.7.0
     - cython
-    - requests
+    - requests >=2.31.0
   run:
     - python
-    - lucit::lucit-licensing-python
-    - lucit::unicorn-fy
-    - lucit::unicorn-binance-rest-api
-    - lucit::unicorn-binance-websocket-api
+    - lucit::lucit-licensing-python >=1.8.2
+    - lucit::unicorn-binance-rest-api >=2.4.0
+    - lucit::unicorn-binance-websocket-api >=2.7.0
     - cython
-    - requests
+    - requests >=2.31.0
 
 dependencies:
   - anaconda-client
