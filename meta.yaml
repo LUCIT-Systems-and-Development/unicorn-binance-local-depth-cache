@@ -54,7 +54,7 @@ test:
 
 about:
   summary: | 
-    A Python SDK from LUCIT to access and manage multiple local Binance DepthCaches with Python in a simple, fast,
+    A Python SDK by LUCIT to access and manage multiple local Binance DepthCaches with Python in a simple, fast,
     flexible, robust and fully-featured way.
   description: |
     [![Get a UNICORN Binance Suite License](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-License-Offer.png)](https://shop.lucit.services)
@@ -91,7 +91,7 @@ about:
     [Contributing](#contributing) |[Disclaimer](#disclaimer) | 
     [Commercial Support](#commercial-support)
     
-    A Python SDK from [LUCIT](https://www.lucit.tech) to access and manage multiple local Binance DepthCaches with Python 
+    A Python SDK by [LUCIT](https://www.lucit.tech) to access and manage multiple local Binance DepthCaches with Python 
     in a simple, fast, flexible, robust and fully-featured way. 
     
     The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 
