@@ -10,7 +10,7 @@ import os
 import time
 
 exchange = "binance.com-futures"
-update_interval_ms = 100
+update_interval_ms = None
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -23,18 +23,16 @@ async def main():
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     used_markets: list = []
 
-    markets = all_markets[0:1]
-    used_markets.extend(markets)
-    print(f"Starting DepthCache for market: {markets}")
-    ubldc.create_depth_cache(markets=markets)
-    markets = all_markets[1:3]
+    markets = all_markets[0:10]
     used_markets.extend(markets)
     print(f"Starting DepthCaches for markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
 
-    time.sleep(10)
+    time.sleep(20)
 
-    ubldc.stop_depth_cache(markets=used_markets)
+    # time.sleep(10)
+    # ubldc.stop_depth_cache(markets=used_markets)
+
     while ubldc.is_stop_request() is False:
         add_string = (f"binance_api_status={ubra.get_used_weight()}\r\n "
                       f"---------------------------------------------------------------------------------------------")

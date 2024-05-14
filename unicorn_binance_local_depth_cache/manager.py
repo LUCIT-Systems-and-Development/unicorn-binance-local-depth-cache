@@ -299,7 +299,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         if market is not None:
             market = market.lower()
-        print(f"binance_api_status={self.ubra.get_used_weight()}")
+        current_weight = self.ubra.get_used_weight()
+        print(f"binance_api_status={current_weight['weight']}")
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
                 try:
@@ -516,10 +517,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         for market in self.depth_caches:
             if signal_type == "DISCONNECT":
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_signals() - Setting "
-                             f"stream_status of depth_cache with market {market} to `DISCONNECT")
+                             f"stream_status of depth_cache with market {market} to `DISCONNECTED")
                 self.depth_caches[market]['is_synchronized'] = False
-                self.depth_caches[market]['stream_status'] = "DISCONNECT"
                 self.depth_caches[market]['refresh_request'] = True
+                self.depth_caches[market]['stream_status'] = "DISCONNECTED"
             elif signal_type == "FIRST_RECEIVED_DATA":
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_signals() - Setting "
                              f"stream_status of depth_cache with market {market} to `RUNNING")
