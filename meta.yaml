@@ -29,14 +29,14 @@ requirements:
     - mypy
     - lucit::lucit-licensing-python >=1.8.2
     - lucit::unicorn-binance-rest-api >=2.5.1
-    - lucit::unicorn-binance-websocket-api >=2.7.0
+    - lucit::unicorn-binance-websocket-api >=2.7.1
     - cython
     - requests >=2.31.0
   run:
     - python
     - lucit::lucit-licensing-python >=1.8.2
     - lucit::unicorn-binance-rest-api >=2.5.1
-    - lucit::unicorn-binance-websocket-api >=2.7.0
+    - lucit::unicorn-binance-websocket-api >=2.7.1
     - cython
     - requests >=2.31.0
 

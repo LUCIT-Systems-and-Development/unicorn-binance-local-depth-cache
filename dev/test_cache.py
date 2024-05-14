@@ -21,20 +21,16 @@ logging.basicConfig(level=logging.DEBUG,
 
 async def main():
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
+    all_markets: list = ["BCCUSDT"]
     used_markets: list = []
 
-    markets = all_markets[0:40]
+    markets = all_markets[0:2]
     used_markets.extend(markets)
     print(f"Starting DepthCaches for markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
 
-    time.sleep(20)
-
-    # time.sleep(10)
-    # ubldc.stop_depth_cache(markets=used_markets)
-
     while ubldc.is_stop_request() is False:
-        add_string = (f"binance_api_status={ubra.get_used_weight()}\r\n "
+        add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
                       f"---------------------------------------------------------------------------------------------")
         for market in used_markets:
             try:
@@ -47,14 +43,14 @@ async def main():
                      f"top 4 asks: {top_asks}\r\n "
                      f"top 4 bids: {top_bids}")
             add_string = f"{add_string}\r\n {depth}"
-        #ubldc.print_summary(add_string=add_string)
+        ubldc.print_summary(add_string=add_string)
         time.sleep(0.5)
 
 
 ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
                                    ubra_manager=ubra,
-                                   update_interval=update_interval_ms) as ubldc:
+                                   depth_cache_update_interval=update_interval_ms) as ubldc:
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
