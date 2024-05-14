@@ -163,8 +163,7 @@ If you like the project, please
 [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
 
 ## Installation and Upgrade
-The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent 
-processing. 
+The module requires Python 3.7 and runs smoothly up to and including Python 3.12.
 
 For the PyPy interpreter we offer packages only from Python version 3.9 and higher.
 
