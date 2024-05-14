@@ -127,8 +127,11 @@ A local depth_cache is the fastest way to access the current order book depth at
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
 - Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
 is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
+
 - If a depth cache is out of sync it gets refreshed automatically within a few seconds.
+
 - 100% Websocket auto-reconnect!
+
 - Supported Exchanges
 
 | Exchange                                                           | Exchange string | 
@@ -140,13 +143,20 @@ is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-
 | More are coming ...                                                | - |
 
 - Create multiple depth caches within a single object instance. 
+
 - Each depth_cache is processed in a separate thread.
+
 - Start or stop multiple caches with just one command 
 [`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
 or [`stop_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache).
+
 - Control websocket out of sync detection with [`websocket_ping_interval`, `websocket_ping_timeout` and `websocket_close_timeout`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) 
+
 - Powered by [UNICORN Binance REST API](https://www.lucit.tech/unicorn-binance-rest-api.html) and 
 [UNICORN Binance WebSocket API](https://www.lucit.tech/unicorn-binance-websocket-api.html).
+
+- Available as a package via `pip` and `conda` as precompiled C extension with stub files for improved Intellisense 
+  functions and source code for easier debugging of the source code. [To the installation.](#installation-and-upgrade)
 
 If you like the project, please 
 [![star](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/star.png)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/stargazers) it on 
@@ -158,7 +168,7 @@ processing.
 
 For the PyPy interpreter we offer packages only from Python version 3.9 and higher.
 
-Anaconda packages are available from Python version 3.8 and higher.
+Anaconda packages are available from Python version 3.8 and higher, but only in the latest version!
 
 The current dependencies are listed [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt).
 
