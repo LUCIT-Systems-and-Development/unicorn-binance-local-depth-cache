@@ -34,8 +34,8 @@ async def main():
                       f"---------------------------------------------------------------------------------------------")
         for market in used_markets:
             try:
-                top_asks = ubldc.get_asks(market=market, depth=4)
-                top_bids = ubldc.get_bids(market=market, depth=4)
+                top_asks = ubldc.get_asks(market=market, limit_count=4)
+                top_bids = ubldc.get_bids(market=market, limit_count=4)
             except DepthCacheOutOfSync:
                 top_asks = "Out of sync!"
                 top_bids = "Out of sync!"

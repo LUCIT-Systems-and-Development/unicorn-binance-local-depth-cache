@@ -46,8 +46,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     flexible, robust and fully-featured way.
 
     Binance API documentation:
-    https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly
-    https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams
+        - https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly
+        - https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams
 
     :param exchange: Select binance.com, binance.com-testnet, binance.com-futures, binance.com-futures-testnet
                      (default: binance.com)
@@ -838,18 +838,23 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         logger.debug(f"BinanceLocalDepthCacheManager.get_version() - Returning the version")
         return self.version
 
-    def print_summary(self, add_string=None, title=None):
+    def print_summary(self, add_string: str = None, footer: str = None, title: str = None):
         """
         Print an overview of all streams
 
         :param add_string: text to add to the output
         :type add_string: str
+        :param footer: footer of the output
+        :type footer: str
         :param title: title of the output
         :type title: str
         """
         if title is None:
             title = self.get_user_agent()
-        self.ubwa.print_summary(add_string=add_string, title=title)
+        else:
+            if footer is None:
+                footer = f"Powered by {self.get_user_agent()}"
+        self.ubwa.print_summary(add_string=add_string, footer=footer, title=title)
 
     def set_refresh_request(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
