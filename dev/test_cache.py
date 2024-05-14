@@ -23,7 +23,7 @@ async def main():
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     used_markets: list = []
 
-    markets = all_markets[0:10]
+    markets = all_markets[0:40]
     used_markets.extend(markets)
     print(f"Starting DepthCaches for markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
@@ -38,8 +38,8 @@ async def main():
                       f"---------------------------------------------------------------------------------------------")
         for market in used_markets:
             try:
-                top_asks = ubldc.get_asks(market=market)[:4]
-                top_bids = ubldc.get_bids(market=market)[:4]
+                top_asks = ubldc.get_asks(market=market, depth=4)
+                top_bids = ubldc.get_bids(market=market, depth=4)
             except DepthCacheOutOfSync:
                 top_asks = "Out of sync!"
                 top_bids = "Out of sync!"
@@ -47,7 +47,7 @@ async def main():
                      f"top 4 asks: {top_asks}\r\n "
                      f"top 4 bids: {top_bids}")
             add_string = f"{add_string}\r\n {depth}"
-        ubldc.print_summary(add_string=add_string)
+        #ubldc.print_summary(add_string=add_string)
         time.sleep(0.5)
 
 

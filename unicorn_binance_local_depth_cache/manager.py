@@ -24,6 +24,7 @@ from unicorn_binance_rest_api import BinanceRestApiManager, BinanceAPIException
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from operator import itemgetter
 from typing import Optional, Union
+import asyncio
 import cython
 import logging
 import platform
@@ -100,8 +101,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  default_refresh_interval: int = None,
                  update_interval: int = None,
                  websocket_close_timeout: int = 2,
-                 websocket_ping_interval: int = 5,
-                 websocket_ping_timeout: int = 10,
+                 websocket_ping_interval: int = 10,
+                 websocket_ping_timeout: int = 30,
                  disable_colorama: bool = False,
                  lucit_api_secret: str = None,
                  lucit_license_ini: str = None,
@@ -124,7 +125,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.websocket_ping_timeout = websocket_ping_timeout
         self.print_stream_signals = print_stream_signals
         self.disable_colorama = disable_colorama
-        self.last_update_check_github = {'timestamp': time.time(), 'status': {'tag_name': ""}}
+        self.last_update_check_github = {'timestamp': time.time(), 'status': {'tag_name': None}}
         self.lucit_api_secret = lucit_api_secret
         self.lucit_license_ini = lucit_license_ini
         self.lucit_license_profile = lucit_license_profile
@@ -216,8 +217,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          'refresh_interval': refresh_interval or self.default_refresh_interval,
                                          'refresh_request': True,
                                          'stop_request': False,
-                                         'stream_status': None,
-                                         'thread': None}
+                                         'stream_status': None}
             self.threading_lock_ask[market] = threading.Lock()
             self.threading_lock_bid[market] = threading.Lock()
             logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market '{market}'!")
@@ -300,7 +300,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if market is not None:
             market = market.lower()
         current_weight = self.ubra.get_used_weight()
-        print(f"binance_api_status={current_weight['weight']}")
+        while int(current_weight['weight']) > 4000:
+            logger.warning(f"BinanceLocalDepthCacheManager._init_depth_cache() - The used weight "
+                           f"({current_weight['weight']})of the Binance API is to high , waiting a few seconds ...")
+            time.sleep(5)
+        logger.info(f"Taking snapshot for market '{market}'! Current weight level is {current_weight}")
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
                 try:
@@ -411,10 +415,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             if self.depth_caches[market]['refresh_request'] is True:
                 logger.info(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Caught refresh_request "
                             f"for depth_cache with market {market}")
-                self._init_depth_cache(market=market)
+
+                thread = threading.Thread(target=self._init_depth_cache, args=(market,))
+                thread.start()
+
                 self.depth_caches[market]['refresh_request'] = False
                 self.depth_caches[market]['is_synchronized'] = False
-
+            if self.depth_caches[market]['last_update_id'] is None:
+                continue
             if self.depth_caches[market]['is_synchronized'] is False:
                 logger.info(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Init depth cache of market "
                             f"{market}")
@@ -611,12 +619,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self._subscribe_depth(markets=markets)
         return True
 
-    def get_asks(self, market: str = None) -> list:
+    def get_asks(self, market: str = None, depth: Optional[int] = None) -> list:
         """
         Get the current list of asks with price and quantity.
 
         :param market: Specify the market symbol for the used depth_cache
         :type market: str
+        :param depth: Define the level from which pruning takes place.
+        :type depth: int or None (0 is nothing, None is everything)
         :return: list
         """
         if market is not None:
@@ -633,16 +643,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                       f"please try again later")
         if market:
             with self.threading_lock_ask[market]:
-                return self._sort_depth_cache(self.depth_caches[market]['asks'], reverse=False)
+                return self._sort_depth_cache(self.depth_caches[market]['asks'], reverse=False)[:depth]
         else:
             raise KeyError(f"Missing parameter `market`")
 
-    def get_bids(self, market: str = None) -> list:
+    def get_bids(self, market: str = None, depth: Optional[int] = None) -> list:
         """
         Get the current list of bids with price and quantity.
 
-        :param market: Specify the market symbol for the used depth_cache
+        :param market: Specify the market symbol for the used depth_cache.
         :type market: str
+        :param depth: Define the level from which pruning takes place.
+        :type depth: int or None (0 is nothing, None is everything)
         :return: list
         """
         if market is not None:
@@ -655,7 +667,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             raise KeyError(f"Invalid value provided: market={market}")
         if market:
             with self.threading_lock_bid[market]:
-                return self._sort_depth_cache(self.depth_caches[market]['bids'], reverse=True)
+                return self._sort_depth_cache(self.depth_caches[market]['bids'], reverse=True)[:depth]
         else:
             raise KeyError(f"Missing parameter `market`")
 
@@ -686,7 +698,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         logger.debug(f"BinanceLocalDepthCacheManager.get_latest_version() - Starting the request")
         # Do a fresh request if status is None or last timestamp is older 1 hour
 
-        if self.last_update_check_github['status']['tag_name'] == "" or \
+        if self.last_update_check_github['status'].get('tag_name') is None or \
                 (self.last_update_check_github['timestamp'] + (60 * 60) < time.time()):
             self.last_update_check_github['status'] = self.get_latest_release_info()
         if self.last_update_check_github['status']:
