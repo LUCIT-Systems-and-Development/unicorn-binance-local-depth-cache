@@ -20,14 +20,15 @@ logging.basicConfig(level=logging.DEBUG,
 
 show_offers = False
 
+
 async def main():
     exclude_markets: list = ['BCCUSDT', 'VENUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
                              'BCHSVUSDT', 'BTTUSDT', 'USDSUSDT', 'USDCUSDT', 'TFUELUSDT', 'MITHUSDT', 'NANOUSDT',
-                             'DASHUSDT']
+                             'DASHUSDT', 'NEOUSDT', 'ICXUSDT']
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     markets: list = []
 
-    for market in all_markets[:50]:
+    for market in all_markets[:1]:
         if market not in exclude_markets:
             markets.append(market)
 
@@ -59,6 +60,8 @@ async def main():
 ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
                                    ubra_manager=ubra,
+                                   websocket_ping_interval=10,
+                                   websocket_ping_timeout=15,
                                    depth_cache_update_interval=update_interval_ms) as ubldc:
     try:
         asyncio.run(main())
