@@ -20,9 +20,10 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 async def main():
+    exclude_markets: list = ['BCCUSDT', 'VENUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
+                             'BCHSVUSDT', 'BTTUSDT', 'USDSUSDT']
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     used_markets: list = []
-    removed_markets: list = []
 
     markets = all_markets[0:30]
     used_markets.extend(markets)
@@ -44,6 +45,7 @@ async def main():
         add_string += f"\r\n found {len(list_of_synced_caches)} synced markets: {list_of_synced_caches}"
         add_string += f"\r\n found {len(list_of_unsynced_caches)} unsynced markets: {list_of_unsynced_caches}"
         ubldc.print_summary(add_string=add_string)
+
         time.sleep(1)
 
 

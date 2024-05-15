@@ -20,6 +20,35 @@
 
 class DepthCacheOutOfSync(Exception):
     """
-    Exception if a DepthCache is out of sync
+    Exception raised when an attempt is made to use a depth_cache that is out of sync.
     """
-    pass
+    def __init__(self, market=None):
+        if market is None:
+            self.message = f"The depth_cache is out of sync, please try again later"
+        else:
+            self.message = f"The depth_cache for market '{market}' is out of sync, please try again later"
+        super().__init__(self.message)
+
+
+class DepthCacheAlreadyStoppedError(Exception):
+    """
+    Exception raised when an attempt is made to use a depth_cache that has already been stopped.
+    """
+    def __init__(self, market=None):
+        if market is None:
+            self.message = f"The depth_cache is already stopped!"
+        else:
+            self.message = f"The depth_cache for market '{market}' is already stopped!"
+        super().__init__(self.message)
+
+
+class DepthCacheNotFoundError(Exception):
+    """
+    Exception raised when an attempt is made to use an instance that does not exist.
+    """
+    def __init__(self, market=None):
+        if market is None:
+            self.message = f"The depth_cache does not exist!"
+        else:
+            self.message = f"The depth_cache for market '{market}' does not exist!"
+        super().__init__(self.message)
