@@ -10,7 +10,7 @@ import logging
 import os
 import time
 
-amount_test_caches: int = 15
+amount_test_caches: int = 40
 exchange: str = "binance.com-futures"
 update_interval_ms: Optional[int] = None
 
@@ -22,9 +22,12 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 async def main():
-    exclude_markets: list = ['BCCUSDT', 'VENUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
+    exclude_markets: list = ['BCCUSDT', 'TUSDUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
                              'BCHSVUSDT', 'BTTUSDT', 'USDSUSDT', 'USDCUSDT', 'TFUELUSDT', 'MITHUSDT', 'NANOUSDT',
-                             'DASHUSDT', 'NEOUSDT', 'ICXUSDT', 'XMRUSDT', 'LINKUSDT', 'ONTUSDT']
+                             'DASHUSDT', 'NEOUSDT', 'ICXUSDT', 'XMRUSDT', 'LINKUSDT', 'ONTUSDT', 'VENUSDT', 'FUNUSDT',
+                             'WANUSDT', 'DOCKUSDT', 'STORMUSDT', 'MFTUSDT', 'PERLUSDT', 'COCOSUSDT', 'NPXSUSDT',
+                             'USDSBUSDT', 'GTOUSDT', 'WINUSDT', 'CVCUSDT', 'TOMOUSDT', 'COSUSDT', 'ERDUSDT', 'BUSDUSDT',
+                             'BEAMUSDT', 'HCUSDT', 'MCOUSDT', 'CTXCUSDT']
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     markets: list = []
 
@@ -34,16 +37,20 @@ async def main():
         if len(markets) >= amount_test_caches:
             break
 
-    print(f"Starting DepthCaches for markets: {markets}")
+    print(f"Starting DepthCaches for {len(markets)} markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
 
     while ubldc.is_stop_request() is False:
-        add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
-                      f"---------------------------------------------------------------------------------------------")
+        markets_synced: list = []
+        markets_not_synced: list = []
         for market in markets:
-            depth = f"'{market}' is in sync: {ubldc.is_depth_cache_synchronized(market=market)}"
-            add_string = f"{add_string}\r\n {depth}"
-
+            if ubldc.is_depth_cache_synchronized(market=market) is True:
+                markets_synced.append(market)
+            else:
+                markets_not_synced.append(market)
+        add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
+                      f"---------------------------------------------------------------------------------------------"
+                      f"\r\n SYNCED: {markets_synced}\r\n NOT SYNCED: {markets_not_synced}")
         ubldc.print_summary(add_string=add_string)
         time.sleep(1)
 

@@ -22,15 +22,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 async def main():
-    exclude_markets: list = ['BCCUSDT', 'VENUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
-                             'BCHSVUSDT', 'BTTUSDT', 'USDSUSDT', 'USDCUSDT', 'TFUELUSDT', 'MITHUSDT', 'NANOUSDT',
-                             'DASHUSDT', 'NEOUSDT', 'ICXUSDT']
-    all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
-    markets: list = []
-
-    for market in all_markets[:2]:
-        if market not in exclude_markets:
-            markets.append(market)
+    markets: list = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT']
 
     print(f"Starting DepthCaches for markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
