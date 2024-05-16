@@ -210,7 +210,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param market: Specify the market for the used depth_cache
         :type market: str
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
+        `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/
+        unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.
+        manager.BinanceLocalDepthCacheManager>`__.
         :type refresh_interval: int
         :return: bool
         """
@@ -637,12 +639,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         return True
 
     @staticmethod
-    def _sort_depth_cache(items: dict, reverse: bool = False, threshold_volume: float = None) -> list:
+    def _sort_depth_cache(items: dict,
+                          limit_count: int = None,
+                          reverse: bool = False,
+                          threshold_volume: float = None) -> list:
         """
         Sort asks or bids by price
 
         :param items: asks or bids
-        :type items: list
+        :type items: dict
+        :param limit_count: List elements threshold to trim the result.
+        :type limit_count: int or None (0 is nothing, None is everything)
         :param reverse: False is regular, True is reversed
         :type reverse: bool
         :param threshold_volume: Volume threshold to trim the result
@@ -650,19 +657,20 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: list
         """
         logger.debug(f"BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting")
-        new_items = [[float(price), float(quantity)] for price, quantity in items.items()]
-        new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
-
-        total_volume: float = 0.0
-        trimmed_items: list = []
-        for price, quantity in new_items:
-            if (price * quantity) + total_volume <= threshold_volume:
-                trimmed_items.append([price, quantity])
-                total_volume += price * quantity
-            else:
-                break
-
-        return trimmed_items
+        sorted_items = [[float(price), float(quantity)] for price, quantity in items.items()]
+        sorted_items = sorted(sorted_items, key=itemgetter(0), reverse=reverse)
+        if threshold_volume is None:
+            return sorted_items[:limit_count]
+        else:
+            total_volume: float = 0.0
+            trimmed_items: list = []
+            for price, quantity in sorted_items:
+                if (price * quantity) + total_volume <= threshold_volume or total_volume == 0.0:
+                    trimmed_items.append([price, quantity])
+                    total_volume += price * quantity
+                else:
+                    break
+            return trimmed_items[:limit_count]
 
     def _subscribe_depth(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
@@ -744,9 +752,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         with self.threading_lock_ask[market]:
-            return self._sort_depth_cache(self.depth_caches[market]['asks'],
-                                          threshold_volume=threshold_volume,
-                                          reverse=False)[:limit_count]
+            return self._sort_depth_cache(items=self.depth_caches[market]['asks'],
+                                          limit_count=limit_count,
+                                          reverse=False,
+                                          threshold_volume=threshold_volume)
 
     def get_bids(self,
                  market: str = None,
@@ -777,9 +786,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         with self.threading_lock_bid[market]:
-            return self._sort_depth_cache(self.depth_caches[market]['bids'],
-                                          threshold_volume=threshold_volume,
-                                          reverse=True)[:limit_count]
+            return self._sort_depth_cache(items=self.depth_caches[market]['bids'],
+                                          limit_count=limit_count,
+                                          reverse=True,
+                                          threshold_volume=threshold_volume)
 
     @staticmethod
     def get_latest_release_info() -> Optional[dict]:

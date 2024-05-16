@@ -161,15 +161,18 @@
 <span class="c1">#</span>
 <span class="c1"># Author: LUCIT Systems and Development</span>
 <span class="c1">#</span>
-<span class="c1"># Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)</span>
+<span class="c1"># Copyright (c) 2022-2024, LUCIT Systems and Development - https://www.lucit.tech</span>
 <span class="c1"># All rights reserved.</span>
 
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">DepthCacheOutOfSync</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.licensing_manager</span> <span class="kn">import</span> <span class="n">LucitLicensingManager</span><span class="p">,</span> <span class="n">NoValidatedLucitLicense</span>
-<span class="kn">from</span> <span class="nn">unicorn_binance_rest_api</span> <span class="kn">import</span> <span class="n">BinanceRestApiManager</span><span class="p">,</span> <span class="n">BinanceAPIException</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="ne">ConnectionError</span>
+<span class="kn">from</span> <span class="nn">unicorn_binance_rest_api</span> <span class="kn">import</span> <span class="n">BinanceRestApiManager</span><span class="p">,</span> <span class="n">BinanceAPIException</span><span class="p">,</span> <span class="n">AlreadyStoppedError</span>
 <span class="kn">from</span> <span class="nn">unicorn_binance_websocket_api</span> <span class="kn">import</span> <span class="n">BinanceWebSocketApiManager</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">cython</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">platform</span>
@@ -180,7 +183,8 @@
 
 <span class="n">__app_name__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unicorn-binance-local-depth-cache&quot;</span>
 <span class="n">__version__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;1.0.0.dev&quot;</span>
-<span class="n">__logger__</span><span class="p">:</span> <span class="n">logging</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
+<span class="n">__logger__</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
+
 <span class="n">logger</span> <span class="o">=</span> <span class="n">__logger__</span>
 
 
@@ -188,21 +192,24 @@
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager">[docs]</a>
 <span class="k">class</span> <span class="nc">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A Python SDK from LUCIT  to access and manage multiple local Binance DepthCaches with Python in a simple, fast,</span>
+<span class="sd">    A Python SDK by LUCIT  to access and manage multiple local Binance DepthCaches with Python in a simple, fast,</span>
 <span class="sd">    flexible, robust and fully-featured way.</span>
 
 <span class="sd">    Binance API documentation:</span>
-<span class="sd">    https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly</span>
-<span class="sd">    https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams</span>
+<span class="sd">        - https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly</span>
+<span class="sd">        - https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams</span>
 
 <span class="sd">    :param exchange: Select binance.com, binance.com-testnet, binance.com-futures, binance.com-futures-testnet</span>
 <span class="sd">                     (default: binance.com)</span>
 <span class="sd">    :type exchange: str</span>
 <span class="sd">    :param default_refresh_interval: The default refresh interval in seconds, default is None.</span>
 <span class="sd">    :type default_refresh_interval: int</span>
-<span class="sd">    :param update_interval: Update speed of the depth stream in milliseconds. More info:</span>
-<span class="sd">                            https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals</span>
-<span class="sd">    :type update_interval: int</span>
+<span class="sd">    :param init_time_window: Only one request to the Binance REST API is permitted per depth_cache in this time window</span>
+<span class="sd">                             (specified in seconds).</span>
+<span class="sd">    :type init_time_window: int (seconds)</span>
+<span class="sd">    :param depth_cache_update_interval: Update speed of the depth stream in milliseconds. More info:</span>
+<span class="sd">                                        https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals</span>
+<span class="sd">    :type depth_cache_update_interval: int</span>
 <span class="sd">    :param websocket_close_timeout: The `close_timeout` parameter defines a maximum wait time in seconds for</span>
 <span class="sd">                                    completing the closing handshake and terminating the TCP connection.</span>
 <span class="sd">                                    This parameter is passed through to the `websockets.client.connect()</span>
@@ -225,6 +232,8 @@
 <span class="sd">    :type websocket_ping_timeout: int</span>
 <span class="sd">    :param disable_colorama: set to True to disable the use of `colorama &lt;https://pypi.org/project/colorama/&gt;`_</span>
 <span class="sd">    :type disable_colorama: bool</span>
+<span class="sd">    :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance</span>
+<span class="sd">    :type ubra_manager: BinanceRestApiManager</span>
 <span class="sd">    :param warn_on_update: set to `False` to disable the update warning</span>
 <span class="sd">    :type warn_on_update: bool</span>
 <span class="sd">    :param lucit_api_secret: The `api_secret` of your UNICORN Binance Suite license from</span>
@@ -238,45 +247,47 @@
 <span class="sd">    :param lucit_license_token: The `license_token` of your UNICORN Binance Suite license from</span>
 <span class="sd">                                https://shop.lucit.services/software/unicorn-binance-suite</span>
 <span class="sd">    :type lucit_license_token:  str</span>
-<span class="sd">    :param ubra_manager: Provide a shared unicorn_binance_rest_api.manager instance</span>
-<span class="sd">    :type ubra_manager: BinanceRestApiManager</span>
-<span class="sd">    :param print_stream_signals: Show `stream_signals` received from UBWA.</span>
-<span class="sd">    :type print_stream_signals:  bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;binance.com&quot;</span><span class="p">,</span>
                  <span class="n">default_refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">depth_cache_update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">init_time_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                  <span class="n">websocket_close_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
                  <span class="n">websocket_ping_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-                 <span class="n">websocket_ping_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="n">websocket_ping_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
                  <span class="n">disable_colorama</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">ubra_manager</span><span class="p">:</span> <span class="n">BinanceRestApiManager</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">warn_on_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">lucit_api_secret</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">lucit_license_ini</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">lucit_license_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">lucit_license_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">warn_on_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">ubra_manager</span><span class="p">:</span> <span class="n">BinanceRestApiManager</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">print_stream_signals</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                 <span class="n">lucit_license_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">__app_name__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">__version__</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_user_agent</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="s1">&#39;compiled&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">cython</span><span class="o">.</span><span class="n">compiled</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;source&#39;</span><span class="si">}</span><span class="s2"> on &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">())</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">release</span><span class="p">())</span><span class="si">}</span><span class="s2"> for exchange </span><span class="si">{</span><span class="n">exchange</span><span class="si">}</span><span class="s2"> started ...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">=</span> <span class="n">exchange</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="o">=</span> <span class="n">update_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span> <span class="o">=</span> <span class="n">depth_cache_update_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_refresh_interval</span> <span class="o">=</span> <span class="n">default_refresh_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_time_window</span> <span class="o">=</span> <span class="n">init_time_window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">websocket_close_timeout</span> <span class="o">=</span> <span class="n">websocket_close_timeout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">websocket_ping_interval</span> <span class="o">=</span> <span class="n">websocket_ping_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">websocket_ping_timeout</span> <span class="o">=</span> <span class="n">websocket_ping_timeout</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">print_stream_signals</span> <span class="o">=</span> <span class="n">print_stream_signals</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disable_colorama</span> <span class="o">=</span> <span class="n">disable_colorama</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tag_name&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tag_name&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_request</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lucit_api_secret</span> <span class="o">=</span> <span class="n">lucit_api_secret</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_ini</span> <span class="o">=</span> <span class="n">lucit_license_ini</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_profile</span> <span class="o">=</span> <span class="n">lucit_license_profile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_token</span> <span class="o">=</span> <span class="n">lucit_license_token</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">LucitLicensingManager</span><span class="p">(</span><span class="n">api_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_api_secret</span><span class="p">,</span>
                                          <span class="n">license_ini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_ini</span><span class="p">,</span>
                                          <span class="n">license_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_profile</span><span class="p">,</span>
@@ -305,6 +316,7 @@
                 <span class="k">raise</span> <span class="ne">ConnectionRefusedError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span> <span class="o">=</span> <span class="n">ubra_manager</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span> <span class="o">=</span> <span class="n">BinanceWebSocketApiManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exchange</span><span class="p">,</span>
                                                <span class="n">enable_stream_signal_buffer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                                <span class="n">disable_colorama</span><span class="o">=</span><span class="n">disable_colorama</span><span class="p">,</span>
@@ -317,11 +329,11 @@
                                                <span class="n">lucit_license_ini</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_ini</span><span class="p">,</span>
                                                <span class="n">lucit_license_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_profile</span><span class="p">,</span>
                                                <span class="n">lucit_license_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_token</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop_request</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">warn_on_update</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_update_available</span><span class="p">():</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gen_get_init_slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator_get_init_slot</span><span class="p">()</span>
+        <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gen_get_init_slot</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">warn_on_update</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_update_available</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">update_msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Release </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_latest_version</span><span class="p">()</span><span class="si">}</span><span class="s2"> is available, please consider updating! &quot;</span>
                           <span class="sa">f</span><span class="s2">&quot;Changelog: https://unicorn-binance-local-depth-cache.docs.lucit.tech/changelog.html&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">update_msg</span><span class="p">)</span>
@@ -346,11 +358,13 @@
 <span class="sd">        :param market: Specify the market for the used depth_cache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of</span>
-<span class="sd">                                 `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager&gt;`_.</span>
+<span class="sd">        `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/</span>
+<span class="sd">        unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.</span>
+<span class="sd">        manager.BinanceLocalDepthCacheManager&gt;`__.</span>
 <span class="sd">        :type refresh_interval: int</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_depth_cache() - Adding new entry for market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_depth_cache() - Adding new entry for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39; ...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;asks&#39;</span><span class="p">:</span> <span class="p">{},</span>
@@ -362,18 +376,17 @@
                                          <span class="s1">&#39;refresh_interval&#39;</span><span class="p">:</span> <span class="n">refresh_interval</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_refresh_interval</span><span class="p">,</span>
                                          <span class="s1">&#39;refresh_request&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                                          <span class="s1">&#39;stop_request&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                                         <span class="s1">&#39;stream_status&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                                         <span class="s1">&#39;thread&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+                                         <span class="s1">&#39;stream_status&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">[</span><span class="n">market</span><span class="p">]</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">[</span><span class="n">market</span><span class="p">]</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_depth_cache() - Not able to add entry for market &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_add_ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ask</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_add_ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ask</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add, update or delete an ask of a specific depth_cache.</span>
 
@@ -383,17 +396,19 @@
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ask</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_ask() - Parameter `ask` and `market` are mandatory!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;asks&#39;</span><span class="p">][</span><span class="n">ask</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ask</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">ask</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.00000000&quot;</span> <span class="ow">or</span> <span class="n">ask</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.000&quot;</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_ask() - Deleting depth position </span><span class="si">{</span><span class="n">ask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> on ask &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;side for market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                             <span class="sa">f</span><span class="s2">&quot;side for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;asks&#39;</span><span class="p">][</span><span class="n">ask</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_add_bid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_add_bid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a bid to a specific depth_cache.</span>
 
@@ -403,13 +418,15 @@
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_bid() - Parameter `bid` and `market` are mandatory!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;bids&#39;</span><span class="p">][</span><span class="n">bid</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">bid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.00000000&quot;</span> <span class="ow">or</span> <span class="n">bid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.000&quot;</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._add_bid() - Deleting depth position </span><span class="si">{</span><span class="n">bid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> on bid &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;side for market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                             <span class="sa">f</span><span class="s2">&quot;side for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;bids&#39;</span><span class="p">][</span><span class="n">bid</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
             <span class="k">return</span> <span class="kc">True</span>
 
@@ -423,10 +440,11 @@
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">order_book</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">order_book</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._apply_updates() - Parameter `order_book` and `market` are &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;mandatory!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._apply_updates() - Applying updates to the depth_cache with &quot;</span>
                      <span class="sa">f</span><span class="s2">&quot;market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ask</span> <span class="ow">in</span> <span class="n">order_book</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">[])</span> <span class="o">+</span> <span class="n">order_book</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;asks&#39;</span><span class="p">,</span> <span class="p">[]):</span>
@@ -435,7 +453,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_bid</span><span class="p">(</span><span class="n">bid</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_get_order_book_from_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">_get_order_book_from_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the order_book snapshot via REST of the chosen market.</span>
 
@@ -445,6 +463,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">current_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span><span class="o">.</span><span class="n">get_used_weight</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">current_weight</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">4000</span> <span class="ow">or</span> <span class="n">current_weight</span><span class="p">[</span><span class="s1">&#39;status_code&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - The used weight &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">current_weight</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) of the Binance API is to high or the status_code &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_weight</span><span class="p">[</span><span class="s1">&#39;status_code&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> != 200, waiting a few seconds ...&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">current_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span><span class="o">.</span><span class="n">get_used_weight</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Taking snapshot for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;! Current weight level is </span><span class="si">{</span><span class="n">current_weight</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-testnet&quot;</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -454,12 +480,20 @@
                                  <span class="sa">f</span><span class="s2">&quot;snapshot for the depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> - BinanceAPIException - &quot;</span>
                                  <span class="sa">f</span><span class="s2">&quot;error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">except</span> <span class="n">AlreadyStoppedError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - AlreadyStoppedError - &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-futures&quot;</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">order_book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span><span class="o">.</span><span class="n">futures_order_book</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">market</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">BinanceAPIException</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book &quot;</span>
                                  <span class="sa">f</span><span class="s2">&quot;snapshot for the depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> - BinanceAPIException - &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">except</span> <span class="n">AlreadyStoppedError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - AlreadyStoppedError - &quot;</span>
                                  <span class="sa">f</span><span class="s2">&quot;error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
@@ -479,6 +513,25 @@
                      <span class="sa">f</span><span class="s2">&quot;the depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">order_book</span>
 
+    <span class="k">def</span> <span class="nf">_generator_get_init_slot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a free init slot.</span>
+
+<span class="sd">        :return: str &quot;INIT&quot; or &quot;DROP&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">last_yield_time</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">id_received</span> <span class="o">=</span> <span class="k">yield</span>
+            <span class="k">with</span> <span class="p">(</span><span class="n">lock</span><span class="p">):</span>
+                <span class="n">current_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">id_received</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_yield_time</span> \
+                        <span class="ow">or</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">last_yield_time</span><span class="p">[</span><span class="n">id_received</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_time_window</span><span class="p">:</span>
+                    <span class="n">last_yield_time</span><span class="p">[</span><span class="n">id_received</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span>
+                    <span class="k">yield</span> <span class="s2">&quot;INIT&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="s2">&quot;DROP&quot;</span>
+
     <span class="k">def</span> <span class="nf">_init_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialise the depth_cache with a rest snapshot.</span>
@@ -487,16 +540,21 @@
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - Starting initialization of the cache &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - Starting initialization ...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">order_book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_order_book_from_rest</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">order_book</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_order_book_from_rest</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - ConnectionError: &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">order_book</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - Can not get order_book of the cache &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - Can not get order_book!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_depth_cache</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_refresh_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
@@ -504,15 +562,20 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">order_book</span><span class="p">[</span><span class="s1">&#39;lastUpdateId&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - TypeError - error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - TypeError: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - KeyError: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - KeyError: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_apply_updates</span><span class="p">(</span><span class="n">order_book</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">bid</span> <span class="ow">in</span> <span class="n">order_book</span><span class="p">[</span><span class="s1">&#39;bids&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_bid</span><span class="p">(</span><span class="n">bid</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ask</span> <span class="ow">in</span> <span class="n">order_book</span><span class="p">[</span><span class="s1">&#39;asks&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_ask</span><span class="p">(</span><span class="n">ask</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache() - Finished initialization of the cache &quot;</span>
-                     <span class="sa">f</span><span class="s2">&quot;with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._init_depth_cache(market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">) - Finished initialization!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_manage_depth_cache_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -520,24 +583,20 @@
 <span class="sd">        Process depth stream_data and manage the depth cache</span>
 
 <span class="sd">        The logic is described here:</span>
-<span class="sd">        - Binance Spot: https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly</span>
-<span class="sd">        - Binance Futures: https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams</span>
+<span class="sd">        - `Binance Spot &lt;https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#how-to-manage-a-local-order-book-correctly&gt;`__</span>
+<span class="sd">        - `Binance Futures &lt;https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams&gt;`__</span>
 
-<span class="sd">        :param stream_id:</span>
+<span class="sd">        :param stream_id: ID of the UBWA stream</span>
 <span class="sd">        :type stream_id: str</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Start processing data from &quot;</span>
-                     <span class="sa">f</span><span class="s2">&quot;webstream </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_stream_label</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                     <span class="sa">f</span><span class="s2">&quot;stream `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_stream_label</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">stream_data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_stream_data_from_asyncio_queue</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;&#39;error&#39;:&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream_data</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Received error message: &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stream_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                <span class="k">continue</span>
-            <span class="k">elif</span> <span class="s2">&quot;&#39;result&#39;:&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream_data</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Received result message: &quot;</span>
+            <span class="c1"># Filter and proof requests</span>
+            <span class="k">if</span> <span class="s2">&quot;&#39;result&#39;:&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream_data</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&#39;error&#39;:&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream_data</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Received system message: &quot;</span>
                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stream_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                 <span class="k">continue</span>
@@ -545,65 +604,29 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Extracted market from stream &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;data: </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - depth_cache for market &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> is stopping!&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - `depth_cache` for </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span>
                              <span class="sa">f</span><span class="s2">&quot;does not exists!&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Caught refresh_request &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;for depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_init_depth_cache</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Caught refresh_request &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;for depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_get_init_slot</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">market</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;INIT&quot;</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Depth init for </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;started at </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_depth_cache</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">market</span><span class="p">,))</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Init depth cache of market &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-testnet&quot;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]:</span>
-                        <span class="c1"># Drop it</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Dropping &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;outdated depth update of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                        <span class="k">continue</span>
-                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span> \
-                            <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]):</span>
-                        <span class="c1"># The first processed event should have U &lt;= lastUpdateId+1 AND u &gt;= lastUpdateId+1.</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_updates</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Finished &quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot;initialization of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="c1"># Init (refresh) finished</span>
-                        <span class="n">last_sync_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_refresh_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                        <span class="k">continue</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-futures&quot;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]:</span>
-                        <span class="c1"># Drop it</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Dropping &quot;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;outdated depth update of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                        <span class="k">continue</span>
-                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> \
-                            <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]):</span>
-                        <span class="c1"># The first processed event should have U &lt;= lastUpdateId AND u &gt;= lastUpdateId</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_updates</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Finished &quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot;initialization of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="c1"># Init (refresh) finished</span>
-                        <span class="n">last_sync_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_refresh_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                        <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Processing depth data</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># Regular updates</span>
                 <span class="c1"># Gap detection</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-testnet&quot;</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
@@ -634,7 +657,7 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                         <span class="k">continue</span>
-                <span class="c1"># Regular updates -&gt; apply</span>
+                <span class="c1"># Apply updates</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Applying regular &quot;</span>
                              <span class="sa">f</span><span class="s2">&quot;depth update to the depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> - update_id: &quot;</span>
                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -642,6 +665,66 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Init depth cache of market &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Dropping &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;outdated depth update of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">! Reason: `last_update_id` is &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-testnet&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]:</span>
+                        <span class="c1"># Drop it</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Dropping &quot;</span>
+                                     <span class="sa">f</span><span class="s2">&quot;outdated depth update of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">! Reason: &quot;</span>
+                                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> \
+                            <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]):</span>
+                        <span class="c1"># The first processed event should have U &lt;= lastUpdateId+1 AND u &gt;= lastUpdateId+1.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_updates</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Finished &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;initialization of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="c1"># Init (refresh) finished</span>
+                        <span class="n">last_sync_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_refresh_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-futures&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]):</span>
+                        <span class="c1"># Drop it</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Dropping &quot;</span>
+                                     <span class="sa">f</span><span class="s2">&quot;outdated depth update of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">! Reason: &quot;</span>
+                                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;= </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;U&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> \
+                            <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">]):</span>
+                        <span class="c1"># The first processed event should have U &lt;= lastUpdateId AND u &gt;= lastUpdateId</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_updates</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Finished &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;initialization of the cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="c1"># Init (refresh) finished</span>
+                        <span class="n">last_sync_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;u&#39;</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_sync_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async() - Set refresh_request &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;for depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+                    <span class="k">continue</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Is &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;exiting ...&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_process_stream_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_msg</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -654,25 +737,36 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_stream_signals</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received STREAM_SIGNAL: </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;DISCONNECT&quot;</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals() - Setting &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;stream_status of depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> to `DISCONNECT&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;DISCONNECT&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting all caches to synchronized is False and triggering a &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;refresh.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;DISCONNECTED&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="c1"># Todo: move to UBWA and replace this part of code with calling it from UBWA</span>
+                <span class="c1"># Block Start</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue</span><span class="p">[</span><span class="n">stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">QueueEmpty</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;BinanceWebSocketApiManager.clear_asyncio_queue(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Finished resetting of &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;asyncio_queue!&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - AsyncIO &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Queue reset done!&quot;</span><span class="p">)</span>
+                <span class="c1"># Block End</span>
+            <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stream_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DISCONNECT&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">elif</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;FIRST_RECEIVED_DATA&quot;</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals() - Setting &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;stream_status of depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> to `RUNNING&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stream_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals() - Setting &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;stream_status of depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> to &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stream_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_type</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;FIRST_RECEIVED_DATA&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `RUNNING`&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `</span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="n">signal_type</span>
 
     <span class="k">def</span> <span class="nf">_reset_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -693,31 +787,55 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                          <span class="n">limit_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                          <span class="n">threshold_volume</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sort asks or bids by price</span>
 
 <span class="sd">        :param items: asks or bids</span>
 <span class="sd">        :type items: dict</span>
+<span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
+<span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
 <span class="sd">        :param reverse: False is regular, True is reversed</span>
 <span class="sd">        :type reverse: bool</span>
+<span class="sd">        :param threshold_volume: Volume threshold to trim the result</span>
+<span class="sd">        :type threshold_volume: float</span>
 <span class="sd">        :return: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting&quot;</span><span class="p">)</span>
-        <span class="n">new_items</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">price</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantity</span><span class="p">)]</span> <span class="k">for</span> <span class="n">price</span><span class="p">,</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="n">new_items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">new_items</span>
+        <span class="n">sorted_items</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">price</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantity</span><span class="p">)]</span> <span class="k">for</span> <span class="n">price</span><span class="p">,</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">sorted_items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sorted_items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">threshold_volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sorted_items</span><span class="p">[:</span><span class="n">limit_count</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">total_volume</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">trimmed_items</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">price</span><span class="p">,</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="n">sorted_items</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">price</span> <span class="o">*</span> <span class="n">quantity</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_volume</span> <span class="o">&lt;=</span> <span class="n">threshold_volume</span> <span class="ow">or</span> <span class="n">total_volume</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">trimmed_items</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">price</span><span class="p">,</span> <span class="n">quantity</span><span class="p">])</span>
+                    <span class="n">total_volume</span> <span class="o">+=</span> <span class="n">price</span> <span class="o">*</span> <span class="n">quantity</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">return</span> <span class="n">trimmed_items</span><span class="p">[:</span><span class="n">limit_count</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_subscribe_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                         <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_subscribe_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unsubscribe a market from a stream. To stop a stream please use `stop_depth_cache()`.</span>
+
+<span class="sd">        :param markets: The markets to stop.</span>
+<span class="sd">        :type markets: str or list</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">markets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">markets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">markets</span> <span class="o">=</span> <span class="p">[</span><span class="n">markets</span><span class="p">,</span> <span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span><span class="si">}</span><span class="s2">ms&quot;</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span><span class="si">}</span><span class="s2">ms&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stream_id</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
@@ -739,7 +857,7 @@
 <span class="sd">        :param markets: Specify the market symbols for caches to be created</span>
 <span class="sd">        :type markets: str or list</span>
 <span class="sd">        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of</span>
-<span class="sd">                                 `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager&gt;`_.</span>
+<span class="sd">                                 `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager&gt;`__.</span>
 <span class="sd">        :type refresh_interval: int</span>
 
 <span class="sd">        :return: bool</span>
@@ -758,62 +876,82 @@
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_asks">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_asks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_asks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">limit_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">threshold_volume</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the current list of asks with price and quantity.</span>
 
 <span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
 <span class="sd">        :type market: str</span>
+<span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
+<span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
+<span class="sd">        :param threshold_volume: Volume threshold to trim the result.</span>
+<span class="sd">        :type threshold_volume: float or None (0 is nothing, None is everything)</span>
 <span class="sd">        :return: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The depth_cache for market symbol &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39; is out of sync, &quot;</span>
-                                              <span class="sa">f</span><span class="s2">&quot;please try again later&quot;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid value provided: market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_depth_cache_synchronized</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The depth_cache for market symbol &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39; is out of sync, &quot;</span>
-                                      <span class="sa">f</span><span class="s2">&quot;please try again later&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">market</span><span class="p">:</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;asks&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing parameter `market`&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStoppedError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;asks&#39;</span><span class="p">],</span>
+                                          <span class="n">limit_count</span><span class="o">=</span><span class="n">limit_count</span><span class="p">,</span>
+                                          <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                          <span class="n">threshold_volume</span><span class="o">=</span><span class="n">threshold_volume</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_bids">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_bids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">limit_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">threshold_volume</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the current list of bids with price and quantity.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used depth_cache.</span>
 <span class="sd">        :type market: str</span>
+<span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
+<span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
+<span class="sd">        :param threshold_volume: Volume threshold to trim the result.</span>
+<span class="sd">        :type threshold_volume: float or None (0 is nothing, None is everything)</span>
 <span class="sd">        :return: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The depth_cache for market symbol &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39; is out of sync, &quot;</span>
-                                          <span class="sa">f</span><span class="s2">&quot;please try again later&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_depth_cache_synchronized</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid value provided: market=</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">market</span><span class="p">:</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;bids&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing parameter `market`&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStoppedError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;bids&#39;</span><span class="p">],</span>
+                                          <span class="n">limit_count</span><span class="o">=</span><span class="n">limit_count</span><span class="p">,</span>
+                                          <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                          <span class="n">threshold_volume</span><span class="o">=</span><span class="n">threshold_volume</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_latest_release_info">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_latest_release_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">get_latest_release_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get info about the latest available release</span>
 
@@ -825,31 +963,33 @@
                                    <span class="sa">f</span><span class="s2">&quot;unicorn-binance-local-depth-cache/releases/latest&quot;</span><span class="p">)</span>
             <span class="n">latest_release_info</span> <span class="o">=</span> <span class="n">respond</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">latest_release_info</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.get_latest_release_info() - Exception - &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;error_msg: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_latest_version">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_latest_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_latest_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the version of the latest available release (cache time 1 hour)</span>
 
-<span class="sd">        :return: str</span>
+<span class="sd">        :return: str or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.get_latest_version() - Starting the request&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceWebSocketApiManager.get_latest_version() - Started ...&quot;</span><span class="p">)</span>
         <span class="c1"># Do a fresh request if status is None or last timestamp is older 1 hour</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;tag_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> \
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tag_name&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> \
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_release_info</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tag_name&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;tag_name&#39;</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;unknown&quot;</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.get_latest_version() - KeyError: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;unknown&quot;</span></div>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_list_of_depth_caches">
@@ -867,9 +1007,20 @@
         <span class="k">return</span> <span class="n">depth_cache_list</span></div>
 
 
+<div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_ubra_manager">
+<a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubra_manager">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_ubra_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BinanceRestApiManager</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the used BinanceRestApiManager() instance of BinanceLocalDepthCacheManager()</span>
+
+<span class="sd">        :return: BinanceRestApiManager</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span></div>
+
+
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_ubwa_manager">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubwa_manager">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_ubwa_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_ubwa_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BinanceWebSocketApiManager</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the used BinanceWebSocketApiManager() instance of BinanceLocalDepthCacheManager()</span>
 
@@ -880,11 +1031,11 @@
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_user_agent">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the user_agent string &quot;lib name + lib version + python version&quot;</span>
 
-<span class="sd">        :return:</span>
+<span class="sd">        :return: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user_agent</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_version</span><span class="p">())</span><span class="si">}</span><span class="s2">-python_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">user_agent</span></div>
@@ -901,13 +1052,18 @@
 
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.is_depth_cache_synchronized() - Returning the status&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.is_depth_cache_synchronized() - Parameter `market` is &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;mandatory!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
+            <span class="n">status</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.is_depth_cache_synchronized() - Returning the status: &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">status</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.is_stop_request">
@@ -923,7 +1079,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.is_stop_request() - Returning the status for market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.is_stop_request() - Returning the status for market &#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_request</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -964,7 +1120,7 @@
             <span class="n">installed_version</span> <span class="o">=</span> <span class="n">installed_version</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_version</span><span class="p">()</span> <span class="o">==</span> <span class="n">installed_version</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_version</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;unknown&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_version</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>
@@ -978,20 +1134,30 @@
 
 <span class="sd">        :return: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.get_version() - Returning the version&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.get_version() - Returning the version: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.print_summary">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.print_summary">[docs]</a>
-    <span class="k">def</span> <span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">footer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print an overview of all streams</span>
 
 <span class="sd">        :param add_string: text to add to the output</span>
 <span class="sd">        :type add_string: str</span>
+<span class="sd">        :param footer: footer of the output</span>
+<span class="sd">        :type footer: str</span>
+<span class="sd">        :param title: title of the output</span>
+<span class="sd">        :type title: str</span>
+<span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">print_summary</span><span class="p">(</span><span class="n">add_string</span><span class="o">=</span><span class="n">add_string</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_user_agent</span><span class="p">())</span></div>
+        <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_user_agent</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">footer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">footer</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Powered by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_user_agent</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">print_summary</span><span class="p">(</span><span class="n">add_string</span><span class="o">=</span><span class="n">add_string</span><span class="p">,</span> <span class="n">footer</span><span class="o">=</span><span class="n">footer</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.set_refresh_request">
@@ -1035,11 +1201,12 @@
         <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="n">markets</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.stop_depth_cache() - Setting stop_request for &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;depth_cache </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">, stop its stream and clear the stream_buffer&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stop_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="c1"># Todo: unsubscribe from multiplex stream</span>
-
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                        <span class="sa">f</span><span class="s2">&quot;depth_cache `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">`, stop its stream and clear the stream_buffer&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stop_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_stream_id</span><span class="p">(),</span> <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -1058,18 +1225,6 @@
         <span class="k">if</span> <span class="n">close_api_session</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span></div>
-
-
-<div class="viewcode-block" id="BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches">
-<a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches">[docs]</a>
-    <span class="k">def</span> <span class="nf">stop_manager_with_all_depth_caches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Alias of `stop_manager()`.</span>
-
-<span class="sd">        :return: bool</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.stop_manager_with_all_depth_caches() - Stop initiated!&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_manager</span><span class="p">()</span></div>
 </div>
 
 </pre></div>
@@ -1177,7 +1332,7 @@
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on May 12 2024 at 12:23 (CET).
+    Last updated on May 16 2024 at 18:17 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.

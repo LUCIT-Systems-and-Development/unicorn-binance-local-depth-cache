@@ -259,7 +259,7 @@
 <a class="reference internal" href="#receive-notifications">Notifications</a> | <a class="reference internal" href="#how-to-report-bugs-or-suggest-improvements">Bugs</a> |
 <a class="reference internal" href="#contributing">Contributing</a> |<a class="reference internal" href="#disclaimer">Disclaimer</a> |
 <a class="reference internal" href="#commercial-support">Commercial Support</a></p>
-<p>A Python SDK from <a class="reference external" href="https://www.lucit.tech">LUCIT</a> to access and manage multiple local Binance DepthCaches with Python
+<p>A Python SDK by <a class="reference external" href="https://www.lucit.tech">LUCIT</a> to access and manage multiple local Binance DepthCaches with Python
 in a simple, fast, flexible, robust and fully-featured way.</p>
 <p>The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The
 full stack of the UBS modules (REST, WebSocket and DepthCache) can be downloaded and installed by PyPi and Anaconda
@@ -395,6 +395,8 @@ or <a class="reference external" href="https://unicorn-binance-local-depth-cache
 <li><p>Control websocket out of sync detection with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache"><code class="docutils literal notranslate"><span class="pre">websocket_ping_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_ping_timeout</span></code> and <code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code></a></p></li>
 <li><p>Powered by <a class="reference external" href="https://www.lucit.tech/unicorn-binance-rest-api.html">UNICORN Binance REST API</a> and
 <a class="reference external" href="https://www.lucit.tech/unicorn-binance-websocket-api.html">UNICORN Binance WebSocket API</a>.</p></li>
+<li><p>Available as a package via <code class="docutils literal notranslate"><span class="pre">pip</span></code> and <code class="docutils literal notranslate"><span class="pre">conda</span></code> as precompiled C extension with stub files for improved Intellisense
+functions and source code for easier debugging of the source code. <a class="reference internal" href="#installation-and-upgrade">To the installation.</a></p></li>
 </ul>
 <p>If you like the project, please
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/stargazers"><img alt="star" src="https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/star.png" /></a> it on
@@ -403,10 +405,9 @@ or <a class="reference external" href="https://unicorn-binance-local-depth-cache
 </section>
 <section id="installation-and-upgrade">
 <h2>Installation and Upgrade<a class="headerlink" href="#installation-and-upgrade" title="Link to this heading">¶</a></h2>
-<p>The module requires Python 3.7 or above, as it depends on Pythons latest asyncio features for asynchronous/concurrent
-processing.</p>
+<p>The module requires Python 3.7 and runs smoothly up to and including Python 3.12.</p>
 <p>For the PyPy interpreter we offer packages only from Python version 3.9 and higher.</p>
-<p>Anaconda packages are available from Python version 3.8 and higher.</p>
+<p>Anaconda packages are available from Python version 3.8 and higher, but only in the latest version!</p>
 <p>The current dependencies are listed <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt">here</a>.</p>
 <p>If you run into errors during the installation take a look <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-suite/wiki/Installation">here</a>.</p>
 <section id="packages-are-created-automatically-with-github-actions">
@@ -543,7 +544,7 @@ and use:</p>
 <p>To receive notifications on available updates you can
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/watchers"><img alt="watch" src="https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/watch.png" /></a>
 the repository on <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache">GitHub</a>, write your
-<a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/example_version_of_this_package.py">own script</a>
+<a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/examples/_archive/example_version_of_this_package.py">own script</a>
 with using
 <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_update_available#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_update_available"><code class="docutils literal notranslate"><span class="pre">is_update_available()</span></code></a>.</p>
 <p>Follow us on <a class="reference external" href="https://www.linkedin.com/company/lucit-systems-and-development">LinkedIn</a>,
@@ -786,7 +787,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on May 12 2024 at 13:20 (CET).
+    Last updated on May 16 2024 at 18:17 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
