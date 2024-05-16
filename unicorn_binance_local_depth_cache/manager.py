@@ -318,44 +318,33 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         logger.info(f"Taking snapshot for market '{market}'!")
         try:
             if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
-                try:
-                    order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
-                except BinanceAPIException as error_msg:
-                    logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book "
-                                 f"snapshot for the depth_cache with market {market} - BinanceAPIException - "
-                                 f"error_msg: {error_msg}")
-                    return None
-                except AlreadyStoppedError as error_msg:
-                    logger.debug(f"BinanceLocalDepthCacheManager._init_depth_cache() - AlreadyStoppedError - "
-                                 f"error_msg: {error_msg}")
-                    return None
+                order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
             elif self.exchange == "binance.com-futures":
-                try:
-                    order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
-                except BinanceAPIException as error_msg:
-                    logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book "
-                                 f"snapshot for the depth_cache with market {market} - BinanceAPIException - "
-                                 f"error_msg: {error_msg}")
-                    return None
-                except AlreadyStoppedError as error_msg:
-                    logger.debug(f"BinanceLocalDepthCacheManager._init_depth_cache() - AlreadyStoppedError - "
-                                 f"error_msg: {error_msg}")
-                    return None
+                order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
             else:
                 return None
+        except BinanceAPIException as error_msg:
+            logger.error(f"BinanceLocalDepthCacheManager._get_order_book_from_rest() - Can not download "
+                         f"order_book snapshot for the depth_cache with market {market} - BinanceAPIException "
+                         f"- error_msg: {error_msg}")
+            return None
+        except AlreadyStoppedError as error_msg:
+            logger.debug(f"BinanceLocalDepthCacheManager._get_order_book_from_rest() - AlreadyStoppedError - "
+                         f"error_msg: {error_msg}")
+            return None
         except requests.exceptions.ConnectionError as error_msg:
-            logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book snapshot "
-                         f"for the depth_cache with market {market} - requests.exceptions.ConnectionError - "
+            logger.error(f"BinanceLocalDepthCacheManager._get_order_book_from_rest() - Can not download order_book "
+                         f"snapshot for the depth_cache with market {market} - requests.exceptions.ConnectionError - "
                          f"error_msg: {error_msg}")
 
             return None
         except requests.exceptions.ReadTimeout as error_msg:
-            logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache() - Can not download order_book snapshot "
-                         f"for the depth_cache with market {market} - requests.exceptions.ReadTimeout - "
+            logger.error(f"BinanceLocalDepthCacheManager._get_order_book_from_rest() - Can not download order_book "
+                         f"snapshot for the depth_cache with market {market} - requests.exceptions.ReadTimeout - "
                          f"error_msg: {error_msg}")
             return None
-        logger.debug(f"BinanceLocalDepthCacheManager._init_depth_cache() - Downloaded order_book snapshot for "
-                     f"the depth_cache with market {market}")
+        logger.debug(f"BinanceLocalDepthCacheManager._init_depth_get_order_book_from_rest_cache() - Downloaded "
+                     f"order_book snapshot for the depth_cache with market {market}")
         return order_book
 
     def _generator_get_init_slot(self) -> Generator[str, str, None]:
@@ -411,7 +400,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.depth_caches[market]['refresh_request'] = True
             return False
         except KeyError as error_msg:
-            print(f"_init_depth_cache(market={market}) - KeyError: {error_msg}")
             logger.error(f"BinanceLocalDepthCacheManager._init_depth_cache(market={market}) - KeyError: {error_msg}")
             self.depth_caches[market]['refresh_request'] = True
             return False
@@ -466,7 +454,28 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 if self._gen_get_init_slot.send(market) == "INIT":
                     logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - "
                                  f"Depth init for {market} started at {time.time()}!")
-                    current_weight = self.ubra.get_used_weight()
+                    try:
+                        current_weight = self.ubra.get_used_weight()
+                    except BinanceAPIException as error_msg:
+                        logger.error(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
+                                     f"weight for market {market} - BinanceAPIException - error_msg: {error_msg}")
+                        continue
+                    except AlreadyStoppedError as error_msg:
+                        logger.debug(
+                            f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
+                            f"weight for market {market} - AlreadyStoppedError - error_msg: {error_msg}")
+                        continue
+                    except requests.exceptions.ConnectionError as error_msg:
+                        logger.error(
+                            f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
+                            f"weight for market {market} - requests.exceptions.ConnectionError - "
+                            f"error_msg: {error_msg}")
+                        continue
+                    except requests.exceptions.ReadTimeout as error_msg:
+                        logger.error(
+                            f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
+                            f"weight for market {market} - requests.exceptions.ReadTimeout - error_msg: {error_msg}")
+                        continue
                     if current_weight['weight'] > 4000 or current_weight['status_code'] != 200:
                         logger.warning(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id})"
                                        f" - The used weight ({current_weight['weight']}) of the Binance API is to high "
