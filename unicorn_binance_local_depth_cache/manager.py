@@ -466,11 +466,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             if self.depth_caches[market]['refresh_request'] is True:
                 logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Caught refresh_request "
                              f"for depth_cache with market {market}")
+                self.depth_caches[market]['is_synchronized'] = False
                 if self._gen_get_init_slot.send(market) == "INIT":
                     logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Depth init for {market} "
                                  f"started at {time.time()}!")
                     self.depth_caches[market]['refresh_request'] = False
-                    self.depth_caches[market]['is_synchronized'] = False
                     thread = threading.Thread(target=self._init_depth_cache, args=(market,))
                     thread.start()
 
@@ -637,20 +637,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         return True
 
     @staticmethod
-    def _sort_depth_cache(items, reverse=False) -> list:
+    def _sort_depth_cache(items: dict, reverse: bool = False, threshold_volume: float = None) -> list:
         """
         Sort asks or bids by price
 
         :param items: asks or bids
-        :type items: dict
+        :type items: list
         :param reverse: False is regular, True is reversed
         :type reverse: bool
+        :param threshold_volume: Volume threshold to trim the result
+        :type threshold_volume: float
         :return: list
         """
         logger.debug(f"BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting")
         new_items = [[float(price), float(quantity)] for price, quantity in items.items()]
         new_items = sorted(new_items, key=itemgetter(0), reverse=reverse)
-        return new_items
+
+        total_volume: float = 0.0
+        trimmed_items: list = []
+        for price, quantity in new_items:
+            if (price * quantity) + total_volume <= threshold_volume:
+                trimmed_items.append([price, quantity])
+                total_volume += price * quantity
+            else:
+                break
+
+        return trimmed_items
 
     def _subscribe_depth(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
@@ -705,16 +717,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
     def get_asks(self,
                  market: str = None,
-                 limit_count: Optional[int] = None,
-                 threshold_volume: Optional[float] = None) -> list:
+                 limit_count: int = None,
+                 threshold_volume: float = None) -> list:
         """
         Get the current list of asks with price and quantity.
 
         :param market: Specify the market symbol for the used depth_cache
         :type market: str
-        :param limit_count: Define the amount of list elements from which pruning takes place.
+        :param limit_count: List elements threshold to trim the result.
         :type limit_count: int or None (0 is nothing, None is everything)
-        :param threshold_volume: Define the volume from which pruning takes place.
+        :param threshold_volume: Volume threshold to trim the result.
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
@@ -722,31 +734,32 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             raise DepthCacheNotFoundError(market=market)
         market = market.lower()
         try:
-            if self.depth_caches[market]['is_synchronized'] is False:
+            if self.is_depth_cache_synchronized(market=market) is False:
                 raise DepthCacheOutOfSync(market=market)
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         try:
-            if self.depth_caches[market]['stop_request'] is True:
+            if self.is_stop_request(market=market) is True:
                 raise DepthCacheAlreadyStoppedError(market=market)
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         with self.threading_lock_ask[market]:
-            # Todo: threshold_volume
-            return self._sort_depth_cache(self.depth_caches[market]['asks'], reverse=False)[:limit_count]
+            return self._sort_depth_cache(self.depth_caches[market]['asks'],
+                                          threshold_volume=threshold_volume,
+                                          reverse=False)[:limit_count]
 
     def get_bids(self,
                  market: str = None,
-                 limit_count: Optional[int] = None,
-                 threshold_volume: Optional[float] = None) -> list:
+                 limit_count: int = None,
+                 threshold_volume: float = None) -> list:
         """
         Get the current list of bids with price and quantity.
 
         :param market: Specify the market symbol for the used depth_cache.
         :type market: str
-        :param limit_count: Define the amount of list elements from which pruning takes place.
+        :param limit_count: List elements threshold to trim the result.
         :type limit_count: int or None (0 is nothing, None is everything)
-        :param threshold_volume: Define the volume from which pruning takes place.
+        :param threshold_volume: Volume threshold to trim the result.
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
@@ -754,18 +767,19 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             raise DepthCacheNotFoundError(market=market)
         market = market.lower()
         try:
-            if self.depth_caches[market]['is_synchronized'] is False:
+            if self.is_depth_cache_synchronized(market=market) is False:
                 raise DepthCacheOutOfSync(market=market)
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         try:
-            if self.depth_caches[market]['stop_request'] is True:
+            if self.is_stop_request(market=market) is True:
                 raise DepthCacheAlreadyStoppedError(market=market)
         except KeyError:
             raise DepthCacheNotFoundError(market=market)
         with self.threading_lock_bid[market]:
-            # Todo: threshold_volume
-            return self._sort_depth_cache(self.depth_caches[market]['bids'], reverse=True)[:limit_count]
+            return self._sort_depth_cache(self.depth_caches[market]['bids'],
+                                          threshold_volume=threshold_volume,
+                                          reverse=True)[:limit_count]
 
     @staticmethod
     def get_latest_release_info() -> Optional[dict]:

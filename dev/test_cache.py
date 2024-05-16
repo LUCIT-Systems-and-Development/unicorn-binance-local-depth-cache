@@ -59,7 +59,7 @@ async def main():
 
 ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
-                                   init_time_window=10,
+                                   init_time_window=15,
                                    ubra_manager=ubra,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15,
