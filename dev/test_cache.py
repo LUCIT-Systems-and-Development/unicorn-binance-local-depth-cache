@@ -28,7 +28,7 @@ async def main():
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     markets: list = []
 
-    for market in all_markets[:1]:
+    for market in all_markets[:30]:
         if market not in exclude_markets:
             markets.append(market)
 
@@ -59,6 +59,7 @@ async def main():
 
 ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
+                                   init_time_window=10,
                                    ubra_manager=ubra,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15,
