@@ -56,7 +56,7 @@ with open("README.md", "r") as fh:
 
 setup(
      name=name,
-     version="1.0.0",
+     version="2.0.0",
      author="LUCIT Systems and Development",
      author_email='info@lucit.tech',
      url="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache",
@@ -66,7 +66,7 @@ setup(
      long_description_content_type="text/markdown",
      license='LSOSL - LUCIT Synergetic Open Source License',
      install_requires=['lucit-licensing-python>=1.8.2', 'Cython', 'requests>=2.31.0',
-                       'unicorn-binance-websocket-api>=2.7.1', 'unicorn-binance-rest-api>=2.5.1'],
+                       'unicorn-binance-websocket-api>=2.8.0', 'unicorn-binance-rest-api>=2.6.0'],
      keywords='binance, depth cache',
      project_urls={
          'Documentation': 'https://unicorn-binance-local-depth-cache.docs.lucit.tech',

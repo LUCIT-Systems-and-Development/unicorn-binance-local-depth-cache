@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "unicorn-binance-local-depth-cache"
-version = "1.0.0"
-description = "A Python SDK by LUCIT  to access and manage multiple local Binance DepthCaches with Python in a simple, fast, flexible, robust and fully-featured way."
+version = "2.0.0"
+description = "A Python SDK by LUCIT to access and manage multiple local Binance DepthCaches with Python in a simple, fast, flexible, robust and fully-featured way."
 authors = ["LUCIT Systems and Development <info@lucit.tech>"]
 license = "LSOSL - LUCIT Synergetic Open Source License"
 readme = "README.md"
@@ -26,8 +26,8 @@ repository = "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-l
 python = ">=3.7.0"
 lucit-licensing-python = ">=1.8.2"
 requests = ">=2.31.0"
-unicorn-binance-rest-api = ">=2.5.1"
-unicorn-binance-websocket-api = ">=2.7.1"
+unicorn-binance-rest-api = ">=2.6.0"
+unicorn-binance-websocket-api = ">=2.8.0"
 
 [tool.poetry.dev-dependencies]
 

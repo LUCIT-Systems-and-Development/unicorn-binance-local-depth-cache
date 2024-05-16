@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
-from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager
 from unicorn_binance_rest_api import BinanceRestApiManager
 from typing import Optional
 import asyncio
@@ -22,6 +22,9 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 async def main():
+    # We exclude some inactive markets:
+    # https://www.binance.com/en/trade/BCC_USDT
+    # https://www.binance.com/en/trade/VEN_USDT
     exclude_markets: list = ['BCCUSDT', 'TUSDUSDT', 'TRXUSDT', 'NULSUSDT', 'TUSDUSDT', 'PAXUSDT', 'BCHABCUSDT',
                              'BCHSVUSDT', 'BTTUSDT', 'USDSUSDT', 'USDCUSDT', 'TFUELUSDT', 'MITHUSDT', 'NANOUSDT',
                              'DASHUSDT', 'NEOUSDT', 'ICXUSDT', 'XMRUSDT', 'LINKUSDT', 'ONTUSDT', 'VENUSDT', 'FUNUSDT',

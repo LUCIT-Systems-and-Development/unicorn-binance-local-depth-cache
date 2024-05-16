@@ -36,7 +36,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "1.0.0.dev"
+__version__: str = "2.0.0.dev"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -614,9 +614,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     logger.debug(
                         f"BinanceWebSocketApiManager.clear_asyncio_queue(stream_id={stream_id}) - Finished resetting of"
                         f" asyncio_queue!")
+                # Block End
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_signals(stream_id={stream_id}) - AsyncIO "
                              f"Queue reset done!")
-                # Block End
             for market in self.depth_caches:
                 self.depth_caches[market]['is_synchronized'] = False
                 self.depth_caches[market]['refresh_request'] = True

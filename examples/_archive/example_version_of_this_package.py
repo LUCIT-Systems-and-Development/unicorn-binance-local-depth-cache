@@ -18,24 +18,16 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-import unicorn_binance_local_depth_cache
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager
 
-# create instance of BinanceWebSocketApiManager
-ubldc = unicorn_binance_local_depth_cache.BinanceLocalDepthCacheManager()
+with BinanceLocalDepthCacheManager(warn_on_update=False) as ubldc:
+    if ubldc.is_update_available():
+        print(f"Please upgrade to {ubldc.get_latest_version()} you are on {ubldc.get_version()}")
+        latest_release_info = ubldc.get_latest_release_info()
+        if latest_release_info:
+            print(f"Please download the latest release or run `pip install unicorn-binance-local-depth-cache --upgrade`"
+                  f":\r\n\ttar: {latest_release_info['tarball_url']}\r\n\tzip: {latest_release_info['zipball_url']}\r\n"
+                  f"release info:\r\n{latest_release_info['body']}")
+    else:
+        print(ubldc.get_version(), "is the latest version!")
 
-# get version of the used UNICORN Binance WebSocket API
-if ubldc.is_update_available():
-    print("Please upgrade to " + ubldc.get_latest_version() + ", you are on",
-          ubldc.get_version())
-
-    latest_release_info = ubldc.get_latest_release_info()
-    if latest_release_info:
-        print("Please download the latest release or run `pip install unicorn-binance-local-depth-cache --upgrade`: ")
-        print("\ttar: " + latest_release_info["tarball_url"])
-        print("\tzip: " + latest_release_info["zipball_url"])
-        print("release info:")
-        print(latest_release_info["body"])
-else:
-    print(ubldc.get_version(), "is the latest version!")
-
-ubldc.stop_manager_with_all_depth_caches

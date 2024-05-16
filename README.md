@@ -162,6 +162,16 @@ If you like the project, please
 [![star](https://raw.githubusercontent.com/lucit-systems-and-development/unicorn-binance-local-depth-cache/master/images/misc/star.png)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/stargazers) it on 
 [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
 
+## Live Demo
+This live demo script runs DepthCaches from [binance.com-futues](https://www.binance.com) and runs on a *CCX13 * virtual 
+machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd)
+
+[Open live monitor!](https://www.lucit.tech/unicorn-binance-local-depth-cache-live-demo.html)
+
+[![live-demo](https://ubldc-demo.lucit.tech/ps.png)](https://www.lucit.tech/unicorn-binance-local-depth-cache-live-demo.html)
+
+(Refresh update once a minute!)
+
 ## Installation and Upgrade
 The module requires Python 3.7 and runs smoothly up to and including Python 3.12.
 
@@ -231,10 +241,10 @@ Run in bash:
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 
 #### Windows
-Use the below command with the version (such as 1.0.0) you determined 
+Use the below command with the version (such as 2.0.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/1.0.0.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.0.0.tar.gz --upgrade`
 
 ### From the latest source (dev-stage) with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!
