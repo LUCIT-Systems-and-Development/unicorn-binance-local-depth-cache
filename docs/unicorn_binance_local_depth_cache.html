@@ -91,8 +91,8 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a><ul>
-<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStoppedError"><code class="docutils literal notranslate"><span class="pre">DepthCacheAlreadyStoppedError</span></code></a></li>
-<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFoundError"><code class="docutils literal notranslate"><span class="pre">DepthCacheNotFoundError</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStopped"><code class="docutils literal notranslate"><span class="pre">DepthCacheAlreadyStopped</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFound"><code class="docutils literal notranslate"><span class="pre">DepthCacheNotFound</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync"><code class="docutils literal notranslate"><span class="pre">DepthCacheOutOfSync</span></code></a></li>
 </ul>
 </li>
@@ -511,15 +511,15 @@ provided lucitlicmgr tries to load a <cite>lucit_license.ini</cite> from <cite>/
 <section id="module-unicorn_binance_local_depth_cache.exceptions">
 <span id="unicorn-binance-local-depth-cache-unicorn-binance-local-depth-cache-exceptions-module"></span><h2>unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module<a class="headerlink" href="#module-unicorn_binance_local_depth_cache.exceptions" title="Link to this heading">¶</a></h2>
 <dl class="py exception">
-<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStoppedError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheAlreadyStoppedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/exceptions.html#DepthCacheAlreadyStoppedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStoppedError" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStopped">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheAlreadyStopped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/exceptions.html#DepthCacheAlreadyStopped"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStopped" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Exception raised when an attempt is made to use a depth_cache that has already been stopped.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFoundError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/exceptions.html#DepthCacheNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFoundError" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFound">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">unicorn_binance_local_depth_cache.exceptions.</span></span><span class="sig-name descname"><span class="pre">DepthCacheNotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">market</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/exceptions.html#DepthCacheNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFound" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Exception raised when an attempt is made to use an instance that does not exist.</p>
 </dd></dl>
@@ -588,8 +588,8 @@ provided lucitlicmgr tries to load a <cite>lucit_license.ini</cite> from <cite>/
 </ul>
 </li>
 <li><a class="reference internal" href="#module-unicorn_binance_local_depth_cache.exceptions">unicorn_binance_local_depth_cache.unicorn_binance_local_depth_cache_exceptions module</a><ul>
-<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStoppedError"><code class="docutils literal notranslate"><span class="pre">DepthCacheAlreadyStoppedError</span></code></a></li>
-<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFoundError"><code class="docutils literal notranslate"><span class="pre">DepthCacheNotFoundError</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheAlreadyStopped"><code class="docutils literal notranslate"><span class="pre">DepthCacheAlreadyStopped</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheNotFound"><code class="docutils literal notranslate"><span class="pre">DepthCacheNotFound</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync"><code class="docutils literal notranslate"><span class="pre">DepthCacheOutOfSync</span></code></a></li>
 </ul>
 </li>

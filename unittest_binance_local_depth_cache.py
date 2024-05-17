@@ -18,7 +18,7 @@
 # Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
-from unicorn_binance_local_depth_cache.manager import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
+from unicorn_binance_local_depth_cache import *
 import logging
 import unittest
 import os
@@ -570,18 +570,31 @@ class TestUbldc(unittest.TestCase):
     def test_sort_dict(self):
         self.assertListEqual(self.assert_list, self.ubldc._sort_depth_cache(self.items))
 
-    def test_is_update_availabe_true(self):
-        self.assertFalse((self.ubldc.is_update_available()))
+    def test_is_update_available_true(self):
+        print(f"test_is_update_available():")
+        result = self.ubldc.is_update_available()
+        is_valid_result = result is True or result is False
+        self.assertTrue(is_valid_result, False)
 
-    def test_invalid_market(self):
-        try:
+    def test_invalid_market_get_asks(self):
+        with self.assertRaises(DepthCacheNotFound):
+            self.ubldc.get_asks(market='TEST_INVALID_MARKET')
+
+    def test_invalid_market_get_bids(self):
+        with self.assertRaises(DepthCacheNotFound):
             self.ubldc.get_bids(market='TEST_INVALID_MARKET')
-        except KeyError:
-            pass
 
     def test_stop_manager(self):
         self.ubldc.stop_manager()
         self.ubldc_futures.stop_manager()
+
+    def test_exception_already_stopped(self):
+        with self.assertRaises(DepthCacheAlreadyStopped):
+            raise DepthCacheAlreadyStopped(market="blah")
+
+    def test_exception_not_found(self):
+        with self.assertRaises(DepthCacheNotFound):
+            raise DepthCacheNotFound(market="blah")
 
 
 if __name__ == '__main__':

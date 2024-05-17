@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.0.0
 Scaling. The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one 
-stream up to the max subscription limit of the endpoint and use the new UBWA interface 
+stream up to the max subscription limit of the endpoint and use the new UBWA `asyncio_queue` interface.
 `get_stream_data_from_asyncio_queue()`. And we avoid bans by complying with Binance weight costs on init.
 ### Added
 - Since UBLDC is delivered as a compiled C extension, IDEs such as Pycharm and Visual Code cannot use information about 
@@ -22,6 +22,7 @@ stream up to the max subscription limit of the endpoint and use the new UBWA int
   obtain the required information from these.
 - `ubldc.get_ubwa_manager()` returns the UBWA instance of UBLDC
 - `ubldc.get_ubra_manager()` returns the UBRA instance of UBLDC
+- New exceptions: `DepthCacheAlreadyStopped` and `DepthCacheNotFound`
 ### Changed
 - The parameter `ubwa_manager` was removed from `BinanceLocalDepthCacheManager()`, because UBLDC has to claim the 
   callback function of the `stream_signals` for itself and has to initialize the instance itself. It is possible to 

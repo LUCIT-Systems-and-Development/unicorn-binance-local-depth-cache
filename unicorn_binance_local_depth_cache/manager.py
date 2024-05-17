@@ -743,18 +743,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: list
         """
         if market is None:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         market = market.lower()
         try:
             if self.is_depth_cache_synchronized(market=market) is False:
                 raise DepthCacheOutOfSync(market=market)
         except KeyError:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         try:
             if self.is_stop_request(market=market) is True:
-                raise DepthCacheAlreadyStoppedError(market=market)
+                raise DepthCacheAlreadyStopped(market=market)
         except KeyError:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         with self.threading_lock_ask[market]:
             return self._sort_depth_cache(items=self.depth_caches[market]['asks'],
                                           limit_count=limit_count,
@@ -777,18 +777,18 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: list
         """
         if market is None:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         market = market.lower()
         try:
             if self.is_depth_cache_synchronized(market=market) is False:
                 raise DepthCacheOutOfSync(market=market)
         except KeyError:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         try:
             if self.is_stop_request(market=market) is True:
-                raise DepthCacheAlreadyStoppedError(market=market)
+                raise DepthCacheAlreadyStopped(market=market)
         except KeyError:
-            raise DepthCacheNotFoundError(market=market)
+            raise DepthCacheNotFound(market=market)
         with self.threading_lock_bid[market]:
             return self._sort_depth_cache(items=self.depth_caches[market]['bids'],
                                           limit_count=limit_count,
@@ -1011,7 +1011,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             try:
                 self.depth_caches[market]['stop_request'] = True
             except KeyError:
-                raise DepthCacheNotFoundError(market=market)
+                raise DepthCacheNotFound(market=market)
             self.ubwa.unsubscribe_from_stream(stream_id=self.get_stream_id(), markets=market)
         return True
 

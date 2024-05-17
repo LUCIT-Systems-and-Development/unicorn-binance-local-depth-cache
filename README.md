@@ -1,6 +1,6 @@
 [![Get a UNICORN Binance Suite License](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-License-Offer.png)](https://shop.lucit.services)
 
-![Anaconda Release](https://img.shields.io/conda/v/lucit/unicorn-binance-local-depth-cache?color=blue)
+[![Anaconda Release](https://img.shields.io/conda/v/lucit/unicorn-binance-local-depth-cache?color=blue)](https://anaconda.org/lucit/unicorn-binance-local-depth-cache)
 [![GitHub Release](https://img.shields.io/github/release/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?label=github)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
 [![PyPi Release](https://img.shields.io/pypi/v/unicorn-binance-local-depth-cache?color=blue)](https://pypi.org/project/unicorn-binance-local-depth-cache/)
 [![Supported Python Version](https://img.shields.io/pypi/pyversions/unicorn_binance_local_depth_cache.svg)](https://www.python.org/downloads/)

@@ -31,7 +31,7 @@ class DepthCacheOutOfSync(Exception):
         super().__init__(self.message)
 
 
-class DepthCacheAlreadyStoppedError(Exception):
+class DepthCacheAlreadyStopped(Exception):
     """
     Exception raised when an attempt is made to use a depth_cache that has already been stopped.
     """
@@ -43,7 +43,7 @@ class DepthCacheAlreadyStoppedError(Exception):
         super().__init__(self.message)
 
 
-class DepthCacheNotFoundError(Exception):
+class DepthCacheNotFound(Exception):
     """
     Exception raised when an attempt is made to use an instance that does not exist.
     """

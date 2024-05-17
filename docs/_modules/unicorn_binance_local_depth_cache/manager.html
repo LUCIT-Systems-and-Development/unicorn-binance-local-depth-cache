@@ -892,18 +892,18 @@
 <span class="sd">        :return: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_depth_cache_synchronized</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStoppedError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStopped</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;asks&#39;</span><span class="p">],</span>
                                           <span class="n">limit_count</span><span class="o">=</span><span class="n">limit_count</span><span class="p">,</span>
@@ -929,18 +929,18 @@
 <span class="sd">        :return: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_depth_cache_synchronized</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DepthCacheOutOfSync</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStoppedError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DepthCacheAlreadyStopped</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">[</span><span class="n">market</span><span class="p">]:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_depth_cache</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;bids&#39;</span><span class="p">],</span>
                                           <span class="n">limit_count</span><span class="o">=</span><span class="n">limit_count</span><span class="p">,</span>
@@ -1205,7 +1205,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stop_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DepthCacheNotFoundError</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_stream_id</span><span class="p">(),</span> <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
