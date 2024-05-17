@@ -39,8 +39,8 @@ logging.basicConfig(level=logging.DEBUG,
 print(f"Starting unittests:")
 
 UBLDC = BinanceLocalDepthCacheManager(exchange="binance.us")
-#UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
 UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.us")
+#UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.com-futures")
 
 
 def shutdown(close_api_session=False):
@@ -624,10 +624,10 @@ class TestUbldc(unittest.TestCase):
         with self.assertRaises(DepthCacheNotFound):
             self.__class__.ubldc.get_bids()
 
-    def test_yget_asks_threshold_volume(self):
+    def test_get_asks_threshold_volume(self):
         self.__class__.ubldc.get_asks(market='BTCUSDT', threshold_volume=200000)
 
-    def test_yget_asks_limit_count(self):
+    def test_get_asks_limit_count(self):
         self.__class__.ubldc.get_asks(market='BTCUSDT', limit_count=5)
 
     def test_zstop_manager(self):

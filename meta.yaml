@@ -54,8 +54,8 @@ test:
 
 about:
   summary: | 
-    A Python SDK by LUCIT to access and manage multiple local Binance DepthCaches with Python in a simple, fast,
-    flexible, robust and fully-featured way.
+    A Python SDK by LUCIT for accessing and managing multiple local Binance order books with Python in a simple, fast, 
+    flexible, robust and fully featured way.
   description: |
     [![Get a UNICORN Binance Suite License](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-License-Offer.png)](https://shop.lucit.services)
     
@@ -91,8 +91,7 @@ about:
     [Contributing](#contributing) |[Disclaimer](#disclaimer) | 
     [Commercial Support](#commercial-support)
     
-    A Python SDK by [LUCIT](https://www.lucit.tech) to access and manage multiple local Binance DepthCaches with Python 
-    in a simple, fast, flexible, robust and fully-featured way. 
+    A Python SDK by [LUCIT](https://www.lucit.tech) for accessing and managing multiple local Binance order books with Python in a simple, fast, flexible, robust and fully featured way.
     
     The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 
     full stack of the UBS modules (REST, WebSocket and DepthCache) can be downloaded and installed by PyPi and Anaconda 

@@ -10,8 +10,9 @@ import os
 import time
 
 exchange: str = "binance.com"
-update_interval_ms: Optional[int] = None
+markets: list = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
 limit_count: int = 4
+update_interval_ms: Optional[int] = None
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -22,9 +23,8 @@ logging.basicConfig(level=logging.DEBUG,
 
 async def main():
     ubra = ubldc.get_ubra_manager()
-    markets: list = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT']
 
-    print(f"Starting DepthCaches for markets: {markets}")
+    print(f"Starting {exchange} DepthCaches for {len(markets)} markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
 
     while ubldc.is_stop_request() is False:
@@ -43,7 +43,7 @@ async def main():
             add_string = f"{add_string}\r\n {depth}"
 
         ubldc.print_summary(add_string=add_string)
-        time.sleep(0.2)
+        await asyncio.sleep(1)
 
 
 with BinanceLocalDepthCacheManager(exchange=exchange,

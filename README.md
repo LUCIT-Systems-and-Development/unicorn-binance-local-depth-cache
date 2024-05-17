@@ -31,8 +31,9 @@
 [Contributing](#contributing) |[Disclaimer](#disclaimer) | 
 [Commercial Support](#commercial-support)
 
-A Python SDK by [LUCIT](https://www.lucit.tech) to access and manage multiple local Binance DepthCaches with Python 
-in a simple, fast, flexible, robust and fully-featured way. 
+A Python SDK by [LUCIT](https://www.lucit.tech) for accessing and managing multiple local Binance 
+[order books](https://academy.binance.com/en/glossary/order-book) with Python in a simple, fast, flexible, robust 
+and fully functional way. 
 
 The organization of the DepthCache takes place in the same asyncio loop as the reception of the websocket data. The 
 full stack of the UBS modules (REST, WebSocket and DepthCache) can be downloaded and installed by PyPi and Anaconda 
@@ -48,27 +49,42 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 
 ## Using a DepthCache
 
-### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code:
+### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code
 ```
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 
-ubldc = BinanceLocalDepthCacheManager(exchange="binance.com")
+ubldc = BinanceLocalDepthCacheManager(exchange="binance.com"
+                                      depth_cache_update_interval=100)
 ubldc.create_depth_cache("BTCUSDT")
 ```
 
-### Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids) depth with:
+### Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids)
+#### To obtain the complete order book
 ```
 asks = ubldc.get_asks("BTCUSDT")
 bids = ubldc.get_bids("BTCUSDT")
 ```
 
-### Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data:
+#### Get the first X elements
+```
+asks = ubldc.get_asks("BTCUSDT", limit_count=10)
+bids = ubldc.get_bids("BTCUSDT", limit_count=10)
+```
+
+#### Retain the elements until volume X has been exceeded
+```
+asks = ubldc.get_asks("BTCUSDT", threshold_volume=300000)
+bids = ubldc.get_bids("BTCUSDT", threshold_volume=300000)
+```
+
+### Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data
 ```
 try:
-    print(f"Top 10 asks: {ubldc.get_asks(market=market)[:10]}")
-    print(f"Top 10 bids: {ubldc.get_bids(market=market)[:10]}")
-except DepthCacheOutOfSync as error_msg:
-    print(f"ERROR: {error_msg}")
+    asks = ubldc.get_asks(market="BTCUSDT", limit_count=5, threshold_volume=300000)
+    bids = ubldc.get_bids(market="BTCUSDT", limit_count=5, threshold_volume=300000)
+except DepthCacheOutOfSync:
+    asks = "Out of sync!"
+    bids = "Out of sync!"
 ```
 
 ### [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
@@ -95,15 +111,16 @@ ubldc.stop_manager()
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
-provides a local depth_cache for the Binance Exchanges [Binance](https://github.com/binance-exchange/binance-official-api-docs) 
-([+Testnet](https://testnet.binance.vision/)), 
+provides local order books for the Binance Exchanges 
+[Binance](https://github.com/binance-exchange/binance-official-api-docs) ([+Testnet](https://testnet.binance.vision/)), 
 [Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
-([+Testnet](https://testnet.binancefuture.com)) - more are coming soon.
+([+Testnet](https://testnet.binancefuture.com)) and [Binance US](https://www.binance.us/).
 
 The algorithm of the depth_cache management was designed according to these instructions:
 
 - [Binance Spot: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly)
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
+- [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
 
 By [`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches) 
 the depth_cache is started and initialized, that means for each depth_cache you want to create a separate 
@@ -134,13 +151,13 @@ is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-
 
 - Supported Exchanges
 
-| Exchange                                                           | Exchange string | 
-|--------------------------------------------------------------------| --------------- | 
-| [Binance](https://www.binance.com)                                 | `binance.com` |
-| [Binance Testnet](https://testnet.binance.vision/)                 | `binance.com-testnet` |
-| [Binance USD-M Futures](https://www.binance.com)                   | `binance.com-futures` |
+| Exchange                                                           | Exchange string               | 
+|--------------------------------------------------------------------|-------------------------------| 
+| [Binance](https://www.binance.com)                                 | `binance.com`                 |
+| [Binance Testnet](https://testnet.binance.vision/)                 | `binance.com-testnet`         |
+| [Binance USD-M Futures](https://www.binance.com)                   | `binance.com-futures`         |
 | [Binance USD-M Futures Testnet](https://testnet.binancefuture.com) | `binance.com-futures-testnet` |
-| More are coming ...                                                | - |
+| [Binance US](https://www.binance.us/)                              | `binance.us`                  |
 
 - Create multiple depth caches within a single object instance. 
 

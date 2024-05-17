@@ -1,6 +1,6 @@
-# Binance DepthCache Limit the number of returned list elements. 
+# Binance Futures DepthCache  
 ## Overview
-Limit the number of returned list elements of `get_asks()` and `get_bids` with the parameter `limit_count`.
+Create DepthCaches for Binance Futures with `exchange="binance.com-futures"`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 

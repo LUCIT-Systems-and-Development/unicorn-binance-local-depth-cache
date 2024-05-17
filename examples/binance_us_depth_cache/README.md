@@ -1,6 +1,6 @@
-# Binance DepthCache Limit the number of returned list elements. 
+# Binance US DepthCache  
 ## Overview
-Limit the number of returned list elements of `get_asks()` and `get_bids` with the parameter `limit_count`.
+Create DepthCaches for Binance US with `exchange="binance.us"`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 

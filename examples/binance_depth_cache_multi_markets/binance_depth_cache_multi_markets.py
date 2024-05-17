@@ -7,10 +7,10 @@ from typing import Optional
 import asyncio
 import logging
 import os
-import time
+
 
 amount_test_caches: int = 40
-exchange: str = "binance.com-futures"
+exchange: str = "binance.com"
 update_interval_ms: Optional[int] = None
 
 logging.getLogger("unicorn_binance_local_depth_cache")
@@ -29,7 +29,8 @@ async def main():
                              'DASHUSDT', 'NEOUSDT', 'ICXUSDT', 'XMRUSDT', 'LINKUSDT', 'ONTUSDT', 'VENUSDT', 'FUNUSDT',
                              'WANUSDT', 'DOCKUSDT', 'STORMUSDT', 'MFTUSDT', 'PERLUSDT', 'COCOSUSDT', 'NPXSUSDT',
                              'USDSBUSDT', 'GTOUSDT', 'WINUSDT', 'CVCUSDT', 'TOMOUSDT', 'COSUSDT', 'ERDUSDT', 'BUSDUSDT',
-                             'BEAMUSDT', 'HCUSDT', 'MCOUSDT', 'CTXCUSDT']
+                             'BEAMUSDT', 'HCUSDT', 'MCOUSDT', 'CTXCUSDT', 'ETCUSDT', 'XLMUSDT', 'QTUMUSDT', 'KNCUSDT',
+                             'COMPUSDT', 'HNTUSDT', 'CTSIUSDT', 'AAVEUSDT']
     ubra = ubldc.get_ubra_manager()
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     markets: list = []
@@ -40,7 +41,7 @@ async def main():
         if len(markets) >= amount_test_caches:
             break
 
-    print(f"Starting DepthCaches for {len(markets)} markets: {markets}")
+    print(f"Starting {exchange} DepthCaches for {len(markets)} markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
 
     while ubldc.is_stop_request() is False:
@@ -55,7 +56,7 @@ async def main():
                       f"---------------------------------------------------------------------------------------------"
                       f"\r\n NOT SYNCED: {markets_not_synced}\r\n SYNCED: {markets_synced}")
         ubldc.print_summary(add_string=add_string)
-        time.sleep(1)
+        await asyncio.sleep(1)
 
 
 with BinanceLocalDepthCacheManager(exchange=exchange,

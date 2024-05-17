@@ -54,11 +54,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :param exchange: Select binance.com, binance.com-testnet, binance.com-futures, binance.com-futures-testnet
                      (default: binance.com)
     :type exchange: str
-    :param default_refresh_interval: The default refresh interval in seconds, default is None.
+    :param default_refresh_interval: The default refresh interval in seconds, default is None. The depth_cache is reset
+                                     and reinitialized at this interval.
     :type default_refresh_interval: int
     :param init_time_window: Only one request to the Binance REST API is permitted per depth_cache in this time window
                              (specified in seconds).
     :type init_time_window: int (seconds)
+    :param high_performance: Set to True makes `create_stream()` a non-blocking function
+    :type high_performance:  bool
     :param depth_cache_update_interval: Update speed of the depth stream in milliseconds. More info:
                                         https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
     :type depth_cache_update_interval: int
@@ -104,6 +107,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: int = None,
                  depth_cache_update_interval: int = None,
+                 high_performance: bool = False,
                  init_interval: float = 0.5,
                  init_time_window: int = 10,
                  websocket_close_timeout: int = 2,
@@ -125,6 +129,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.depth_caches: dict = {}
         self.depth_cache_update_interval = depth_cache_update_interval
         self.default_refresh_interval = default_refresh_interval
+        self.high_performance = high_performance
         self.init_interval = init_interval
         self.init_time_window = init_time_window
         self.websocket_close_timeout = websocket_close_timeout
@@ -184,6 +189,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                lucit_license_profile=self.lucit_license_profile,
                                                lucit_license_token=self.lucit_license_token)
 
+        if self.high_performance is True:
+            logger.info(f"Using `high_performance` ...")
         self._gen_get_init_slot = self._generator_get_init_slot()
         next(self._gen_get_init_slot)
 
@@ -212,9 +219,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param market: Specify the market for the used depth_cache
         :type market: str
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-        `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/
-        unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.
-        manager.BinanceLocalDepthCacheManager>`__.
+        `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
+        The depth_cache is reset and reinitialized at this interval.
         :type refresh_interval: int
         :return: bool
         """
@@ -319,9 +325,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             market = market.lower()
         logger.info(f"Taking snapshot for market '{market}'!")
         try:
-            if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
+            if self.exchange == "binance.com" \
+                    or self.exchange == "binance.com-testnet" \
+                    or self.exchange == "binance.us":
                 order_book = self.ubra.get_order_book(symbol=market.upper(), limit=1000)
-            elif self.exchange == "binance.com-futures":
+            elif self.exchange == "binance.com-futures" or self.exchange == "binance.com-futures-testnet":
                 order_book = self.ubra.futures_order_book(symbol=market.upper(), limit=1000)
             else:
                 return None
@@ -463,7 +471,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Caught "
                              f"refresh_request for depth_cache with market {market} ...")
                 self.depth_caches[market]['is_synchronized'] = False
-                if self._gen_get_init_slot.send(market) == "INIT":
+                if self._gen_get_init_slot.send(market) == "INIT" or self.high_performance is True:
                     logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - "
                                  f"Depth init for {market} started at {time.time()}!")
                     try:
@@ -503,7 +511,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             if self.depth_caches[market]['is_synchronized'] is True:
                 # Regular updates
                 # Gap detection
-                if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
+                if self.exchange == "binance.com" \
+                        or self.exchange == "binance.com-testnet" \
+                        or self.exchange == "binance.us":
                     if stream_data['data']['U'] != self.depth_caches[market]['last_update_id']+1:
                         logger.error(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) "
                                      f"- There is a gap between the last and the penultimate update ID, the depth_cache"
@@ -512,7 +522,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         self.depth_caches[market]['refresh_request'] = True
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
-                elif self.exchange == "binance.com-futures":
+                elif self.exchange == "binance.com-futures" or self.exchange == "binance.com-futures-testnet":
                     if stream_data['data']['pu'] != self.depth_caches[market]['last_update_id']:
                         logger.error(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) "
                                      f"- There is a gap between the last and the penultimate update ID, the depth_cache"
@@ -548,7 +558,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                  f"`last_update_id` is None")
                     self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                     continue
-                if self.exchange == "binance.com" or self.exchange == "binance.com-testnet":
+                if self.exchange == "binance.com" \
+                        or self.exchange == "binance.com-testnet" \
+                        or self.exchange == "binance.us":
                     if int(stream_data['data']['u']) <= self.depth_caches[market]['last_update_id']:
                         # Drop it
                         logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) "
@@ -570,7 +582,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         self.depth_caches[market]['is_synchronized'] = True
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
-                elif self.exchange == "binance.com-futures":
+                elif self.exchange == "binance.com-futures" or self.exchange == "binance.com-futures-testnet":
                     if int(stream_data['data']['u']) < int(self.depth_caches[market]['last_update_id']):
                         # Drop it
                         logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) -"
@@ -720,11 +732,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :param markets: Specify the market symbols for caches to be created
         :type markets: str or list
         :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of
-        `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/
-        unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.
-        manager.BinanceLocalDepthCacheManager>`__.
+                                 `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
+                                 The depth_cache is reset and reinitialized at this interval.
         :type refresh_interval: int
-
         :return: bool
         """
         if markets is None:

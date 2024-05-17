@@ -16,6 +16,7 @@ Scaling. The core functions have been rewritten in this update. Instead of one s
 stream up to the max subscription limit of the endpoint and use the new UBWA `asyncio_queue` interface.
 `get_stream_data_from_asyncio_queue()`. And we avoid bans by complying with Binance weight costs on init.
 ### Added
+- Support for "binance.us"
 - Since UBLDC is delivered as a compiled C extension, IDEs such as Pycharm and Visual Code cannot use information about 
   available methods, parameters and their types for autocomplete and other intellisense functions. As a solution, from 
   now on stub files (PYI) will be created in the build process and attached to the packages. The IDEs can automatically 
