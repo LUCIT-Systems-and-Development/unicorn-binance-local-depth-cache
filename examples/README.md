@@ -6,6 +6,3 @@ file is to download and start, if an example does not work, we are happy about a
 [patch](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/fork) or a message via 
 [GitHub Issue](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose) or 
 [our chat](https://www.lucit.tech/get-support.html).
-
-Old examples are stored in the 
-[archive](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tree/master/examples/_archive).

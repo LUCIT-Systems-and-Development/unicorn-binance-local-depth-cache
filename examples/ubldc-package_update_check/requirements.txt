@@ -1,0 +1,2 @@
+unicorn-binance-local-depth-cache>=2.0.0
+
