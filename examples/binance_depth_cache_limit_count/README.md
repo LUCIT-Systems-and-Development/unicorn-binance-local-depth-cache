@@ -1,6 +1,6 @@
-# Version of this Package
+# Binance DepthCache Limit the number of returned list elements. 
 ## Overview
-This is the original script from https://ubldc-demo.lucit.tech
+Limit the number of returned list elements of `get_asks()` and `get_bids` with the parameter `limit_count`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 
@@ -16,7 +16,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ## Usage
 ### Running the Script:
 ```bash
-python ubldc-demo.py
+python binance_depth_cache_limit_count.py
 ```
 
 ### Graceful Shutdown:
@@ -28,4 +28,4 @@ The script employs logging to provide insights into its operation and to assist 
 file named after the script with a .log extension.
 
 For further assistance or to report issues, please [contact our support team](https://www.lucit.tech/get-support.html) 
-or [visit our GitHub repository](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api).
+or [visit our GitHub repository](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache).

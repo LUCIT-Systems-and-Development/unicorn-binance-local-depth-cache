@@ -3,7 +3,6 @@
 # ¯\_(ツ)_/¯
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from unicorn_binance_rest_api import BinanceRestApiManager
 from typing import Optional
 import asyncio
 import logging
@@ -23,6 +22,7 @@ logging.basicConfig(level=logging.DEBUG,
 
 async def main():
     markets: list = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT']
+    ubra = ubldc.get_ubra_manager()
 
     print(f"Starting DepthCaches for markets: {markets}")
     ubldc.create_depth_cache(markets=markets)
@@ -46,10 +46,8 @@ async def main():
         time.sleep(0.2)
 
 
-ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
                                    init_time_window=5,
-                                   ubra_manager=ubra,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15,
                                    depth_cache_update_interval=update_interval_ms) as ubldc:

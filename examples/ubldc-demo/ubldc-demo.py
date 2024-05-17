@@ -4,7 +4,6 @@
 
 from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from unicorn_binance_rest_api import BinanceRestApiManager
 from typing import Optional
 import asyncio
 import logging
@@ -28,6 +27,7 @@ load_dotenv()
 
 
 async def main():
+    ubra = ubldc.get_ubra_manager()
     ubldc.create_depth_cache(markets=markets)
     while ubldc.is_stop_request() is False:
         add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
@@ -66,10 +66,8 @@ async def main():
             await asyncio.sleep(10)
 
 
-ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
                                    init_time_window=5,
-                                   ubra_manager=ubra,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15,
                                    depth_cache_update_interval=update_interval_ms) as ubldc:

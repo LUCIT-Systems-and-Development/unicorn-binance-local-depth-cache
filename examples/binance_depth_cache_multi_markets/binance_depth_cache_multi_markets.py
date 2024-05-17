@@ -3,7 +3,6 @@
 # ¯\_(ツ)_/¯
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager
-from unicorn_binance_rest_api import BinanceRestApiManager
 from typing import Optional
 import asyncio
 import logging
@@ -31,6 +30,7 @@ async def main():
                              'WANUSDT', 'DOCKUSDT', 'STORMUSDT', 'MFTUSDT', 'PERLUSDT', 'COCOSUSDT', 'NPXSUSDT',
                              'USDSBUSDT', 'GTOUSDT', 'WINUSDT', 'CVCUSDT', 'TOMOUSDT', 'COSUSDT', 'ERDUSDT', 'BUSDUSDT',
                              'BEAMUSDT', 'HCUSDT', 'MCOUSDT', 'CTXCUSDT']
+    ubra = ubldc.get_ubra_manager()
     all_markets: list = [item['symbol'] for item in ubra.get_all_tickers() if item['symbol'].endswith("USDT")]
     markets: list = []
 
@@ -58,10 +58,8 @@ async def main():
         time.sleep(1)
 
 
-ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
                                    init_time_window=5,
-                                   ubra_manager=ubra,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=20,
                                    depth_cache_update_interval=update_interval_ms) as ubldc:
