@@ -9,7 +9,7 @@ import logging
 import os
 import time
 
-exchange: str = "binance.com-futures"
+exchange: str = "binance.com"
 update_interval_ms: Optional[int] = None
 limit_count: int = 4
 

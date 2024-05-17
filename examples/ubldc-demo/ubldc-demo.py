@@ -4,19 +4,17 @@
 
 from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from typing import Optional
 import asyncio
 import logging
 import os
 
 footer: str = "By LUCIT - www.lucit.tech"
-exchange: str = "binance.com-futures"
+exchange: str = "binance.com"
 limit_count: int = 2
 markets: list = ['BTCUSDT', 'ETHUSDT']
 title: str = "UBLDC Demo"
 threshold_volume: float = 200000
 threshold_volume_limit_count: int = 3
-update_interval_ms: Optional[int] = None
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -67,10 +65,8 @@ async def main():
 
 
 with BinanceLocalDepthCacheManager(exchange=exchange,
-                                   init_time_window=5,
                                    websocket_ping_interval=10,
-                                   websocket_ping_timeout=15,
-                                   depth_cache_update_interval=update_interval_ms) as ubldc:
+                                   websocket_ping_timeout=15) as ubldc:
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

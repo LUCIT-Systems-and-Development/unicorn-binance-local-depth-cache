@@ -20,10 +20,15 @@
 # All rights reserved.
 
 from unicorn_binance_local_depth_cache import *
+from unicorn_binance_local_depth_cache.licensing_manager import LucitLicensingManager, NoValidatedLucitLicense
 import logging
 import unittest
 import os
 import time
+import threading
+
+import tracemalloc
+tracemalloc.start(25)
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -38,11 +43,16 @@ UBLDC = BinanceLocalDepthCacheManager(exchange="binance.us")
 UBLDC_FUTURES = BinanceLocalDepthCacheManager(exchange="binance.us")
 
 
+def shutdown(close_api_session=False):
+    pass
+
+
 class TestUbldc(unittest.TestCase):
-    def setUp(self):
-        self.ubldc = UBLDC
-        self.ubldc_futures = UBLDC_FUTURES
-        self.items = {'0.00204980': 39.05, '0.00204990': 1.63, '0.00205050': 158.68, '0.00205060': 81.97,
+    @classmethod
+    def setUp(cls):
+        cls.ubldc = UBLDC
+        cls.ubldc_futures = UBLDC_FUTURES
+        cls.items = {'0.00204980': 39.05, '0.00204990': 1.63, '0.00205050': 158.68, '0.00205060': 81.97,
                       '0.00205080': 32.5, '0.00205090': 16.74, '0.00205100': 149.34, '0.00205110': 6.68,
                       '0.00205140': 16.77, '0.00205150': 50.0, '0.00205170': 17.1, '0.00205180': 20.04,
                       '0.00205190': 54.93, '0.00205200': 192.59, '0.00205210': 286.96, '0.00205220': 156.73,
@@ -274,7 +284,7 @@ class TestUbldc(unittest.TestCase):
                       '0.00217580': 0.22, '0.00217590': 5.86, '0.00217600': 1.06, '0.00217610': 0.09, '0.00217620': 1.2,
                       '0.00217630': 2.35}
 
-        self.assert_list = [[0.0020498, 39.05], [0.0020499, 1.63], [0.0020505, 158.68], [0.0020506, 81.97],
+        cls.assert_list = [[0.0020498, 39.05], [0.0020499, 1.63], [0.0020505, 158.68], [0.0020506, 81.97],
                             [0.0020508, 32.5], [0.0020509, 16.74], [0.002051, 149.34], [0.0020511, 6.68],
                             [0.0020514, 16.77], [0.0020515, 50.0], [0.0020517, 17.1], [0.0020518, 20.04],
                             [0.0020519, 54.93], [0.002052, 192.59], [0.0020521, 286.96], [0.0020522, 156.73],
@@ -511,91 +521,141 @@ class TestUbldc(unittest.TestCase):
                             [0.0021758, 0.22], [0.0021759, 5.86], [0.002176, 1.06], [0.0021761, 0.09], [0.0021762, 1.2],
                             [0.0021763, 2.35]]
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.ubldc.stop_manager()
+        print(f"\r\nTestUbldc threads:")
+        for thread in threading.enumerate():
+            print(thread.name)
+        print(f"TestUbldc stopping:")
+
     def test_add_depth_cache_missing_market(self):
-        self.assertFalse(self.ubldc._add_depth_cache())
+        self.assertFalse(self.__class__.ubldc._add_depth_cache())
 
     def test_div(self):
-        self.ubldc.get_latest_release_info()
-        self.ubldc.get_latest_version()
-        self.ubldc.get_version()
-        self.ubldc.is_update_available()
-        self.ubldc.is_depth_cache_synchronized("BTCUSDT")
-        self.ubldc.get_list_of_depth_caches()
+        self.__class__.ubldc.get_latest_release_info()
+        self.__class__.ubldc.get_latest_version()
+        self.__class__.ubldc.get_version()
+        self.__class__.ubldc.is_update_available()
+        self.__class__.ubldc.is_depth_cache_synchronized("BTCUSDT")
+        self.__class__.ubldc.get_list_of_depth_caches()
 
-    def test_create_depth_cache_true(self):
-        self.assertTrue(self.ubldc.create_depth_cache(markets='BTCUSDT', refresh_interval=20))
+    def test_acreate_depth_cache_true(self):
+        self.assertTrue(self.__class__.ubldc.create_depth_cache(markets='BTCUSDT'))
+        time.sleep(20)
         try:
-            self.ubldc.get_asks(market='BTCUSDT')
+            self.__class__.ubldc.get_asks(market='BTCUSDT')
         except DepthCacheOutOfSync:
             pass
         try:
-            self.ubldc.get_bids(market='BTCUSDT')
+            self.__class__.ubldc.get_bids(market='BTCUSDT')
+        except DepthCacheOutOfSync:
+            pass
+
+    def test_create_depth_cache_oos(self):
+        self.assertTrue(self.__class__.ubldc.create_depth_cache(markets='ETHUSDT'))
+        time.sleep(30)
+        try:
+            self.__class__.ubldc.get_asks(market='ETHUSDT')
+        except DepthCacheOutOfSync:
+            pass
+        try:
+            self.__class__.ubldc.get_bids(market='ETHUSDT')
         except DepthCacheOutOfSync:
             pass
 
     def test_create_depth_cache_true_exists(self):
-        self.assertTrue(self.ubldc.create_depth_cache(markets='BTCUSDT'))
+        self.assertTrue(self.__class__.ubldc.create_depth_cache(markets='BTCUSDT'))
 
     def test_stream_signal_disconnect(self):
-        self.ubldc.ubwa.add_to_stream_signal_buffer("DISCONNECT", "faked_stream_id", "debug msg")
+        self.__class__.ubldc.ubwa.add_to_stream_signal_buffer("DISCONNECT", "faked_stream_id", "debug msg")
 
     def test_create_depth_cache_true_futures(self):
-        self.assertTrue(self.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
+        self.assertTrue(self.__class__.ubldc_futures.create_depth_cache(markets='BTCUSDT'))
         time.sleep(120)
 
     def test_set_refresh_request(self):
-        self.assertTrue(self.ubldc.set_refresh_request("BTCUSDT"))
+        self.assertTrue(self.__class__.ubldc.set_refresh_request("BTCUSDT"))
         time.sleep(10)
 
     def test_stop_depth_cache_true(self):
-        self.assertTrue(self.ubldc.stop_depth_cache(str("BTCUSDT")))
+        self.assertTrue(self.__class__.ubldc.stop_depth_cache(str("BTCUSDT")))
 
     def test_create_depth_cache_false(self):
-        self.assertFalse(self.ubldc.create_depth_cache())
+        self.assertFalse(self.__class__.ubldc.create_depth_cache())
 
     def test_stop_depth_cache_false(self):
-        self.assertFalse(self.ubldc.stop_depth_cache())
+        self.assertFalse(self.__class__.ubldc.stop_depth_cache())
 
     def test_get_asks(self):
         try:
-            self.ubldc.get_asks(market='BTCUSDT')
+            self.__class__.ubldc.get_asks(market='BTCUSDT')
         except DepthCacheOutOfSync:
             pass
 
     def test_get_bids(self):
         try:
-            self.ubldc.get_bids(market='BTCUSDT')
+            self.__class__.ubldc.get_bids(market='BTCUSDT')
         except DepthCacheOutOfSync:
             pass
 
     def test_sort_dict(self):
-        self.assertListEqual(self.assert_list, self.ubldc._sort_depth_cache(self.items))
+        self.assertListEqual(self.assert_list, self.__class__.ubldc._sort_depth_cache(self.items))
 
     def test_is_update_available_true(self):
         print(f"test_is_update_available():")
-        result = self.ubldc.is_update_available()
+        result = self.__class__.ubldc.is_update_available()
         is_valid_result = result is True or result is False
         self.assertTrue(is_valid_result, False)
 
     def test_invalid_market_get_asks(self):
         with self.assertRaises(DepthCacheNotFound):
-            self.ubldc.get_asks(market='TEST_INVALID_MARKET')
+            self.__class__.ubldc.get_asks(market='TEST_INVALID_MARKET')
+
+    def test_invalid_market_get_asks_without_params(self):
+        with self.assertRaises(DepthCacheNotFound):
+            self.__class__.ubldc.get_asks()
 
     def test_invalid_market_get_bids(self):
         with self.assertRaises(DepthCacheNotFound):
-            self.ubldc.get_bids(market='TEST_INVALID_MARKET')
+            self.__class__.ubldc.get_bids(market='TEST_INVALID_MARKET')
 
-    def test_stop_manager(self):
-        self.ubldc.stop_manager()
-        self.ubldc_futures.stop_manager()
+    def test_invalid_market_get_bids_without_params(self):
+        with self.assertRaises(DepthCacheNotFound):
+            self.__class__.ubldc.get_bids()
+
+    def test_yget_asks_threshold_volume(self):
+        self.__class__.ubldc.get_asks(market='BTCUSDT', threshold_volume=200000)
+
+    def test_yget_asks_limit_count(self):
+        self.__class__.ubldc.get_asks(market='BTCUSDT', limit_count=5)
+
+    def test_zstop_manager(self):
+        self.__class__.ubldc_futures.stop_manager()
 
     def test_exception_already_stopped(self):
         with self.assertRaises(DepthCacheAlreadyStopped):
             raise DepthCacheAlreadyStopped(market="blah")
 
+    def test_exception_already_stopped_without_param(self):
+        with self.assertRaises(DepthCacheAlreadyStopped):
+            raise DepthCacheAlreadyStopped()
+
     def test_exception_not_found(self):
         with self.assertRaises(DepthCacheNotFound):
             raise DepthCacheNotFound(market="blah")
+
+    def test_exception_not_found_without_param(self):
+        with self.assertRaises(DepthCacheNotFound):
+            raise DepthCacheNotFound()
+
+    def test_llm(self):
+        with self.assertRaises(NoValidatedLucitLicense):
+            llm = LucitLicensingManager(license_token="blub", api_secret="blob", parent_shutdown_function=shutdown)
+
+    def test_with(self):
+        with BinanceLocalDepthCacheManager() as ubldc:
+            ubldc.get_latest_release_info()
 
 
 if __name__ == '__main__':

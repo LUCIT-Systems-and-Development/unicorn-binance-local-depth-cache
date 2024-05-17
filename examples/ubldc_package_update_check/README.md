@@ -1,4 +1,4 @@
-# Version of this Package
+# Get the Version and Update Info of this Package
 ## Overview
 This shows how to obtain information about new versions programmatically.
 
