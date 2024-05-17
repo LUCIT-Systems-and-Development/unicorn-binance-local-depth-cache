@@ -450,7 +450,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 continue
             if self.depth_caches[market]['refresh_request'] is True:
                 logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Caught "
-                             f"refresh_request for depth_cache with market {market}")
+                             f"refresh_request for depth_cache with market {market} ...")
                 self.depth_caches[market]['is_synchronized'] = False
                 if self._gen_get_init_slot.send(market) == "INIT":
                     logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - "
@@ -882,12 +882,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         if market is None:
             logger.debug(f"BinanceLocalDepthCacheManager.is_depth_cache_synchronized() - Parameter `market` is "
                          f"mandatory!")
-            return False
+            raise DepthCacheNotFound(market=market)
         market = market.lower()
         try:
             status = self.depth_caches[market]['is_synchronized']
         except KeyError:
-            status = False
+            raise DepthCacheNotFound(market=market)
         logger.debug(f"BinanceLocalDepthCacheManager.is_depth_cache_synchronized() - Returning the status: "
                      f"{status}")
         return status
