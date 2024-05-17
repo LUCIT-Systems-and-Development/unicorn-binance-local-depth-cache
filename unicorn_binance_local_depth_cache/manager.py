@@ -60,7 +60,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :param init_time_window: Only one request to the Binance REST API is permitted per depth_cache in this time window
                              (specified in seconds).
     :type init_time_window: int (seconds)
-    :param high_performance: Set to True makes `create_stream()` a non-blocking function
+    :param high_performance: If True, access to the depth snapshots via REST in the INIT process is not regulated.
+                             Be careful!
     :type high_performance:  bool
     :param depth_cache_update_interval: Update speed of the depth stream in milliseconds. More info:
                                         https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
