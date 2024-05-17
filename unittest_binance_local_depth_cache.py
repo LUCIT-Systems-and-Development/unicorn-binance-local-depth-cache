@@ -654,7 +654,7 @@ class TestUbldc(unittest.TestCase):
             llm = LucitLicensingManager(license_token="blub", api_secret="blob", parent_shutdown_function=shutdown)
 
     def test_with(self):
-        with BinanceLocalDepthCacheManager() as ubldc:
+        with BinanceLocalDepthCacheManager(exchange="binance.us") as ubldc:
             ubldc.get_latest_release_info()
 
 
