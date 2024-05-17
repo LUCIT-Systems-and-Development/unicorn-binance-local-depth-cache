@@ -11,7 +11,7 @@ import time
 
 exchange: str = "binance.com"
 update_interval_ms: Optional[int] = None
-threshold_volume: float = 200000
+threshold_volume: float = 200000.0
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
