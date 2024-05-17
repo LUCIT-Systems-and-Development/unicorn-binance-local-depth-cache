@@ -1,11 +1,11 @@
 [![Get a UNICORN Binance Suite License](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/logo/LUCIT-UBS-License-Offer.png)](https://shop.lucit.services)
 
 [![GitHub Release](https://img.shields.io/github/release/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache.svg?label=github)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
-[![GitHub Downloads](https://img.shields.io/github/downloads/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/total?color=blue)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases)
 ![Anaconda Release](https://img.shields.io/conda/v/lucit/unicorn-binance-local-depth-cache?color=blue)
-![Anaconda Downloads](https://img.shields.io/conda/dn/lucit/unicorn-binance-local-depth-cache?color=blue)
 [![PyPi Release](https://img.shields.io/pypi/v/unicorn-binance-local-depth-cache?color=blue)](https://pypi.org/project/unicorn-binance-local-depth-cache/)
 [![PyPi Downloads](https://pepy.tech/badge/unicorn-binance-local-depth-cache)](https://pepy.tech/project/unicorn-binance-local-depth-cache)
+[![PyPi Downloads](https://pepy.tech/badge/unicorn-binance-local-depth-cache/month)](https://pepy.tech/project/unicorn-binance-local-depth-cache)
+[![PyPi Downloads](https://pepy.tech/badge/unicorn-binance-local-depth-cache/week)](https://pepy.tech/project/unicorn-binance-local-depth-cache)
 [![License](https://img.shields.io/badge/license-LSOSL-blue)](https://unicorn-binance-local-depth-cache.docs.lucit.tech/license.html)
 [![Supported Python Version](https://img.shields.io/pypi/pyversions/unicorn_binance_local_depth_cache.svg)](https://www.python.org/downloads/)
 [![PyPI - Status](https://img.shields.io/pypi/status/unicorn_binance_local_depth_cache.svg)](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues)
@@ -250,16 +250,6 @@ Use the below command with the version (such as 2.0.0) you determined
 This is not a release version and can not be considered to be stable!
 
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tarball/master --upgrade`
-
-### [Conda environment](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html), [Virtualenv](https://virtualenv.pypa.io/en/latest/) or plain [Python](https://www.python.org)
-Download the [latest release](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest) 
-or the [current master branch](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/master.zip)
- and use:
- 
-- ./environment.yml
-- ./pyproject.toml
-- ./requirements.txt
-- ./setup.py
 
 ## Change Log
 [https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/changelog.html](https://lucit-systems-and-development.github.io/unicorn-binance-local-depth-cache/changelog.html)

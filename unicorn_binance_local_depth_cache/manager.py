@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ¯\_(ツ)_/¯
 #
 # File: unicorn_binance_local_depth_cache/manager.py
 #
@@ -36,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.0.0.dev"
+__version__: str = "2.0.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -605,16 +606,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                          f"refresh.")
             self.stream_status = "DISCONNECTED"
             if self.ubwa.is_stop_request(stream_id=stream_id) is False:
-                # Todo: move to UBWA and replace this part of code with calling it from UBWA
-                # Block Start
-                try:
-                    while True:
-                        self.ubwa.asyncio_queue[stream_id].get_nowait()
-                except asyncio.QueueEmpty:
-                    logger.debug(
-                        f"BinanceWebSocketApiManager.clear_asyncio_queue(stream_id={stream_id}) - Finished resetting of"
-                        f" asyncio_queue!")
-                # Block End
+                self.ubwa.clear_asyncio_queue(stream_id=stream_id)
                 logger.debug(f"BinanceLocalDepthCacheManager._process_stream_signals(stream_id={stream_id}) - AsyncIO "
                              f"Queue reset done!")
             for market in self.depth_caches:
