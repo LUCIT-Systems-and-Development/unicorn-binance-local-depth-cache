@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
+from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 from unicorn_binance_rest_api import BinanceRestApiManager
 from typing import Optional
 import asyncio
 import logging
 import os
-import time
 
 footer: str = "By LUCIT - www.lucit.tech"
 exchange: str = "binance.com-futures"
