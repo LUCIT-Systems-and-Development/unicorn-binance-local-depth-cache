@@ -19,12 +19,12 @@ threshold_volume: float = 200000
 threshold_volume_limit_count: int = 3
 update_interval_ms: Optional[int] = None
 
-
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
+load_dotenv()
 
 
 async def main():
