@@ -13,7 +13,7 @@ exchange: str = "binance.com"
 limit_count: int = 2
 markets: list = ['BTCUSDT', 'ETHUSDT']
 title: str = "UBLDC Demo"
-threshold_volume: float = 200000
+threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
 
 logging.getLogger("unicorn_binance_local_depth_cache")
