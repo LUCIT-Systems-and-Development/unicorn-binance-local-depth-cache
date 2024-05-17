@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ¯\_(ツ)_/¯
 #
 # File: unittest_binance_local_depth_cache.py
 #

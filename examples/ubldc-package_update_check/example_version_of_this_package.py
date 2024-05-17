@@ -15,7 +15,7 @@
 #
 # Author: LUCIT Systems and Development
 #
-# Copyright (c) 2022-2023, LUCIT Systems and Development (https://www.lucit.tech)
+# Copyright (c) 2022-2024, LUCIT Systems and Development (https://www.lucit.tech)
 # All rights reserved.
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager

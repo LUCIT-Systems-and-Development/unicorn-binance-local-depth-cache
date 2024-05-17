@@ -53,17 +53,17 @@ async def main():
                 markets_not_synced.append(market)
         add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
                       f"---------------------------------------------------------------------------------------------"
-                      f"\r\n SYNCED: {markets_synced}\r\n NOT SYNCED: {markets_not_synced}")
+                      f"\r\n NOT SYNCED: {markets_not_synced}\r\n SYNCED: {markets_synced}")
         ubldc.print_summary(add_string=add_string)
         time.sleep(1)
 
 
 ubra = BinanceRestApiManager(exchange=exchange)
 with BinanceLocalDepthCacheManager(exchange=exchange,
-                                   init_time_window=10,
+                                   init_time_window=5,
                                    ubra_manager=ubra,
                                    websocket_ping_interval=10,
-                                   websocket_ping_timeout=15,
+                                   websocket_ping_timeout=20,
                                    depth_cache_update_interval=update_interval_ms) as ubldc:
     try:
         asyncio.run(main())

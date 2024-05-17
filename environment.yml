@@ -8,7 +8,7 @@ channels:
 dependencies:
   - python>=3.7
   - lucit::lucit-licensing-python>=1.8.2
-  - lucit::unicorn-binance-rest-api>=2.6.0
+  - lucit::unicorn-binance-rest-api>=2.6.1
   - lucit::unicorn-binance-websocket-api>=2.8.0
   - cython
   - requests>=2.31.0

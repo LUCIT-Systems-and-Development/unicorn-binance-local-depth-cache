@@ -27,7 +27,6 @@ from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from operator import itemgetter
 from typing import Optional, Union, Generator, Dict
 
-import asyncio
 import cython
 import logging
 import platform
@@ -105,6 +104,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     def __init__(self, exchange: str = "binance.com",
                  default_refresh_interval: int = None,
                  depth_cache_update_interval: int = None,
+                 init_interval: float = 0.5,
                  init_time_window: int = 10,
                  websocket_close_timeout: int = 2,
                  websocket_ping_interval: int = 5,
@@ -125,6 +125,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.depth_caches: dict = {}
         self.depth_cache_update_interval = depth_cache_update_interval
         self.default_refresh_interval = default_refresh_interval
+        self.init_interval = init_interval
         self.init_time_window = init_time_window
         self.websocket_close_timeout = websocket_close_timeout
         self.websocket_ping_interval = websocket_ping_interval
@@ -352,10 +353,15 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         Get a free init slot.
 
+        The generator controls the INIT processes for DepthCaches. Only a total of 1 INIT signal is issued per
+        `init_interval` for all markets, and only once per depth cache in `self.init_time_window`.
+
         :return: str "INIT" or "DROP"
         """
         last_yield_time: Dict[str, float] = {}
+        last_global_yield_time: float = 0.0
         lock = threading.Lock()
+
         while True:
             id_received = yield
             with (lock):
@@ -363,7 +369,12 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 if id_received not in last_yield_time \
                         or current_time - last_yield_time[id_received] >= self.init_time_window:
                     last_yield_time[id_received] = current_time
-                    yield "INIT"
+
+                    if current_time - last_global_yield_time >= self.init_interval:
+                        last_global_yield_time = current_time
+                        yield "INIT"
+                    else:
+                        yield "DROP"
                 else:
                     yield "DROP"
 
@@ -970,6 +981,38 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             if footer is None:
                 footer = f"Powered by {self.get_user_agent()}"
         self.ubwa.print_summary(add_string=add_string, footer=footer, title=title)
+
+    def print_summary_to_png(self,
+                             print_summary_export_path: str = None,
+                             height_per_row: float = 12.5,
+                             add_string: str = None,
+                             footer: str = None,
+                             title: str = None):
+        """
+        Create a PNG image file with the console output of `print_summary()`
+
+        *LINUX ONLY* It should not be hard to make it OS independent:
+        https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api/issues/61
+
+        :param print_summary_export_path: If you want to export the output of print_summary() to an image,
+                                         please provide a path like "/var/www/html/". `View the Wiki!
+                                         <https://github.com/LUCIT-Systems-and-Development/unicorn-binance-websocket-api/wiki/How-to-export-print_summary()-stdout-to-PNG%3F>`__
+        :type print_summary_export_path: str
+        :param height_per_row: set the height per row for the image height calculation
+        :type height_per_row: float
+        :param add_string: text to add to the output
+        :type add_string: str
+        :param footer: set a footer (last row) for print_summary output
+        :type footer: str
+        :param title: set a title (first row) for print_summary output
+        :type title: str
+        :return: bool
+        """
+        self.ubwa.print_summary_to_png(add_string=add_string,
+                                       height_per_row=height_per_row,
+                                       print_summary_export_path=print_summary_export_path,
+                                       footer=footer,
+                                       title=title)
 
     def set_refresh_request(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
