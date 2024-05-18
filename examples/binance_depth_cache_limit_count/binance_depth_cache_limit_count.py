@@ -3,16 +3,13 @@
 # ¯\_(ツ)_/¯
 
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from typing import Optional
 import asyncio
 import logging
 import os
-import time
 
 exchange: str = "binance.com"
 markets: list = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
 limit_count: int = 4
-update_interval_ms: Optional[int] = None
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -46,11 +43,7 @@ async def main():
         await asyncio.sleep(1)
 
 
-with BinanceLocalDepthCacheManager(exchange=exchange,
-                                   init_time_window=5,
-                                   websocket_ping_interval=10,
-                                   websocket_ping_timeout=15,
-                                   depth_cache_update_interval=update_interval_ms) as ubldc:
+with BinanceLocalDepthCacheManager(exchange=exchange) as ubldc:
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

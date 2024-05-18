@@ -7,7 +7,6 @@ from typing import Optional
 import asyncio
 import logging
 import os
-import time
 
 exchange: str = "binance.com-futures"
 markets: list = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
