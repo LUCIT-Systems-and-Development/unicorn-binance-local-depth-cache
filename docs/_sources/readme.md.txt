@@ -122,11 +122,11 @@ The algorithm of the depth_cache management was designed according to these inst
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 - [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
 
-By [`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches) 
-the depth_cache is started and initialized, that means for each depth_cache you want to create a separate 
-thread is started. As soon as at least one depth update is received via websocket, a REST snapshot is downloaded and 
-the depth updates are applied to it, keeping it in sync in real-time. Once this is done, the state of the cache is set 
-to "synchronous".
+With [Create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches) 
+the depth_cache is started and initialized, i.e. for each depth_cache that is to be created, a separate 
+asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via 
+websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized 
+in real time. As soon as Once this is done, the status of the cache is set to "synchronous".
 
 Data in the depth_cache can be accessed with ['get_asks()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) 
 and ['get_bids()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids). 
@@ -181,7 +181,7 @@ If you like the project, please
 
 ## Live Demo
 This live demo script runs DepthCaches from [binance.com-futues](https://www.binance.com) and runs on a *CCX13 * virtual 
-machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd)
+machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd).
 
 [Open live monitor!](https://www.lucit.tech/unicorn-binance-local-depth-cache-live-demo.html)
 
