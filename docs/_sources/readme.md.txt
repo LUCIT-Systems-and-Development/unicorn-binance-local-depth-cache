@@ -53,8 +53,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ```
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 
-ubldc = BinanceLocalDepthCacheManager(exchange="binance.com"
-                                      depth_cache_update_interval=100)
+ubldc = BinanceLocalDepthCacheManager(exchange="binance.com", depth_cache_update_interval=100)
 ubldc.create_depth_cache("BTCUSDT")
 ```
 
