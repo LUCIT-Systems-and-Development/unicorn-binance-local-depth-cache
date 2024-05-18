@@ -160,7 +160,7 @@ is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-
 
 - Create multiple depth caches within a single object instance. 
 
-- Each depth_cache is processed in a separate thread.
+- Each depth_cache is managed in an asyncio coroutine.
 
 - Start or stop multiple caches with just one command 
 [`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
