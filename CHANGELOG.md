@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
 ## 2.0.0.dev (development stage/unreleased/unstable)
+### Added
+- Handling all stream signals of UBWA clearly.
+- More granular and efficient transfer of update values.
+### Fixed
+- Filtering and removing 0 values now works with all formats. (0.0, 0.000, 0.0000000, ...)
+
 
 ## 2.0.0
 Scaling. The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one 

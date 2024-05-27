@@ -179,7 +179,7 @@ If you like the project, please
 [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
 
 ## Live Demo
-This live demo script runs DepthCaches from [binance.com-futues](https://www.binance.com) and runs on a *CCX13 * virtual 
+This live demo script runs DepthCaches from [binance.com](https://www.binance.com) and runs on a *CCX13* virtual 
 machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd).
 
 [Open live monitor!](https://www.lucit.tech/unicorn-binance-local-depth-cache-live-demo.html)
