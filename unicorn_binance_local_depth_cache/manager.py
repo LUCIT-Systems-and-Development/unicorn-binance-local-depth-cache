@@ -124,7 +124,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         super().__init__()
         self.name = __app_name__
         self.version = __version__
-        logger.info(f"New instance of {self.get_user_agent()}-{'compiled-nogil' if cython.compiled else 'source'} on "
+        logger.info(f"New instance of {self.get_user_agent()}-{'compiled' if cython.compiled else 'source'} on "
                     f"{str(platform.system())} {str(platform.release())} for exchange {exchange} started ...")
         self.exchange = exchange
         self.depth_caches: dict = {}
@@ -686,8 +686,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float
         :return: list
         """
-        logger.debug(f"BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting "
-                     f"{'with nogil ...' if cython.compiled else '...'}")
+        logger.debug(f"BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting ...")
         sorted_items = [[float(price), float(quantity)] for price, quantity in items.items()]
         sorted_items = sorted(sorted_items, key=itemgetter(0), reverse=reverse)
         if threshold_volume is None:
@@ -811,6 +810,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type limit_count: int or None (0 is nothing, None is everything)
         :param reverse: False is regular, True is reversed
         :type reverse: bool
+        :param side: asks or bids
+        :type side: str
         :param threshold_volume: Volume threshold to trim the result.
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
@@ -831,17 +832,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError:
             raise DepthCacheNotFound(market=market)
         with self.threading_lock_bid[market]:
-            if cython.compiled is True:
-                with cython.nogil:
-                    return self._sort_depth_cache(items=self.depth_caches[market][side],
-                                                  limit_count=limit_count,
-                                                  reverse=reverse,
-                                                  threshold_volume=threshold_volume)
-            else:
-                return self._sort_depth_cache(items=self.depth_caches[market][side],
-                                              limit_count=limit_count,
-                                              reverse=reverse,
-                                              threshold_volume=threshold_volume)
+            return self._sort_depth_cache(items=self.depth_caches[market][side],
+                                          limit_count=limit_count,
+                                          reverse=reverse,
+                                          threshold_volume=threshold_volume)
 
     @staticmethod
     def get_latest_release_info() -> Optional[dict]:
