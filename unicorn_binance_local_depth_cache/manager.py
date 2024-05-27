@@ -800,7 +800,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                        market: str = None,
                        limit_count: int = None,
                        reverse: bool = False,
-                       side: str = "",
+                       side: str = None,
                        threshold_volume: float = None) -> list:
         """
         Get the current list of bids with price and quantity.
@@ -815,6 +815,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
+        if side is None:
+            raise ValueError("Side must be specified.")
         if market is None:
             raise DepthCacheNotFound(market=market)
         market = market.lower()
@@ -829,10 +831,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         except KeyError:
             raise DepthCacheNotFound(market=market)
         with self.threading_lock_bid[market]:
-            return self._sort_depth_cache(items=self.depth_caches[market][side],
-                                          limit_count=limit_count,
-                                          reverse=reverse,
-                                          threshold_volume=threshold_volume)
+            if cython.compiled is True:
+                with cython.nogil:
+                    return self._sort_depth_cache(items=self.depth_caches[market][side],
+                                                  limit_count=limit_count,
+                                                  reverse=reverse,
+                                                  threshold_volume=threshold_volume)
+            else:
+                return self._sort_depth_cache(items=self.depth_caches[market][side],
+                                              limit_count=limit_count,
+                                              reverse=reverse,
+                                              threshold_volume=threshold_volume)
 
     @staticmethod
     def get_latest_release_info() -> Optional[dict]:

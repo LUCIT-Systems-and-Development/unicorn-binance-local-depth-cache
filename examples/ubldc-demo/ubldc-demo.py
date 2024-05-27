@@ -15,6 +15,7 @@ markets: list = ['BTCUSDT', 'ETHUSDT']
 title: str = "UBLDC Demo"
 threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
+update_interval = 100
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -65,6 +66,7 @@ async def main():
 
 
 with BinanceLocalDepthCacheManager(exchange=exchange,
+                                   depth_cache_update_interval=update_interval,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15) as ubldc:
     try:
