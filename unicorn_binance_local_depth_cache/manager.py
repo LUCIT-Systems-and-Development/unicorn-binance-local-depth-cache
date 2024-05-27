@@ -1011,7 +1011,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             if footer is None:
                 footer = f"Powered by {self.get_user_agent()}"
-        self.ubwa.print_summary(add_string=add_string, footer=footer, title=title)
+        info = (f"update_interval_ms={self.depth_cache_update_interval}\r\n "
+                f"binance_api_status={self.ubra.get_used_weight(cached=True)}")
+        if add_string is not None:
+            info = f"{info}\r\n {add_string}"
+        self.ubwa.print_summary(add_string=info, footer=footer, title=title)
 
     def print_summary_to_png(self,
                              print_summary_export_path: str = None,
@@ -1039,7 +1043,16 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type title: str
         :return: bool
         """
-        self.ubwa.print_summary_to_png(add_string=add_string,
+        if title is None:
+            title = self.get_user_agent()
+        else:
+            if footer is None:
+                footer = f"Powered by {self.get_user_agent()}"
+        info = (f"update_interval_ms={self.depth_cache_update_interval}\r\n "
+                f"binance_api_status={self.ubra.get_used_weight(cached=True)}")
+        if add_string is not None:
+            info = f"{info}\r\n {add_string}"
+        self.ubwa.print_summary_to_png(add_string=info,
                                        height_per_row=height_per_row,
                                        print_summary_export_path=print_summary_export_path,
                                        footer=footer,

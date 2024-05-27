@@ -9,13 +9,13 @@ import logging
 import os
 
 footer: str = "By LUCIT - www.lucit.tech"
-exchange: str = "binance.com"
+exchange: str = "binance.com-futures"
 limit_count: int = 2
-markets: list = ['BTCUSDT', 'ETHUSDT']
+markets: list = ['1000SHIBUSDT', 'BTCUSDT', 'ETHUSDT']
 title: str = "UBLDC Demo"
 threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
-update_interval = 100
+update_interval_ms = 100
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.DEBUG,
@@ -26,11 +26,9 @@ load_dotenv()
 
 
 async def main():
-    ubra = ubldc.get_ubra_manager()
     ubldc.create_depth_cache(markets=markets)
     while ubldc.is_stop_request() is False:
-        add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
-                      f"---------------------------------------------------------------------------------------------")
+        add_string = f"---------------------------------------------------------------------------------------------"
         for market in markets:
             try:
                 top_asks_limit = ubldc.get_asks(market=market, limit_count=limit_count)
@@ -57,22 +55,20 @@ async def main():
             ubldc.print_summary(add_string=add_string, footer=footer, title=title)
             await asyncio.sleep(1)
         else:
-            ubldc.ubwa.print_summary_to_png(add_string=add_string,
-                                            height_per_row=13.5,
-                                            print_summary_export_path="/var/www/html/",
-                                            footer=footer,
-                                            title=title)
+            ubldc.print_summary_to_png(add_string=add_string,
+                                       height_per_row=13.5,
+                                       print_summary_export_path="/var/www/html/",
+                                       footer=footer,
+                                       title=title)
             await asyncio.sleep(10)
 
 
 with BinanceLocalDepthCacheManager(exchange=exchange,
-                                   depth_cache_update_interval=update_interval,
+                                   depth_cache_update_interval=update_interval_ms,
                                    websocket_ping_interval=10,
                                    websocket_ping_timeout=15) as ubldc:
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\r\nGracefully stopping ...")
-    except Exception as e:
-        print(f"\r\nERROR: {e}")
-        print("Gracefully stopping ...")
+
