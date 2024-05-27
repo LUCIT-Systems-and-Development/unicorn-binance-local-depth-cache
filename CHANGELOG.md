@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.1.0
 ### Changed
 - More granular and efficient transfer of update values.
+- `init_time_window` default value 10 to 5
+- `websocket_ping_interval` default value 5 to 10
+- `websocket_ping_timeout` default value 15 to 20
 ### Fixed
 - Filtering and removing 0 values now works with all formats. (0.0, 0.000, 0.0000000, ...)
 - Updates were erroneously applied twice in `_init_depth_cache()`.
