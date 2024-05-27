@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.1.0.dev (development stage/unreleased/unstable)
 
 ## 2.1.0
+### Added
+- DepthCache specific infos to `print_summary()`.
 ### Changed
 - More granular and efficient transfer of update values.
 - `init_time_window` default value 10 to 5
