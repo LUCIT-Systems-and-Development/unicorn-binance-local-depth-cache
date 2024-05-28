@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.1.0.dev (development stage/unreleased/unstable)
 
 ## 2.1.0
+Stability and performance optimization
 ### Added
 - DepthCache specific infos to `print_summary()`.
 ### Changed
