@@ -36,7 +36,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.1.0.dev"
+__version__: str = "2.1.1"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -770,7 +770,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         """
         return self._get_book_side(market=market,
                                    limit_count=limit_count,
-                                   reverse=True,
+                                   reverse=False,
                                    side="asks",
                                    threshold_volume=threshold_volume)
 

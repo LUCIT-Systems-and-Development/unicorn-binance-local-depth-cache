@@ -9,7 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
-## 2.1.0.dev (development stage/unreleased/unstable)
+## 2.1.1.dev (development stage/unreleased/unstable)
+
+## 2.1.1
+### Fixed
+- Wrong sort order in `get_asks()` - bug was released with 2.1.0.
 
 ## 2.1.0
 Stability and performance optimization
