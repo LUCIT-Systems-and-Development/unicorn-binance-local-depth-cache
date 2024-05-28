@@ -36,7 +36,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.0.0.dev"
+__version__: str = "2.1.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -687,7 +687,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :return: list
         """
         logger.debug(f"BinanceLocalDepthCacheManager._sort_depth_cache() - Start sorting ...")
-        sorted_items = [[float(price), float(quantity)] for price, quantity in items.items()]
+        sorted_items = [[float(price), float(quantity)] for price, quantity in list(items.items())]
         sorted_items = sorted(sorted_items, key=itemgetter(0), reverse=reverse)
         if threshold_volume is None:
             return sorted_items[:limit_count]

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Filtering and removing 0 values now works with all formats. (0.0, 0.000, 0.0000000, ...)
 - Updates were erroneously applied twice in `_init_depth_cache()`.
 - Handling all stream signals of UBWA clearly.
+- RuntimeError in the for loop of `_sort_depth_cache()` 
 
 ## 2.0.0
 Scaling. The core functions have been rewritten in this update. Instead of one stream per depth_cache, we now use one 

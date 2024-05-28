@@ -179,7 +179,7 @@ If you like the project, please
 [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)! 
 
 ## Live Demo
-This live demo script runs DepthCaches from [binance.com](https://www.binance.com) and runs on a *CCX13* virtual 
+This live demo script runs DepthCaches from [binance.com-futures](https://www.binance.com) and runs on a *CCX13* virtual 
 machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd).
 
 [Open live monitor!](https://www.lucit.tech/unicorn-binance-local-depth-cache-live-demo.html)
@@ -257,10 +257,10 @@ Run in bash:
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 
 #### Windows
-Use the below command with the version (such as 2.0.0) you determined 
+Use the below command with the version (such as 2.1.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.0.0.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.1.0.tar.gz --upgrade`
 
 ### From the latest source (dev-stage) with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!
