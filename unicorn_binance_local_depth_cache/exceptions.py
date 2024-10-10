@@ -19,6 +19,19 @@
 # Copyright (c) 2022-2024, LUCIT Systems and Development - https://www.lucit.tech
 # All rights reserved.
 
+
+class DepthCacheClusterNotReachableError(Exception):
+    """
+    Exception raised when the UBDCC is not reachable.
+    """
+    def __init__(self, url=None):
+        if url is None:
+            self.message = f"Connection with UBDCC could not be established!"
+        else:
+            self.message = f"Connection with UBDCC ({url}) could not be established!"
+        super().__init__(self.message)
+
+
 class DepthCacheOutOfSync(Exception):
     """
     Exception raised when an attempt is made to use a depth_cache that is out of sync.

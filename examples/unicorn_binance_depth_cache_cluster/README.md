@@ -1,6 +1,6 @@
-# UBLDC Demo
+# UBLDC Cluster
 ## Overview
-This is the original script from https://ubldc-demo.lucit.tech
+Instead of creating and using local DepthCaches, we connect to a UNICORN Binance DepthCache Cluster.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 

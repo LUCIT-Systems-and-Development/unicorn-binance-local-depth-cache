@@ -19,6 +19,7 @@
 # Copyright (c) 2022-2024, LUCIT Systems and Development - https://www.lucit.tech
 # All rights reserved.
 
+from .cluster import Cluster
 from .exceptions import *
 from .licensing_manager import LucitLicensingManager, NoValidatedLucitLicense
 from requests import ConnectionError
@@ -115,6 +116,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  websocket_ping_interval: int = 10,
                  websocket_ping_timeout: int = 20,
                  disable_colorama: bool = False,
+                 ubdcc_address: str = None,
+                 ubdcc_port: int = 80,
                  ubra_manager: BinanceRestApiManager = None,
                  warn_on_update: bool = True,
                  lucit_api_secret: str = None,
@@ -137,6 +140,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.websocket_ping_interval = websocket_ping_interval
         self.websocket_ping_timeout = websocket_ping_timeout
         self.disable_colorama = disable_colorama
+        self.ubdcc_address = ubdcc_address
+        self.ubdcc_port = ubdcc_port
         self.last_update_check_github: dict = {'timestamp': time.time(), 'status': {'tag_name': None}}
         self.stop_request: bool = False
         self.stream_id: Optional[str] = None
@@ -147,7 +152,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.lucit_license_ini = lucit_license_ini
         self.lucit_license_profile = lucit_license_profile
         self.lucit_license_token = lucit_license_token
-
+        if self.ubdcc_address is not None:
+            self.cluster = Cluster(address=self.ubdcc_address, port=self.ubdcc_port)
+        else:
+            self.cluster = None
         self.llm = LucitLicensingManager(api_secret=self.lucit_api_secret,
                                          license_ini=self.lucit_license_ini,
                                          license_profile=self.lucit_license_profile,
@@ -704,9 +712,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
 
     def _subscribe_depth(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
-        Unsubscribe a market from a stream. To stop a stream please use `stop_depth_cache()`.
+        Subscribe a market on a stream.
 
-        :param markets: The markets to stop.
+        :param markets: The markets
         :type markets: str or list
         :return: bool
         """
@@ -729,8 +737,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.ubwa.subscribe_to_stream(stream_id=self.stream_id, markets=markets)
 
     def create_depth_cache(self,
-                           markets: Optional[Union[str, list]] = None,
-                           refresh_interval: int = None) -> bool:
+                           markets: str | list = None,
+                           refresh_interval: int = None,
+                           desired_quantity: int = None) -> bool:
         """
         Create one or more depth_cache!
 
@@ -740,17 +749,35 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                  `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
                                  The depth_cache is reset and reinitialized at this interval.
         :type refresh_interval: int
+        :param desired_quantity: Can only be used in cluster mode (UBDCC)! Specifies how many replicas of the DepthCache
+                                 should be created.
+        :type desired_quantity: int
         :return: bool
         """
         if markets is None:
             return False
-
         if type(markets) is list:
-            for market in markets:
-                self._add_depth_cache(market=market, refresh_interval=refresh_interval)
+            if self.cluster is None:
+                for market in markets:
+                    self._add_depth_cache(market=market, refresh_interval=refresh_interval)
+            else:
+                for market in markets:
+                    self.cluster.create_depthcache(exchange=self.exchange,
+                                                   market=market,
+                                                   desired_quantity=desired_quantity,
+                                                   refresh_interval=refresh_interval,
+                                                   update_interval=self.depth_cache_update_interval)
         else:
-            self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
-        self._subscribe_depth(markets=markets)
+            if self.cluster is None:
+                self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
+            else:
+                self.cluster.create_depthcache(exchange=self.exchange,
+                                               market=markets,
+                                               desired_quantity=desired_quantity,
+                                               refresh_interval=refresh_interval,
+                                               update_interval=self.depth_cache_update_interval)
+        if self.cluster is None:
+            self._subscribe_depth(markets=markets)
         return True
 
     def get_asks(self,
@@ -768,11 +795,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        return self._get_book_side(market=market,
-                                   limit_count=limit_count,
-                                   reverse=False,
-                                   side="asks",
-                                   threshold_volume=threshold_volume)
+        if self.cluster is None:
+            return self._get_book_side(market=market,
+                                       limit_count=limit_count,
+                                       reverse=False,
+                                       side="asks",
+                                       threshold_volume=threshold_volume)
+        else:
+            return self.cluster.get_asks(exchange=self.exchange,
+                                         market=market,
+                                         limit_count=limit_count,
+                                         threshold_volume=threshold_volume)['asks']
 
     def get_bids(self,
                  market: str = None,
@@ -789,11 +822,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        return self._get_book_side(market=market,
-                                   limit_count=limit_count,
-                                   reverse=True,
-                                   side="bids",
-                                   threshold_volume=threshold_volume)
+        if self.cluster is None:
+            return self._get_book_side(market=market,
+                                       limit_count=limit_count,
+                                       reverse=True,
+                                       side="bids",
+                                       threshold_volume=threshold_volume)
+        else:
+            return self.cluster.get_bids(exchange=self.exchange,
+                                         market=market,
+                                         limit_count=limit_count,
+                                         threshold_volume=threshold_volume)['bids']
 
     def _get_book_side(self,
                        market: str = None,
