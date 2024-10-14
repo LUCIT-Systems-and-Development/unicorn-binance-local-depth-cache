@@ -33,7 +33,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.16.5
 
       - name: Build wheels Mac
-        if: matrix.os == 'macos-11'
+        if: matrix.os == 'macos-12'
         uses: pypa/cibuildwheel@v2.16.5
 
       - name: Build wheels Windows
@@ -44,6 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
+          overwrite: true
 
   build_sdist:
     name: Build source distribution
@@ -59,6 +60,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: dist/*.tar.gz
+          overwrite: true
 
   Release:
     needs: [build_wheels, build_sdist]
