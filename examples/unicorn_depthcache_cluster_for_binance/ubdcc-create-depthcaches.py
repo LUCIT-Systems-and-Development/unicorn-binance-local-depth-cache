@@ -40,6 +40,7 @@ async def main():
     for market in markets:
         print(f"Creating DepthCache #{loop}: {market}")
         ubldc.cluster.create_depthcache(exchange=exchange, market=market, desired_quantity=3)
+        ubldc.create
         loop += 1
         await asyncio.sleep(2.25)
 

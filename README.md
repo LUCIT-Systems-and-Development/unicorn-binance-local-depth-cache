@@ -108,6 +108,26 @@ ubldc.stop_manager()
 
 [Discover more possibilities.](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html)
 
+## Connect to a UNICORN DepthCache Cluster for Binance
+```
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
+
+async def main():
+    ubldc.cluster.create_depthcache(exchange="binance.com", markets=['BTCUSDT', 'ETHUSDT'], desired_quantity=3)
+    while True:
+        print(ubldc.cluster.get_asks(exchange="binance.com", market='BTCUSDT', limit_count=2))
+try:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address="192.10.80.4") as ubldc:
+        try:
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            print("\r\nGracefully stopping ...")
+except DepthCacheClusterNotReachableError as error_msg:
+    print(f"ERROR: {error_msg}")
+
+
+```
+
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
 provides local order books for the Binance Exchanges 

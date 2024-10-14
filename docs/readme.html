@@ -3,7 +3,7 @@
 <html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>UNICORN Binance Local Depth Cache &#8212; unicorn-binance-local-depth-cache 2.1.1 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -79,6 +79,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#stop-ubldc-after-usage-to-avoid-memory-leaks">Stop <code class="docutils literal notranslate"><span class="pre">ubldc</span></code> after usage to avoid memory leaks</a></li>
+<li><a class="reference internal" href="#connect-to-a-unicorn-depthcache-cluster-for-binance">Connect to a UNICORN DepthCache Cluster for Binance</a></li>
 <li><a class="reference internal" href="#description">Description</a><ul>
 <li><a class="reference internal" href="#why-a-local-depth-cache">Why a local depth_cache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
@@ -185,7 +186,7 @@
     </div>
 </div>
   
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -279,11 +280,11 @@ as a Python C extension for maximum performance.</p>
 <section id="using-a-depthcache">
 <h2>Using a DepthCache<a class="headerlink" href="#using-a-depthcache" title="Link to this heading">¶</a></h2>
 <section id="create-a-local-depth-cache-for-binance-with-just-3-lines-of-code">
-<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">Create a local depth_cache</a> for Binance with just 3 lines of code<a class="headerlink" href="#create-a-local-depth-cache-for-binance-with-just-3-lines-of-code" title="Link to this heading">¶</a></h3>
+<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache">Create a local depth_cache</a> for Binance with just 3 lines of code<a class="headerlink" href="#create-a-local-depth-cache-for-binance-with-just-3-lines-of-code" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unicorn_binance_local_depth_cache</span> <span class="kn">import</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">,</span> <span class="n">DepthCacheOutOfSync</span>
 
 <span class="n">ubldc</span> <span class="o">=</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">,</span> <span class="n">depth_cache_update_interval</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">ubldc</span><span class="o">.</span><span class="n">create_depth_cache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
+<span class="n">ubldc</span><span class="o">.</span><span class="n">create_depthcache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -324,7 +325,7 @@ as a Python C extension for maximum performance.</p>
 </section>
 <section id="stop-and-delete-a-depth-cache">
 <h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">Stop and delete a depth_cache</a>:<a class="headerlink" href="#stop-and-delete-a-depth-cache" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_depth_cache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_depthcache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -333,7 +334,7 @@ as a Python C extension for maximum performance.</p>
 <h2>Stop <code class="docutils literal notranslate"><span class="pre">ubldc</span></code> after usage to avoid memory leaks<a class="headerlink" href="#stop-ubldc-after-usage-to-avoid-memory-leaks" title="Link to this heading">¶</a></h2>
 <p>When you instantiate UBLDC with <code class="docutils literal notranslate"><span class="pre">with</span></code>, <code class="docutils literal notranslate"><span class="pre">ubldc.stop_manager()</span></code> is automatically executed upon exiting the <code class="docutils literal notranslate"><span class="pre">with</span></code>-block.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">BinanceWebSocketApiManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">ubldc</span><span class="p">:</span>
-    <span class="n">ubldc</span><span class="o">.</span><span class="n">create_depth_cache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
+    <span class="n">ubldc</span><span class="o">.</span><span class="n">create_depthcache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Without <code class="docutils literal notranslate"><span class="pre">with</span></code>, you must explicitly execute <code class="docutils literal notranslate"><span class="pre">ubldc.stop_manager()</span></code> yourself.</p>
@@ -341,6 +342,27 @@ as a Python C extension for maximum performance.</p>
 </pre></div>
 </div>
 <p><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html">Discover more possibilities.</a></p>
+</section>
+<section id="connect-to-a-unicorn-depthcache-cluster-for-binance">
+<h2>Connect to a UNICORN DepthCache Cluster for Binance<a class="headerlink" href="#connect-to-a-unicorn-depthcache-cluster-for-binance" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unicorn_binance_local_depth_cache</span> <span class="kn">import</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">,</span> <span class="n">DepthCacheClusterNotReachableError</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">ubldc</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">create_depthcache</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">,</span> <span class="n">markets</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BTCUSDT&#39;</span><span class="p">,</span> <span class="s1">&#39;ETHUSDT&#39;</span><span class="p">],</span> <span class="n">desired_quantity</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ubldc</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="s1">&#39;BTCUSDT&#39;</span><span class="p">,</span> <span class="n">limit_count</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="n">exchange</span><span class="p">,</span> <span class="n">ubdcc_address</span><span class="o">=</span><span class="s2">&quot;192.10.80.4&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ubldc</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">Gracefully stopping ...&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">DepthCacheClusterNotReachableError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+</pre></div>
+</div>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
@@ -355,7 +377,7 @@ provides local order books for the Binance Exchanges
 <li><p><a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams">Binance Futures: “How to manage a local order book correctly”</a></p></li>
 <li><p><a class="reference external" href="https://docs.binance.us/#order-book-depth-diff-stream">Binance US: “Managing a Local Order Book”</a></p></li>
 </ul>
-<p>With <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches">Create_depth_cache()`</a>
+<p>With <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches">create_depthcache()`</a>
 the depth_cache is started and initialized, i.e. for each depth_cache that is to be created, a separate
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via
 websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized
@@ -415,9 +437,9 @@ is thrown or ask with <a class="reference external" href="https://unicorn-binanc
 <li><p>Create multiple depth caches within a single object instance.</p></li>
 <li><p>Each depth_cache is managed in an asyncio coroutine.</p></li>
 <li><p>Start or stop multiple caches with just one command
-<a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches"><code class="docutils literal notranslate"><span class="pre">create_depth_cache()</span></code></a>
+<a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches"><code class="docutils literal notranslate"><span class="pre">create_depthcache()</span></code></a>
 or <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache"><code class="docutils literal notranslate"><span class="pre">stop_depth_cache()</span></code></a>.</p></li>
-<li><p>Control websocket out of sync detection with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache"><code class="docutils literal notranslate"><span class="pre">websocket_ping_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_ping_timeout</span></code> and <code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code></a></p></li>
+<li><p>Control websocket out of sync detection with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache"><code class="docutils literal notranslate"><span class="pre">websocket_ping_interval</span></code>, <code class="docutils literal notranslate"><span class="pre">websocket_ping_timeout</span></code> and <code class="docutils literal notranslate"><span class="pre">websocket_close_timeout</span></code></a></p></li>
 <li><p>Powered by <a class="reference external" href="https://www.lucit.tech/unicorn-binance-rest-api.html">UNICORN Binance REST API</a> and
 <a class="reference external" href="https://www.lucit.tech/unicorn-binance-websocket-api.html">UNICORN Binance WebSocket API</a>.</p></li>
 <li><p>Available as a package via <code class="docutils literal notranslate"><span class="pre">pip</span></code> and <code class="docutils literal notranslate"><span class="pre">conda</span></code> as precompiled C extension with stub files for improved Intellisense
@@ -438,7 +460,7 @@ machine of <a class="reference external" href="https://hetzner.cloud/?ref=rKgYRM
 </section>
 <section id="installation-and-upgrade">
 <h2>Installation and Upgrade<a class="headerlink" href="#installation-and-upgrade" title="Link to this heading">¶</a></h2>
-<p>The module requires Python 3.7 and runs smoothly up to and including Python 3.12.</p>
+<p>The module requires Python 3.8 and runs smoothly up to and including Python 3.12.</p>
 <p>For the PyPy interpreter we offer packages only from Python version 3.9 and higher.</p>
 <p>Anaconda packages are available from Python version 3.8 and higher, but only in the latest version!</p>
 <p>The current dependencies are listed <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/blob/master/requirements.txt">here</a>.</p>
@@ -625,7 +647,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo">
                 <div style="text-align: center;">
@@ -659,6 +681,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
 </ul>
 </li>
 <li><a class="reference internal" href="#stop-ubldc-after-usage-to-avoid-memory-leaks">Stop <code class="docutils literal notranslate"><span class="pre">ubldc</span></code> after usage to avoid memory leaks</a></li>
+<li><a class="reference internal" href="#connect-to-a-unicorn-depthcache-cluster-for-binance">Connect to a UNICORN DepthCache Cluster for Binance</a></li>
 <li><a class="reference internal" href="#description">Description</a><ul>
 <li><a class="reference internal" href="#why-a-local-depth-cache">Why a local depth_cache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
@@ -765,7 +788,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
       </div>
       <div class="clearer"></div>
     </div>  
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -813,10 +836,10 @@ of any kind, including but not limited to direct or indirect damages for loss of
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on May 28 2024 at 12:48 (CET).
+    Last updated on Oct 14 2024 at 14:35 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
         with <a href="https://github.com/LUCIT-Systems-and-Development/python-docs-theme-lucit">python-docs-theme-lucit</a>
         by <a href="https://www.lucit.tech">LUCIT Systems and Development</a>.
     </div>

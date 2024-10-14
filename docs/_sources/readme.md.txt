@@ -49,12 +49,12 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 
 ## Using a DepthCache
 
-### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) for Binance with just 3 lines of code
+### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache) for Binance with just 3 lines of code
 ```
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 
 ubldc = BinanceLocalDepthCacheManager(exchange="binance.com", depth_cache_update_interval=100)
-ubldc.create_depth_cache("BTCUSDT")
+ubldc.create_depthcache("BTCUSDT")
 ```
 
 ### Get the [asks](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) and [bids](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids)
@@ -88,7 +88,7 @@ except DepthCacheOutOfSync:
 
 ### [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
 ```
-ubldc.stop_depth_cache("BTCUSDT")
+ubldc.stop_depthcache("BTCUSDT")
 ```
 
 ## Stop `ubldc` after usage to avoid memory leaks
@@ -97,7 +97,7 @@ When you instantiate UBLDC with `with`, `ubldc.stop_manager()` is automatically 
 
 ```
 with BinanceWebSocketApiManager() as ubldc:
-    ubldc.create_depth_cache("BTCUSDT")
+    ubldc.create_depthcache("BTCUSDT")
 ```
 
 Without `with`, you must explicitly execute `ubldc.stop_manager()` yourself.
@@ -107,6 +107,26 @@ ubldc.stop_manager()
 ```
 
 [Discover more possibilities.](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html)
+
+## Connect to a UNICORN DepthCache Cluster for Binance
+```
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
+
+async def main():
+    ubldc.cluster.create_depthcache(exchange="binance.com", markets=['BTCUSDT', 'ETHUSDT'], desired_quantity=3)
+    while True:
+        print(ubldc.cluster.get_asks(exchange="binance.com", market='BTCUSDT', limit_count=2))
+try:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address="192.10.80.4") as ubldc:
+        try:
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            print("\r\nGracefully stopping ...")
+except DepthCacheClusterNotReachableError as error_msg:
+    print(f"ERROR: {error_msg}")
+
+
+```
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 
@@ -121,7 +141,7 @@ The algorithm of the depth_cache management was designed according to these inst
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 - [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
 
-With [Create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches) 
+With [create_depthcache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches) 
 the depth_cache is started and initialized, i.e. for each depth_cache that is to be created, a separate 
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via 
 websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized 
@@ -163,10 +183,10 @@ is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-
 - Each depth_cache is managed in an asyncio coroutine.
 
 - Start or stop multiple caches with just one command 
-[`create_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_caches)
+[`create_depthcache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches)
 or [`stop_depth_cache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache).
 
-- Control websocket out of sync detection with [`websocket_ping_interval`, `websocket_ping_timeout` and `websocket_close_timeout`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache) 
+- Control websocket out of sync detection with [`websocket_ping_interval`, `websocket_ping_timeout` and `websocket_close_timeout`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache) 
 
 - Powered by [UNICORN Binance REST API](https://www.lucit.tech/unicorn-binance-rest-api.html) and 
 [UNICORN Binance WebSocket API](https://www.lucit.tech/unicorn-binance-websocket-api.html).
@@ -189,7 +209,7 @@ machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd).
 (Refresh update once a minute!)
 
 ## Installation and Upgrade
-The module requires Python 3.7 and runs smoothly up to and including Python 3.12.
+The module requires Python 3.8 and runs smoothly up to and including Python 3.12.
 
 For the PyPy interpreter we offer packages only from Python version 3.9 and higher.
 
