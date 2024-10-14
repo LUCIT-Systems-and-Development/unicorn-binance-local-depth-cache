@@ -729,20 +729,26 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             channel = f"depth@{self.depth_cache_update_interval}ms"
 
-        if self.get_stream_id() is None:
-            uuid = self.ubwa.get_new_uuid_id()
+        stream_id = self.get_stream_id()
+        if stream_id is None:
             stream_id = self.ubwa.create_stream(channels=channel,
                                                 markets=markets,
                                                 stream_label=f"ubldc_depth",
                                                 output="dict",
                                                 process_asyncio_queue=self._manage_depth_cache_async)
+            uuid = self.ubwa.get_new_uuid_id()
             self.websockets[uuid] = {"id": uuid,
-                                     "subscriptions": [],
+                                     "channel": channel,
+                                     "markets": markets,
                                      "stream_id": stream_id}
         else:
-            self.ubwa.subscribe_to_stream(stream_id=self.stream_id, markets=markets)
+            for ws_id in self.websockets:
+                if self.websockets[ws_id]['stream_id'] == stream_id:
+                    self.websockets[ws_id]['markets'].append(markets)
+                    break
+            self.ubwa.subscribe_to_stream(stream_id=stream_id, markets=markets)
 
-    def create_depthcache(self, markets: Optional[str, list] = None, refresh_interval: int = None) -> bool:
+    def create_depthcache(self, markets: Optional[Union[str, list]] = None, refresh_interval: int = None) -> bool:
         """
         Create one or more DepthCaches!
 
@@ -980,14 +986,24 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             except KeyError:
                 return False
 
-    def get_stream_id(self) -> Optional[str]:
+    def get_stream_id(self, market: str = None) -> Optional[str]:
         """
-        Get the stream_id of the stream.
+        Get the stream_id of the corresponding stream.
 
-        :return: stream_id (str)
+        :return: stream_id (str) or None
         """
         if len(self.websockets) == 0:
             return None
+        if market is not None:
+            for ws_id in self.websockets:
+                if market in self.websockets[ws_id]['markets']:
+                    return self.websockets[ws_id]['stream_id']
+        else:
+            return None
+        for ws_id in self.websockets:
+            if len(self.websockets[ws_id]['markets']) < self.ubwa.get_limit_of_subscriptions_per_stream():
+                return self.websockets[ws_id]['stream_id']
+        return None
 
     def is_update_available(self) -> bool:
         """
@@ -1120,7 +1136,9 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 self.depth_caches[market]['stop_request'] = True
             except KeyError:
                 raise DepthCacheNotFound(market=market)
-            self.ubwa.unsubscribe_from_stream(stream_id=self.get_stream_id(), markets=market)
+            stream_id = self.get_stream_id(market=market)
+            if stream_id is not None:
+                self.ubwa.unsubscribe_from_stream(stream_id=stream_id, markets=market)
         return True
 
     def stop_depth_cache(self, markets: Optional[Union[str, list]] = None) -> bool:
