@@ -20,6 +20,22 @@ unicorn\_binance\_local\_depth\_cache.unicorn\_binance\_local\_depth\_cache\_exc
     :undoc-members:
     :show-inheritance:
 
+unicorn\_binance\_local\_depth\_cache.unicorn\_binance\_local\_depth\_cache\_cluster module
+-------------------------------------------------------------------------------------------
+
+.. automodule:: unicorn_binance_local_depth_cache.cluster
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+unicorn\_binance\_local\_depth\_cache.unicorn\_binance\_local\_depth\_cache\_cluster_endpoints module
+-----------------------------------------------------------------------------------------------------
+
+.. automodule:: unicorn_binance_local_depth_cache.cluster_endpoints
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Module contents
 ---------------
 
