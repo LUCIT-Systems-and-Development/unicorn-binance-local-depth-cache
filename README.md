@@ -189,7 +189,7 @@ machine of [HETZNER CLOUD](https://hetzner.cloud/?ref=rKgYRMq0l8fd).
 (Refresh update once a minute!)
 
 ## Installation and Upgrade
-The module requires Python 3.7 and runs smoothly up to and including Python 3.12.
+The module requires Python 3.8 and runs smoothly up to and including Python 3.12.
 
 For the PyPy interpreter we offer packages only from Python version 3.9 and higher.
 
