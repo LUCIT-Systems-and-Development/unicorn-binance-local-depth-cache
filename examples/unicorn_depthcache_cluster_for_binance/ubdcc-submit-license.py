@@ -22,6 +22,7 @@ threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
 update_interval_ms: int = 100
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
+ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 
 
 logging.getLogger("unicorn_binance_local_depth_cache")
@@ -32,10 +33,10 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    pprint(ubldc.cluster.submit_license(api_secret=api_secret, license_token=license_token), indent=4)
+    pprint(ubldc.cluster.submit_license(api_secret=api_secret, license_token=license_token, debug=True), indent=4)
 
 try:
-    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address) as ubldc:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:
         try:
             asyncio.run(main())
         except KeyboardInterrupt:

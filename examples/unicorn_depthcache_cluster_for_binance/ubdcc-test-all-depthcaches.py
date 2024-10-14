@@ -14,6 +14,7 @@ exchange: str = "binance.com-futures"
 limit_count: int = 2
 threshold_volume: float = 200000.0
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
+ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.ERROR,
@@ -47,12 +48,10 @@ async def main():
     print(f"Successful working caches: {len(working_caches)}")
     for error in errors:
         print(f"ERROR: {error}: {errors[error]}")
-
-    print(f"exclude={non_working_caches}")
     await asyncio.sleep(1)
 
 try:
-    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address) as ubldc:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:
         try:
             asyncio.run(main())
         except KeyboardInterrupt:

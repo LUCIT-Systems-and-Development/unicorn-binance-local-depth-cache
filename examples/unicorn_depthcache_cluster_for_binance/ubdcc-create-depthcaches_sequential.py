@@ -4,9 +4,11 @@
 
 from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
+from unicorn_binance_rest_api import BinanceRestApiManager
 import asyncio
 import logging
 import os
+
 
 load_dotenv()
 
@@ -22,16 +24,22 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    dc = ubldc.cluster.get_depthcache_list()
-    for dcl_exchange in dc['depthcache_list']:
-        print(f"Stopping {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on UBDCC "
-              f"'{ubdcc_address}'!")
-        loop = 1
-        for market in dc['depthcache_list'][dcl_exchange]:
-            print(f"Stopping DepthCache #{loop}: {market}")
-            ubldc.cluster.stop_depthcache(exchange=dcl_exchange, market=market)
-            loop += 1
-    await asyncio.sleep(1)
+    with BinanceRestApiManager(exchange=exchange) as ubra:
+        if exchange == "binance.com" or exchange == "binance.us":
+            exchange_info = ubra.get_exchange_info()
+        elif exchange == "binance.com-futures":
+            exchange_info = ubra.futures_exchange_info()
+        else:
+            raise ValueError(f"Unknown exchange: {exchange}")
+        markets = []
+        for item in exchange_info['symbols']:
+            if item['symbol'].endswith("USDT") and item['status'] == "TRADING":
+                markets.append(item['symbol'])
+    markets = markets[:210]
+    print(f"Adding {len(markets)} DepthCaches for exchange '{exchange}' on UBDCC '{ubdcc_address}':")
+    for market in markets:
+        result = ubldc.cluster.create_depthcache(exchange=exchange, market=market, desired_quantity=3, debug=True)
+        print(f"{result}")
 
 try:
     with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:

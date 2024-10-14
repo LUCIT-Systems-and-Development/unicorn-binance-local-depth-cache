@@ -14,6 +14,7 @@ load_dotenv()
 
 exchange: str = "binance.com-futures"
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
+ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 
 logging.getLogger("unicorn_binance_local_depth_cache")
 logging.basicConfig(level=logging.ERROR,
@@ -34,18 +35,12 @@ async def main():
         for item in exchange_info['symbols']:
             if item['symbol'].endswith("USDT") and item['status'] == "TRADING":
                 markets.append(item['symbol'])
-    markets = markets[:200]
-    print(f"Adding {len(markets)} DepthCaches for exchange '{exchange}' on UBDCC '{ubdcc_address}'!")
-    loop = 1
-    for market in markets:
-        print(f"Creating DepthCache #{loop}: {market}")
-        ubldc.cluster.create_depthcache(exchange=exchange, market=market, desired_quantity=3)
-        ubldc.create
-        loop += 1
-        await asyncio.sleep(2.25)
+    markets = markets[:210]
+    result = ubldc.cluster.create_depthcaches(exchange=exchange, markets=markets, desired_quantity=3, debug=True)
+    print(f"Adding {len(markets)} DepthCaches for exchange '{exchange}' on UBDCC '{ubdcc_address}': {result}")
 
 try:
-    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address) as ubldc:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:
         try:
             asyncio.run(main())
         except KeyboardInterrupt:

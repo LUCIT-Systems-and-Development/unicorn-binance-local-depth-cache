@@ -21,6 +21,7 @@
 
 class ClusterEndpoints:
     create_depthcache: str = "create_depthcache"
+    create_depthcaches: str = "create_depthcaches"
     get_asks: str = "get_asks"
     get_bids: str = "get_bids"
     get_cluster_info: str = "get_cluster_info"

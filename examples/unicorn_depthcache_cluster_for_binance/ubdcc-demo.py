@@ -19,6 +19,7 @@ title: str = "UBDCC Demo"
 threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
+ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 update_interval_ms: int = 100
 
 
@@ -61,7 +62,7 @@ async def main():
         await asyncio.sleep(1)
 
 try:
-    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address) as ubldc:
+    with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:
         try:
             asyncio.run(main())
         except KeyboardInterrupt:
