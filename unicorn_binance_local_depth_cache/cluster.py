@@ -89,7 +89,7 @@ class Cluster:
                           desired_quantity: int = None,
                           update_interval: int = None,
                           refresh_interval: int = None,
-                          debug: bool = True) -> dict:
+                          debug: bool = False) -> dict:
         if exchange is None or market is None:
             raise ValueError("Missing mandatory parameter: exchange, market")
         params = {"exchange": exchange,
@@ -105,7 +105,7 @@ class Cluster:
                            desired_quantity: int = None,
                            update_interval: int = None,
                            refresh_interval: int = None,
-                           debug: bool = True) -> dict:
+                           debug: bool = False) -> dict:
         if exchange is None or markets is None:
             raise ValueError("Missing mandatory parameter: exchange, markets")
         params = {"exchange": exchange,
@@ -120,7 +120,7 @@ class Cluster:
                  market: str = None,
                  limit_count: int = None,
                  threshold_volume: int = None,
-                 debug: bool = True) -> dict:
+                 debug: bool = False) -> dict:
         if exchange is None or market is None:
             raise ValueError("Missing mandatory parameter: exchange, market")
         params = {"exchange": exchange,
@@ -134,7 +134,7 @@ class Cluster:
                  market: str = None,
                  limit_count: int = None,
                  threshold_volume: int = None,
-                 debug: bool = True) -> dict:
+                 debug: bool = False) -> dict:
         if exchange is None or market is None:
             raise ValueError("Missing mandatory parameter: exchange, market")
         params = {"exchange": exchange,
@@ -143,13 +143,13 @@ class Cluster:
                   "threshold_volume": threshold_volume}
         return self._request(self.endpoints.get_bids, method="get", params=params, debug=debug)
 
-    def get_cluster_info(self, debug: bool = True) -> dict:
+    def get_cluster_info(self, debug: bool = False) -> dict:
         return self._request(self.endpoints.get_cluster_info, method="get", debug=debug)
 
-    def get_depthcache_list(self, debug: bool = True) -> dict:
+    def get_depthcache_list(self, debug: bool = False) -> dict:
         return self._request(self.endpoints.get_depthcache_list, method="get", debug=debug)
 
-    def get_depthcache_info(self, exchange: str = None, market: str = None, debug: bool = True) -> dict:
+    def get_depthcache_info(self, exchange: str = None, market: str = None, debug: bool = False) -> dict:
         if exchange is None or market is None:
             raise ValueError("Missing mandatory parameter: exchange, market")
         params = {"exchange": exchange,
@@ -159,14 +159,14 @@ class Cluster:
     def get_test(self) -> dict:
         return self._request(self.endpoints.test, method="get")
 
-    def submit_license(self, api_secret: str = None, license_token: str = None, debug: bool = True) -> dict:
+    def submit_license(self, api_secret: str = None, license_token: str = None, debug: bool = False) -> dict:
         if api_secret is None or license_token is None:
             raise ValueError("Missing mandatory parameter: api_secret, license_token")
         params = {"api_secret": api_secret,
                   "license_token": license_token}
         return self._request(self.endpoints.submit_license, method="get", params=params, debug=debug)
 
-    def stop_depthcache(self, exchange: str = None, market: str = None, debug: bool = True) -> dict:
+    def stop_depthcache(self, exchange: str = None, market: str = None, debug: bool = False) -> dict:
         if exchange is None or market is None:
             raise ValueError("Missing mandatory parameter: exchange, market")
         params = {"exchange": exchange,
