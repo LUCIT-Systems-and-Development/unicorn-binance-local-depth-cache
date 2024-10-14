@@ -115,7 +115,7 @@ from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, Dep
 
 async def main():
     ubldc.cluster.create_depthcache(exchange="binance.com", markets=['BTCUSDT', 'ETHUSDT'], desired_quantity=3)
-    while True:
+    while ubldc.is_stop_request() is False:
         print(ubldc.cluster.get_asks(exchange="binance.com", market='BTCUSDT', limit_count=2))
         
 try:
@@ -279,10 +279,10 @@ Run in bash:
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 
 #### Windows
-Use the below command with the version (such as 2.1.1) you determined 
+Use the below command with the version (such as 2.2.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.1.1.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.2.0.tar.gz --upgrade`
 
 ### From the latest source (dev-stage) with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!

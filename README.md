@@ -115,7 +115,7 @@ from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, Dep
 
 async def main():
     ubldc.cluster.create_depthcache(exchange="binance.com", markets=['BTCUSDT', 'ETHUSDT'], desired_quantity=3)
-    while True:
+    while ubldc.is_stop_request() is False:
         print(ubldc.cluster.get_asks(exchange="binance.com", market='BTCUSDT', limit_count=2))
         
 try:
