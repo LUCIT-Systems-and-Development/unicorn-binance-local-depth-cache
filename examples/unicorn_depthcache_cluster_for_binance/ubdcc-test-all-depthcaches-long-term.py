@@ -2,19 +2,22 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
+from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 import asyncio
 import datetime
 import logging
 import os
 
+load_dotenv()
+
 exchange: str = "binance.com-futures"
 limit_count: int = 2
 threshold_volume: float = 200000.0
-ubdcc_address = ""
+ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.ERROR,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")

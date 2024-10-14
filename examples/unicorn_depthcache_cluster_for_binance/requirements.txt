@@ -1,0 +1,2 @@
+python-dotenv
+unicorn-binance-local-depth-cache>=2.2.0

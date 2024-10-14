@@ -2,24 +2,28 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
-from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync, DepthCacheClusterNotReachableError
+from dotenv import load_dotenv
+from unicorn_binance_local_depth_cache import (BinanceLocalDepthCacheManager, DepthCacheOutOfSync,
+                                               DepthCacheClusterNotReachableError)
 import asyncio
 import logging
 import os
+
+load_dotenv()
 
 footer: str = "By LUCIT - www.lucit.tech"
 exchange: str = "binance.com-futures"
 limit_count: int = 2
 markets: list = ['1000SHIBUSDT', 'BTCUSDT', 'ETHUSDT']
-title: str = "UBLDC Demo"
+title: str = "UBDCC Demo"
 threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
+ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
 update_interval_ms: int = 100
 
-ubdcc_address = ""
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.ERROR,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")

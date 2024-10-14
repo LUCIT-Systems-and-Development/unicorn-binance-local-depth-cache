@@ -2,32 +2,37 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
-from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
+from dotenv import load_dotenv
 import asyncio
 import logging
 import os
+from pprint import pprint
+from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 
+load_dotenv()
+
+api_secret: str = os.getenv('API_SECRET')
+footer: str = "By LUCIT - www.lucit.tech"
 exchange: str = "binance.com-futures"
-ubdcc_address = ""
+license_token: str = os.getenv('LICENSE_TOKEN')
+limit_count: int = 2
+markets: list = ['1000SHIBUSDT', 'BTCUSDT', 'ETHUSDT']
+title: str = "UBDCC Demo"
+threshold_volume: float = 200000.0
+threshold_volume_limit_count: int = 3
+update_interval_ms: int = 100
+ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
+
 
 logging.getLogger("unicorn_binance_local_depth_cache")
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.ERROR,
                     filename=os.path.basename(__file__) + '.log',
                     format="{asctime} [{levelname:8}] {process} {thread} {module}: {message}",
                     style="{")
 
 
 async def main():
-    dc = ubldc.cluster.get_depthcache_list()
-    for dcl_exchange in dc['depthcache_list']:
-        print(f"Stopping {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on UBDCC "
-              f"'{ubdcc_address}'!")
-        loop = 1
-        for market in dc['depthcache_list'][dcl_exchange]:
-            print(f"Stopping DepthCache #{loop}: {market}")
-            ubldc.cluster.stop_depthcache(exchange=dcl_exchange, market=market)
-            loop += 1
-    await asyncio.sleep(1)
+    pprint(ubldc.cluster.submit_license(api_secret=api_secret, license_token=license_token), indent=4)
 
 try:
     with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address) as ubldc:

@@ -87,7 +87,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+examples/unicorn_depthcache_cluster_for_binance/.env
 .venv
 env/
 venv/

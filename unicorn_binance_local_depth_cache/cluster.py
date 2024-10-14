@@ -30,14 +30,14 @@ logger = __logger__
 
 
 class Cluster:
-    def __init__(self, address=None, port=None):
+    def __init__(self, address: str = None, port: int = None):
         self.address: str = address
         self.endpoints: ClusterEndpoints = ClusterEndpoints()
         self.port: int = port
         self.url: str
         self._build_url()
         if self.test():
-            logger.info(f"Connection with UBDCC successfully established, activate cluster mode.")
+            logger.info(f"Connection with UBDCC {self.url} successfully established! Activate cluster mode ...")
         else:
             raise DepthCacheClusterNotReachableError(url=self.url)
 

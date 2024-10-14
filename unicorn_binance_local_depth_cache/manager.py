@@ -152,10 +152,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.lucit_license_ini = lucit_license_ini
         self.lucit_license_profile = lucit_license_profile
         self.lucit_license_token = lucit_license_token
-        if self.ubdcc_address is not None:
-            self.cluster = Cluster(address=self.ubdcc_address, port=self.ubdcc_port)
-        else:
-            self.cluster = None
         self.llm = LucitLicensingManager(api_secret=self.lucit_api_secret,
                                          license_ini=self.lucit_license_ini,
                                          license_profile=self.lucit_license_profile,
@@ -167,6 +163,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         licensing_exception = self.llm.get_license_exception()
         if licensing_exception is not None:
             raise NoValidatedLucitLicense(licensing_exception)
+
+        if self.ubdcc_address is not None:
+            self.cluster = Cluster(address=self.ubdcc_address, port=self.ubdcc_port)
+        else:
+            self.cluster = None
 
         if ubra_manager is None:
             try:
@@ -736,10 +737,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             self.ubwa.subscribe_to_stream(stream_id=self.stream_id, markets=markets)
 
-    def create_depth_cache(self,
-                           markets: str | list = None,
-                           refresh_interval: int = None,
-                           desired_quantity: int = None) -> bool:
+    def create_depth_cache(self, markets: str | list = None, refresh_interval: int = None) -> bool:
         """
         Create one or more depth_cache!
 
@@ -749,35 +747,17 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                  `BinanceLocalDepthCache <https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager>`__.
                                  The depth_cache is reset and reinitialized at this interval.
         :type refresh_interval: int
-        :param desired_quantity: Can only be used in cluster mode (UBDCC)! Specifies how many replicas of the DepthCache
-                                 should be created.
-        :type desired_quantity: int
+
         :return: bool
         """
         if markets is None:
             return False
         if type(markets) is list:
-            if self.cluster is None:
-                for market in markets:
-                    self._add_depth_cache(market=market, refresh_interval=refresh_interval)
-            else:
-                for market in markets:
-                    self.cluster.create_depthcache(exchange=self.exchange,
-                                                   market=market,
-                                                   desired_quantity=desired_quantity,
-                                                   refresh_interval=refresh_interval,
-                                                   update_interval=self.depth_cache_update_interval)
+            for market in markets:
+                self._add_depth_cache(market=market, refresh_interval=refresh_interval)
         else:
-            if self.cluster is None:
-                self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
-            else:
-                self.cluster.create_depthcache(exchange=self.exchange,
-                                               market=markets,
-                                               desired_quantity=desired_quantity,
-                                               refresh_interval=refresh_interval,
-                                               update_interval=self.depth_cache_update_interval)
-        if self.cluster is None:
-            self._subscribe_depth(markets=markets)
+            self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
+        self._subscribe_depth(markets=markets)
         return True
 
     def get_asks(self,
@@ -795,20 +775,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        if self.cluster is None:
-            return self._get_book_side(market=market,
-                                       limit_count=limit_count,
-                                       reverse=False,
-                                       side="asks",
-                                       threshold_volume=threshold_volume)
-        else:
-            try:
-                return self.cluster.get_asks(exchange=self.exchange,
-                                             market=market,
-                                             limit_count=limit_count,
-                                             threshold_volume=threshold_volume)['asks']
-            except KeyError:
-                return []
+        return self._get_book_side(market=market,
+                                   limit_count=limit_count,
+                                   reverse=False,
+                                   side="asks",
+                                   threshold_volume=threshold_volume)
 
     def get_bids(self,
                  market: str = None,
@@ -825,20 +796,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        if self.cluster is None:
-            return self._get_book_side(market=market,
-                                       limit_count=limit_count,
-                                       reverse=True,
-                                       side="bids",
-                                       threshold_volume=threshold_volume)
-        else:
-            try:
-                return self.cluster.get_bids(exchange=self.exchange,
-                                             market=market,
-                                             limit_count=limit_count,
-                                             threshold_volume=threshold_volume)['bids']
-            except KeyError:
-                return []
+        return self._get_book_side(market=market,
+                                   limit_count=limit_count,
+                                   reverse=True,
+                                   side="bids",
+                                   threshold_volume=threshold_volume)
 
     def _get_book_side(self,
                        market: str = None,

@@ -1,6 +1,7 @@
-# UBLDC Cluster
+# UNICORN DepthCache Cluster for Binance
+
 ## Overview
-Instead of creating and using local DepthCaches, we connect to a UNICORN Binance DepthCache Cluster.
+Instead of creating and using local DepthCaches, we connect to a UNICORN DepthCache Cluster for Binance.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 
