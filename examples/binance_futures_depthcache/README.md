@@ -1,6 +1,6 @@
-# Binance US DepthCache  
+# Binance Futures DepthCache  
 ## Overview
-Create DepthCaches for Binance US with `exchange="binance.us"`.
+Create DepthCaches for Binance Futures with `exchange="binance.com-futures"`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 
@@ -16,7 +16,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ## Usage
 ### Running the Script:
 ```bash
-python binance_us_depth_cache.py
+python binance_us_depthcache.py
 ```
 
 ### Graceful Shutdown:

@@ -1,6 +1,7 @@
-# Binance DepthCache Limit the number of returned list elements. 
+# Binance DepthCache Limits the number of returned list items by volume. 
 ## Overview
-Limit the number of returned list elements of `get_asks()` and `get_bids` with the parameter `limit_count`.
+Limit the number of returned list elements of `get_asks()` and `get_bids` by volume with the parameter 
+`threshold_volume`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 
@@ -16,7 +17,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ## Usage
 ### Running the Script:
 ```bash
-python binance_us_depth_cache.py
+python binance_depthcache_threshold_volume.py
 ```
 
 ### Graceful Shutdown:

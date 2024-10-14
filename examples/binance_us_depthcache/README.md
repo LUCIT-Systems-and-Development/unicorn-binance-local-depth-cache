@@ -1,6 +1,6 @@
-# UBLDC Multi Markets
+# Binance US DepthCache  
 ## Overview
-This example starts 40 DepthCaches with 1 second interval.
+Create DepthCaches for Binance US with `exchange="binance.us"`.
 
 ## Prerequisites
 Ensure you have Python 3.7+ installed on your system. 
@@ -16,7 +16,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ## Usage
 ### Running the Script:
 ```bash
-python binance_depth_cache_multi_markets.py
+python binance_us_depthcache.py
 ```
 
 ### Graceful Shutdown:
