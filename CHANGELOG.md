@@ -14,7 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.2.0
 ### Added
 - ***Experimental*** Client functions for interacting with the UNICORN DepthCache Cluster for Binance 
-
+### Renamed 
+- 'create_depth_cache()' -> 'create_depthcache()' 
+- 'stop_depth_cache()' -> 'stop_depthcache()'
 
 ## 2.1.1
 ### Fixed

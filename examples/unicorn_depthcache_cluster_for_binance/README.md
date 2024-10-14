@@ -11,6 +11,8 @@ Before running the provided script, install the required Python packages:
 pip install -r requirements.txt
 ```
 
+And set up your `.env` file!
+
 ## Get a UNICORN Binance Suite License
 To run modules of the *UNICORN Binance Suite* you need a [valid license](https://shop.lucit.services)!
 

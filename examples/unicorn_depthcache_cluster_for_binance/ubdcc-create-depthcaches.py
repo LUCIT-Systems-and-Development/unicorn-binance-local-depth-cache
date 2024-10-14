@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 # ¯\_(ツ)_/¯
 
+from dotenv import load_dotenv
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 from unicorn_binance_rest_api import BinanceRestApiManager
-from dotenv import load_dotenv
 import asyncio
 import logging
 import os
@@ -39,7 +39,7 @@ async def main():
     loop = 1
     for market in markets:
         print(f"Creating DepthCache #{loop}: {market}")
-        ubldc.create_depth_cache(markets=market, desired_quantity=2)
+        ubldc.cluster.create_depthcache(exchange=exchange, market=market, desired_quantity=3)
         loop += 1
         await asyncio.sleep(2.25)
 

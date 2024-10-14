@@ -24,7 +24,7 @@ async def main():
     ubra = ubldc.get_ubra_manager()
 
     print(f"Starting {exchange} DepthCaches for {len(markets)} markets: {markets}")
-    ubldc.create_depth_cache(markets=markets)
+    ubldc.create_depthcache(markets=markets)
 
     while ubldc.is_stop_request() is False:
         add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "

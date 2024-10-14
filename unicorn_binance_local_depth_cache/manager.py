@@ -144,7 +144,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.ubdcc_port = ubdcc_port
         self.last_update_check_github: dict = {'timestamp': time.time(), 'status': {'tag_name': None}}
         self.stop_request: bool = False
-        self.stream_id: Optional[str] = None
         self.stream_status: Optional[str] = None
         self.threading_lock_ask: dict = {}
         self.threading_lock_bid: dict = {}
@@ -198,6 +197,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                lucit_license_ini=self.lucit_license_ini,
                                                lucit_license_profile=self.lucit_license_profile,
                                                lucit_license_token=self.lucit_license_token)
+
+        self.websockets = {}
 
         if self.high_performance is True:
             logger.info(f"Using `high_performance` ...")
@@ -729,17 +730,21 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             channel = f"depth@{self.depth_cache_update_interval}ms"
 
         if self.get_stream_id() is None:
-            self.stream_id = self.ubwa.create_stream(channels=channel,
-                                                     markets=markets,
-                                                     stream_label=f"ubldc_depth",
-                                                     output="dict",
-                                                     process_asyncio_queue=self._manage_depth_cache_async)
+            uuid = self.ubwa.get_new_uuid_id()
+            stream_id = self.ubwa.create_stream(channels=channel,
+                                                markets=markets,
+                                                stream_label=f"ubldc_depth",
+                                                output="dict",
+                                                process_asyncio_queue=self._manage_depth_cache_async)
+            self.websockets[uuid] = {"id": uuid,
+                                     "subscriptions": [],
+                                     "stream_id": stream_id}
         else:
             self.ubwa.subscribe_to_stream(stream_id=self.stream_id, markets=markets)
 
-    def create_depth_cache(self, markets: str | list = None, refresh_interval: int = None) -> bool:
+    def create_depthcache(self, markets: Optional[str, list] = None, refresh_interval: int = None) -> bool:
         """
-        Create one or more depth_cache!
+        Create one or more DepthCaches!
 
         :param markets: Specify the market symbols for caches to be created
         :type markets: str or list
@@ -759,6 +764,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
         self._subscribe_depth(markets=markets)
         return True
+
+    def create_depth_cache(self, markets: Optional[str] = None, refresh_interval: int = None) -> bool:
+        """
+        ***Deprecated!*** Please use 'create_depthcache()' instead!
+        """
+        logger.warning(f"BinanceLocalDepthCacheManager.create_depth_cache() is deprecated, please use "
+                       f"'create_depthcache()' instead!")
+        return self.create_depthcache(markets=markets, refresh_interval=refresh_interval)
 
     def get_asks(self,
                  market: str = None,
@@ -967,13 +980,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             except KeyError:
                 return False
 
-    def get_stream_id(self) -> str:
+    def get_stream_id(self) -> Optional[str]:
         """
         Get the stream_id of the stream.
 
         :return: stream_id (str)
         """
-        return self.stream_id
+        if len(self.websockets) == 0:
+            return None
 
     def is_update_available(self) -> bool:
         """
@@ -1085,22 +1099,22 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             self.depth_caches[market]['refresh_request'] = True
         return True
 
-    def stop_depth_cache(self, markets: Optional[Union[str, list]] = None) -> bool:
+    def stop_depthcache(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
-        Stop and delete one or more depth_caches!
+        Stop and delete one or more DepthCaches!
 
         :param markets: Specify the market symbols for the depth_caches to be stopped and deleted
         :type markets: str or list
         :return: bool
         """
         if markets is None:
-            logger.critical(f"BinanceLocalDepthCacheManager.stop_depth_cache() - Please provide a market")
+            logger.critical(f"BinanceLocalDepthCacheManager.stop_depthcache() - Please provide a market")
             return False
         if isinstance(markets, str):
             markets = [markets, ]
         for market in markets:
             market = market.lower()
-            logger.info(f"BinanceLocalDepthCacheManager.stop_depth_cache() - Setting stop_request for "
+            logger.info(f"BinanceLocalDepthCacheManager.stop_depthcache() - Setting stop_request for "
                         f"depth_cache `{market}`, stop its stream and clear the stream_buffer")
             try:
                 self.depth_caches[market]['stop_request'] = True
@@ -1108,6 +1122,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise DepthCacheNotFound(market=market)
             self.ubwa.unsubscribe_from_stream(stream_id=self.get_stream_id(), markets=market)
         return True
+
+    def stop_depth_cache(self, markets: Optional[Union[str, list]] = None) -> bool:
+        """
+        ***Deprecated!*** Please use 'stop_depthcache()' instead!
+        """
+        logger.warning(f"BinanceLocalDepthCacheManager.stop_depth_cache() is deprecated, please use "
+                       f"'stop_depthcache()' instead!")
+        return self.stop_depthcache(markets=markets)
 
     def stop_manager(self, close_api_session: bool = True) -> bool:
         """

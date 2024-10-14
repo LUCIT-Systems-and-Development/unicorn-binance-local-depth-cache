@@ -42,7 +42,7 @@ async def main():
             break
 
     print(f"Starting {exchange} DepthCaches for {len(markets)} markets: {markets}")
-    ubldc.create_depth_cache(markets=markets)
+    ubldc.create_depthcache(markets=markets)
 
     while ubldc.is_stop_request() is False:
         markets_synced: list = []

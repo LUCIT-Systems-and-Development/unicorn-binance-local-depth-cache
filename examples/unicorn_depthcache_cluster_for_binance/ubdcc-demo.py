@@ -30,20 +30,20 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    ubldc.create_depth_cache(markets=markets)
+    ubldc.cluster.create_depthcache(markets=markets)
     while ubldc.is_stop_request() is False:
         dividing_line = f"---------------------------------------------------------------------------------------------"
         add_string = dividing_line
         for market in markets:
             try:
-                top_asks_limit = ubldc.get_asks(market=market, limit_count=limit_count)
-                top_bids_limit = ubldc.get_bids(market=market, limit_count=limit_count)
-                top_asks_threshold = ubldc.get_asks(market=market,
-                                                    limit_count=threshold_volume_limit_count,
-                                                    threshold_volume=threshold_volume)
-                top_bids_threshold = ubldc.get_bids(market=market,
-                                                    limit_count=threshold_volume_limit_count,
-                                                    threshold_volume=threshold_volume)
+                top_asks_limit = ubldc.cluster.get_asks(market=market, limit_count=limit_count)
+                top_bids_limit = ubldc.cluster.get_bids(market=market, limit_count=limit_count)
+                top_asks_threshold = ubldc.cluster.get_asks(market=market,
+                                                            limit_count=threshold_volume_limit_count,
+                                                            threshold_volume=threshold_volume)
+                top_bids_threshold = ubldc.cluster.get_bids(market=market,
+                                                            limit_count=threshold_volume_limit_count,
+                                                            threshold_volume=threshold_volume)
             except DepthCacheOutOfSync:
                 top_asks_limit = "Out of sync!"
                 top_bids_limit = "Out of sync!"
