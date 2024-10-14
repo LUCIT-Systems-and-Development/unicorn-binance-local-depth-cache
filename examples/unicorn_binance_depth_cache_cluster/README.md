@@ -16,7 +16,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 ## Usage
 ### Running the Script:
 ```bash
-python ubldc-cluster.py
+python ubdcc-demo.py
 ```
 
 ### Graceful Shutdown:

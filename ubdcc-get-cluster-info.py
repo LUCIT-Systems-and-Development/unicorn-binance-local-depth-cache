@@ -8,15 +8,8 @@ import os
 from pprint import pprint
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 
-footer: str = "By LUCIT - www.lucit.tech"
 exchange: str = "binance.com-futures"
-limit_count: int = 2
 markets: list = ['1000SHIBUSDT', 'BTCUSDT', 'ETHUSDT']
-title: str = "UBLDC Demo"
-threshold_volume: float = 200000.0
-threshold_volume_limit_count: int = 3
-update_interval_ms: int = 100
-
 ubdcc_address = ""
 
 logging.getLogger("unicorn_binance_local_depth_cache")

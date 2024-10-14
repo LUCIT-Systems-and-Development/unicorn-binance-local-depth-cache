@@ -37,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.1.1"
+__version__: str = "2.1.1.dev"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -802,10 +802,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                        side="asks",
                                        threshold_volume=threshold_volume)
         else:
-            return self.cluster.get_asks(exchange=self.exchange,
-                                         market=market,
-                                         limit_count=limit_count,
-                                         threshold_volume=threshold_volume)['asks']
+            try:
+                return self.cluster.get_asks(exchange=self.exchange,
+                                             market=market,
+                                             limit_count=limit_count,
+                                             threshold_volume=threshold_volume)['asks']
+            except KeyError:
+                return []
 
     def get_bids(self,
                  market: str = None,
@@ -829,10 +832,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                        side="bids",
                                        threshold_volume=threshold_volume)
         else:
-            return self.cluster.get_bids(exchange=self.exchange,
-                                         market=market,
-                                         limit_count=limit_count,
-                                         threshold_volume=threshold_volume)['bids']
+            try:
+                return self.cluster.get_bids(exchange=self.exchange,
+                                             market=market,
+                                             limit_count=limit_count,
+                                             threshold_volume=threshold_volume)['bids']
+            except KeyError:
+                return []
 
     def _get_book_side(self,
                        market: str = None,
