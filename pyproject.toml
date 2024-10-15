@@ -24,6 +24,7 @@ repository = "https://github.com/LUCIT-Systems-and-Development/unicorn-binance-l
 
 [tool.poetry.dependencies]
 python = ">=3.8.0"
+aiohttp = "*"
 lucit-licensing-python = ">=1.8.2"
 requests = ">=2.31.0"
 unicorn-binance-rest-api = ">=2.6.1"
