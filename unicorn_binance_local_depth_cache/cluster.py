@@ -93,7 +93,8 @@ class Cluster:
                              timeout: int = 10,
                              debug: bool = False) -> dict:
         start_time: float = 0.0
-        params = {k: v for k, v in params.items() if v is not None}
+        if params is not None:
+            params = {k: v for k, v in params.items() if v is not None}
         if debug is True:
             start_time = time.time()
             if params is None:
