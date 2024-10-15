@@ -152,8 +152,9 @@ except DepthCacheClusterNotReachableError as error_msg:
     print(f"ERROR: {error_msg}")
 ```
 
-[UNICORN DephtCache Cluster for Binance examples](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tree/master/examples/unicorn_depthcache_cluster_for_binance)
-[Discover more cluster possibilities.](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.cluster)
+[Try UNICORN DephtCache Cluster for Binance examples!](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/tree/master/examples/unicorn_depthcache_cluster_for_binance)
+
+[Discover more cluster possibilities ...](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html#module-unicorn_binance_local_depth_cache.cluster)
 
 ## Description
 The Python package [UNICORN Binance Local Depth Cache](https://www.lucit.tech/unicorn-binance-local-depth-cache.html) 

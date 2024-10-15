@@ -45,7 +45,7 @@ async def main():
         await asyncio.sleep(2)
 
 
-with BinanceLocalDepthCacheManager(exchange="binance.com-futures", init_interval=1) as ubldc:
+with BinanceLocalDepthCacheManager(exchange="binance.com-futures") as ubldc:
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
