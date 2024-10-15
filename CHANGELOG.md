@@ -9,9 +9,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
-## 2.2.0.dev (development stage/unreleased/unstable)
+## 2.3.0.dev (development stage/unreleased/unstable)
+
+## 2.3.0.dev 
 ### Added
-- Async client functions for interacting with the UNICORN DepthCache Cluster for Binance 
+- Async client functions for interacting with the UNICORN DepthCache Cluster for Binance.
+### Fixed
+- DepthCache management now correctly handles refreshes.
 
 ## 2.2.0
 ### Added

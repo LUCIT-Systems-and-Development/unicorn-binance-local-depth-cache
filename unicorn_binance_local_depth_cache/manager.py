@@ -26,7 +26,7 @@ from requests import ConnectionError
 from unicorn_binance_rest_api import BinanceRestApiManager, BinanceAPIException, AlreadyStoppedError
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from operator import itemgetter
-from typing import Optional, Union, Generator, Dict
+from typing import Optional, Union, Generator, Dict, List
 
 import cython
 import logging
@@ -488,31 +488,37 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     except BinanceAPIException as error_msg:
                         logger.error(f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
                                      f"weight for market {market} - BinanceAPIException - error_msg: {error_msg}")
+                        self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                     except AlreadyStoppedError as error_msg:
                         logger.debug(
                             f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
                             f"weight for market {market} - AlreadyStoppedError - error_msg: {error_msg}")
+                        self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                     except requests.exceptions.ConnectionError as error_msg:
                         logger.error(
                             f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
                             f"weight for market {market} - requests.exceptions.ConnectionError - "
                             f"error_msg: {error_msg}")
+                        self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                     except requests.exceptions.ReadTimeout as error_msg:
                         logger.error(
                             f"BinanceLocalDepthCacheManager._manage_depth_cache_async() - Can not get used "
                             f"weight for market {market} - requests.exceptions.ReadTimeout - error_msg: {error_msg}")
+                        self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
-                    if current_weight['weight'] > 4000 or current_weight['status_code'] != 200:
+                    if current_weight['weight'] > 2200 or current_weight['status_code'] != 200:
                         logger.warning(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id})"
                                        f" - The used weight ({current_weight['weight']}) of the Binance API is to high "
                                        f"or the status_code {current_weight['status_code']} != 200, market {market} is "
                                        f"waiting a few seconds ...")
+                        self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
-                    logger.info(f"Taking snapshot for market '{market}'! Current weight level is {current_weight}")
+                    logger.info(f"Taking snapshot for market '{market}'! Current weight level is {current_weight}!")
                     self.depth_caches[market]['refresh_request'] = False
+                    self.depth_caches[market]['last_update_id'] = None
                     thread = threading.Thread(target=self._init_depth_cache, args=(market,))
                     thread.start()
 
@@ -529,6 +535,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                      f" `{market}` is no longer correct and must be reinitialized")
                         self.depth_caches[market]['is_synchronized'] = False
                         self.depth_caches[market]['refresh_request'] = True
+                        self.depth_caches[market]['last_update_id'] = None
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                 elif self.exchange == "binance.com-futures" or self.exchange == "binance.com-futures-testnet":
@@ -538,6 +545,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                      f" `{market}` is no longer correct and must be reinitialized")
                         self.depth_caches[market]['is_synchronized'] = False
                         self.depth_caches[market]['refresh_request'] = True
+                        self.depth_caches[market]['last_update_id'] = None
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                 if self.depth_caches[market]['refresh_interval'] is not None:
@@ -548,6 +556,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                     f"depth_cache `{market}`")
                         self.depth_caches[market]['is_synchronized'] = False
                         self.depth_caches[market]['refresh_request'] = True
+                        self.depth_caches[market]['last_update_id'] = None
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
                 # Apply updates
@@ -558,6 +567,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 self.depth_caches[market]['last_update_id'] = int(stream_data['data']['u'])
                 self.depth_caches[market]['last_update_time'] = int(time.time())
                 self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
+                continue
             else:
                 logger.info(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Init "
                             f"depth cache of market {market}")
@@ -612,14 +622,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         self.depth_caches[market]['is_synchronized'] = True
                         self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
                         continue
-                    logger.info(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Set "
-                                f"refresh_request for depth_cache with market {market}")
-                    self.depth_caches[market]['is_synchronized'] = False
-                    self.depth_caches[market]['refresh_request'] = True
-                    self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
-                    continue
-            logger.debug(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Is "
-                         f"exiting ...")
+                logger.info(f"BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id={stream_id}) - Set "
+                            f"refresh_request for depth_cache with market {market}")
+                self.depth_caches[market]['is_synchronized'] = False
+                self.depth_caches[market]['refresh_request'] = True
+                self.depth_caches[market]['last_update_id'] = None
+                self.ubwa.asyncio_queue_task_done(stream_id=stream_id)
+                continue
 
     def _process_stream_signals(self, signal_type=None, stream_id=None, data_record=None, error_msg=None) -> None:
         """
@@ -729,26 +738,27 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             channel = f"depth@{self.depth_cache_update_interval}ms"
 
-        stream_id = self.get_stream_id()
-        if stream_id is None:
-            stream_id = self.ubwa.create_stream(channels=channel,
-                                                markets=markets,
-                                                stream_label=f"ubldc_depth",
-                                                output="dict",
-                                                process_asyncio_queue=self._manage_depth_cache_async)
-            uuid = self.ubwa.get_new_uuid_id()
-            self.websockets[uuid] = {"id": uuid,
-                                     "channel": channel,
-                                     "markets": markets,
-                                     "stream_id": stream_id}
-        else:
-            for ws_id in self.websockets:
-                if self.websockets[ws_id]['stream_id'] == stream_id:
-                    self.websockets[ws_id]['markets'].append(markets)
-                    break
-            self.ubwa.subscribe_to_stream(stream_id=stream_id, markets=markets)
+        for market in markets:
+            stream_id = self.get_stream_id()
+            if stream_id is None:
+                stream_id = self.ubwa.create_stream(channels=channel,
+                                                    markets=market,
+                                                    stream_label=f"ubldc_depth",
+                                                    output="dict",
+                                                    process_asyncio_queue=self._manage_depth_cache_async)
+                uuid = self.ubwa.get_new_uuid_id()
+                self.websockets[uuid] = {"id": uuid,
+                                         "channel": channel,
+                                         "markets": [market, ],
+                                         "stream_id": stream_id}
+            else:
+                for ws_id in self.websockets:
+                    if self.websockets[ws_id]['stream_id'] == stream_id:
+                        self.websockets[ws_id]['markets'].append(market)
+                        break
+                self.ubwa.subscribe_to_stream(stream_id=stream_id, markets=market)
 
-    def create_depthcache(self, markets: Optional[Union[str, list]] = None, refresh_interval: int = None) -> bool:
+    def create_depthcache(self, markets: Union[str, List[str], None] = None, refresh_interval: int = None) -> bool:
         """
         Create one or more DepthCaches!
 
@@ -999,11 +1009,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 if market in self.websockets[ws_id]['markets']:
                     return self.websockets[ws_id]['stream_id']
         else:
+            for ws_id in self.websockets:
+                if self.ubwa.get_number_of_free_subscription_slots(stream_id=self.websockets[ws_id]['stream_id']) >= 1:
+                    return self.websockets[ws_id]['stream_id']
             return None
-        for ws_id in self.websockets:
-            if len(self.websockets[ws_id]['markets']) < self.ubwa.get_limit_of_subscriptions_per_stream():
-                return self.websockets[ws_id]['stream_id']
-        return None
 
     def is_update_available(self) -> bool:
         """
