@@ -3,6 +3,7 @@
 # ¯\_(ツ)_/¯
 
 from dotenv import load_dotenv
+from pprint import pprint
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 from unicorn_binance_rest_api import BinanceRestApiManager
 import asyncio
@@ -38,8 +39,9 @@ async def main():
     markets = markets[:210]
     print(f"Adding {len(markets)} DepthCaches for exchange '{exchange}' on UBDCC '{ubdcc_address}':")
     for market in markets:
-        result = ubldc.cluster.create_depthcache(exchange=exchange, market=market, desired_quantity=3, debug=True)
-        print(f"{result}")
+        result = await ubldc.cluster.create_depthcache_async(exchange=exchange, market=market,
+                                                             desired_quantity=3, debug=True)
+        pprint(result)
 
 try:
     with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:

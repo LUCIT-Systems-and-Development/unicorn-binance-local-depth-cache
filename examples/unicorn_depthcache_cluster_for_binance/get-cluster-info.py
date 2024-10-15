@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    pprint(ubldc.cluster.get_cluster_info(), depth=4)
+    pprint(ubldc.cluster.get_cluster_info(debug=True))
     await asyncio.sleep(1)
 
 try:

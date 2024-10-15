@@ -26,16 +26,16 @@ logging.basicConfig(level=logging.ERROR,
 
 async def main():
     while True:
-        dc = ubldc.cluster.get_depthcache_list()
+        dc = await ubldc.cluster.get_depthcache_list_async(debug=True)
         errors = {}
         non_working_caches = []
         working_caches = []
         for dcl_exchange in dc['depthcache_list']:
-            print(f"Testing {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on UBDCC "
-                  f"'{ubdcc_address}' at {datetime.datetime.now()}!")
+            print(f"Testing {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on "
+                  f"UBDCC '{ubdcc_address}' at {datetime.datetime.now()}!")
             for market in dc['depthcache_list'][dcl_exchange]:
-                asks = ubldc.cluster.get_asks(exchange=dcl_exchange, market=market,
-                                              limit_count=limit_count, threshold_volume=threshold_volume)
+                asks = await ubldc.cluster.get_bids_async(exchange=dcl_exchange, market=market, limit_count=limit_count,
+                                                          threshold_volume=threshold_volume)
                 if asks.get('error_id') is not None:
                     errors[asks.get('error_id')] = 1 if errors.get(asks.get('error_id')) is None else errors.get(asks.get('error_id')) + 1
                     non_working_caches.append(market)

@@ -3,6 +3,7 @@
 # ¯\_(ツ)_/¯
 
 from dotenv import load_dotenv
+from pprint import pprint
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 import asyncio
 import logging
@@ -36,18 +37,20 @@ async def main():
             asks = ubldc.cluster.get_asks(exchange=dcl_exchange, market=market,
                                           limit_count=limit_count, threshold_volume=threshold_volume, debug=True)
             if asks.get('error_id') is not None:
-                print(f"Asks from DepthCache #{loop} '{market}' failed: {asks.get('error_id')} - {asks.get('message')}\r\n"
-                      f"{asks.get('requests')}")
+                print(f"Asks from DepthCache #{loop} '{market}' failed: {asks.get('error_id')} - {asks.get('message')}")
+                pprint(asks)
                 errors[asks.get('error_id')] = 1 if errors.get(asks.get('error_id')) is None else errors.get(asks.get('error_id')) + 1
                 non_working_caches.append(market)
             else:
-                print(f"Asks from DepthCache #{loop} '{market}': {asks}")
+                print(f"Asks from DepthCache #{loop} '{market}':")
+                pprint(asks)
                 working_caches.append(market)
             loop += 1
 
     print(f"Successful working caches: {len(working_caches)}")
-    for error in errors:
-        print(f"ERROR: {error}: {errors[error]}")
+    if len(errors) > 0:
+        print(f"ERRORS:")
+        pprint(errors)
     await asyncio.sleep(1)
 
 try:

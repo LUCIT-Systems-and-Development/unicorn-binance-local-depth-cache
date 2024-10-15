@@ -3,6 +3,7 @@
 # ¯\_(ツ)_/¯
 
 from dotenv import load_dotenv
+from pprint import pprint
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheClusterNotReachableError
 import asyncio
 import logging
@@ -11,6 +12,8 @@ import os
 load_dotenv()
 
 exchange: str = "binance.com-futures"
+limit_count: int = 2
+threshold_volume: float = 200000.0
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
 ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 
@@ -22,15 +25,32 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    dc = ubldc.cluster.get_depthcache_list()
+    dc = await ubldc.cluster.get_depthcache_list_async(debug=True)
+    errors = {}
+    non_working_caches = []
+    working_caches = []
     for dcl_exchange in dc['depthcache_list']:
-        print(f"Stopping {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on UBDCC "
+        print(f"Testing {len(dc['depthcache_list'][dcl_exchange])} DepthCaches for exchange '{dcl_exchange}' on UBDCC "
               f"'{ubdcc_address}'!")
         loop = 1
         for market in dc['depthcache_list'][dcl_exchange]:
-            print(f"Stopping DepthCache #{loop}: {market}")
-            ubldc.cluster.stop_depthcache(exchange=dcl_exchange, market=market)
+            asks = await ubldc.cluster.get_asks_async(exchange=dcl_exchange, market=market, limit_count=limit_count,
+                                                      threshold_volume=threshold_volume, debug=True)
+            if asks.get('error_id') is not None:
+                print(f"Asks from DepthCache #{loop} '{market}' failed: {asks.get('error_id')} - {asks.get('message')}")
+                pprint(asks)
+                errors[asks.get('error_id')] = 1 if errors.get(asks.get('error_id')) is None else errors.get(asks.get('error_id')) + 1
+                non_working_caches.append(market)
+            else:
+                print(f"Asks from DepthCache #{loop} '{market}':")
+                pprint(asks)
+                working_caches.append(market)
             loop += 1
+
+    print(f"Successful working caches: {len(working_caches)}")
+    if len(errors) > 0:
+        print(f"ERRORS:")
+        pprint(errors)
     await asyncio.sleep(1)
 
 try:
