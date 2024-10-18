@@ -25,8 +25,7 @@ async def main():
     ubldc.create_depthcache(markets=markets)
 
     while ubldc.is_stop_request() is False:
-        add_string = (f"binance_api_status={ubra.get_used_weight(cached=True)}\r\n "
-                      f"---------------------------------------------------------------------------------------------")
+        add_string = f"---------------------------------------------------------------------------------------------"
         for market in markets:
             try:
                 top_asks = ubldc.get_asks(market=market, limit_count=limit_count)

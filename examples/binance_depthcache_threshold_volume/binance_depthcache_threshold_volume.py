@@ -8,6 +8,7 @@ import asyncio
 import logging
 import os
 
+amount_test_caches: int = 40
 exchange: str = "binance.com"
 update_interval_ms: Optional[int] = None
 threshold_volume: float = 200000.0
@@ -20,8 +21,13 @@ logging.basicConfig(level=logging.DEBUG,
 
 
 async def main():
-    markets: list = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
     ubra = ubldc.get_ubra_manager()
+    exchange_info = ubra.get_exchange_info()
+    markets = []
+    for item in exchange_info['symbols']:
+        if item['symbol'].endswith("USDT") and item['status'] == "TRADING":
+            markets.append(item['symbol'])
+    markets = markets[:amount_test_caches]
 
     print(f"Starting {exchange} DepthCaches for {len(markets)} markets: {markets}")
     ubldc.create_depthcache(markets=markets)

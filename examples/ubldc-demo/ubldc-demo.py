@@ -8,10 +8,10 @@ import asyncio
 import logging
 import os
 
+amount_test_caches: int = 5
 footer: str = "By LUCIT - www.lucit.tech"
 exchange: str = "binance.com-futures"
 limit_count: int = 2
-markets: list = ['1000SHIBUSDT', 'BTCUSDT', 'ETHUSDT']
 title: str = "UBLDC Demo"
 threshold_volume: float = 200000.0
 threshold_volume_limit_count: int = 3
@@ -26,6 +26,14 @@ load_dotenv()
 
 
 async def main():
+    ubra = ubldc.get_ubra_manager()
+    exchange_info = ubra.futures_exchange_info()
+    markets = []
+    for item in exchange_info['symbols']:
+        if item['symbol'].endswith("USDT") and item['status'] == "TRADING":
+            markets.append(item['symbol'])
+    markets = markets[:amount_test_caches]
+
     ubldc.create_depth_cache(markets=markets)
     while ubldc.is_stop_request() is False:
         add_string = f"---------------------------------------------------------------------------------------------"
