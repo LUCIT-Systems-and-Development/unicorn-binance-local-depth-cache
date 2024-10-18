@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.4.0.dev (development stage/unreleased/unstable)
 
+## 2.4.1
+### Fixed
+- ValueError in `stop_depthcache()`
+
 ## 2.4.0
 ### Changed
 - Rewrite of the init process. Now it is possible to successfully create much more DepthCaches than before!

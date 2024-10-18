@@ -1,2 +1,2 @@
-2.4.0
+2.4.1
 meta.yaml,pyproject.toml,setup.py,README.md,.github/workflows/build_wheels.yml,dev/sphinx/source/conf.py,unicorn_binance_local_depth_cache/manager.py

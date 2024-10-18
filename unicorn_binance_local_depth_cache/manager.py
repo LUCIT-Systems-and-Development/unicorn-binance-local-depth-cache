@@ -37,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.4.0.dev"
+__version__: str = "2.4.1"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -1217,8 +1217,15 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             if dc_stream is not None:
                 self.ubwa.unsubscribe_from_stream(stream_id=self.dc_streams[dc_stream]['stream_id'], markets=market)
                 with self.dc_streams_lock:
-                    self.dc_streams[dc_stream]['markets'].remove(market)
-                    self.dc_streams[dc_stream]['subscribed_markets'].remove(market)
+                    try:
+                        self.dc_streams[dc_stream]['markets'].remove(market)
+                    except ValueError:
+                        logger.debug(f"ValueError: '{market}' not in 'self.dc_streams[dc_stream]['markets']'")
+                    try:
+                        self.dc_streams[dc_stream]['subscribed_markets'].remove(market)
+                    except ValueError:
+                        logger.debug(f"ValueError: '{market}' not in "
+                                     f"'self.dc_streams[dc_stream]['subscribed_markets']'")
         return True
 
     def stop_depth_cache(self, markets: Optional[Union[str, list]] = None) -> bool:
