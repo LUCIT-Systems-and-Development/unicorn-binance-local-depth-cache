@@ -37,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.3.0"
+__version__: str = "2.4.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
