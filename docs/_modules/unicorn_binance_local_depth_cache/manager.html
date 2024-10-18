@@ -183,7 +183,7 @@
 
 
 <span class="n">__app_name__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unicorn-binance-local-depth-cache&quot;</span>
-<span class="n">__version__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;2.3.0&quot;</span>
+<span class="n">__version__</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;2.3.0.dev&quot;</span>
 <span class="n">__logger__</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;unicorn_binance_local_depth_cache&quot;</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">__logger__</span>
@@ -203,10 +203,12 @@
 <span class="sd">    :param exchange: Select binance.com, binance.com-testnet, binance.com-futures, binance.com-futures-testnet</span>
 <span class="sd">                     (default: binance.com)</span>
 <span class="sd">    :type exchange: str</span>
-<span class="sd">    :param default_refresh_interval: The default refresh interval in seconds, default is None. The depth_cache is reset</span>
+<span class="sd">    :param default_refresh_interval: The default refresh interval in seconds, default is None. The DepthCache is reset</span>
 <span class="sd">                                     and reinitialized at this interval.</span>
 <span class="sd">    :type default_refresh_interval: int</span>
-<span class="sd">    :param init_time_window: Only one request to the Binance REST API is permitted per depth_cache in this time window</span>
+<span class="sd">    :param init_interval: Only one request to the Binance REST API is permitted to all DepthCaches.</span>
+<span class="sd">    :type init_interval: float (seconds)</span>
+<span class="sd">    :param init_time_window: Only one request to the Binance REST API is permitted per DepthCache in this time window</span>
 <span class="sd">                             (specified in seconds).</span>
 <span class="sd">    :type init_time_window: int (seconds)</span>
 <span class="sd">    :param high_performance: If True, access to the depth snapshots via REST in the INIT process is not regulated.</span>
@@ -258,7 +260,7 @@
                  <span class="n">default_refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">depth_cache_update_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">high_performance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">init_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">init_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
                  <span class="n">init_time_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
                  <span class="n">websocket_close_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
                  <span class="n">websocket_ping_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -278,6 +280,8 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_user_agent</span><span class="p">()</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="s1">&#39;compiled&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">cython</span><span class="o">.</span><span class="n">compiled</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;source&#39;</span><span class="si">}</span><span class="s2"> on &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">())</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">release</span><span class="p">())</span><span class="si">}</span><span class="s2"> for exchange </span><span class="si">{</span><span class="n">exchange</span><span class="si">}</span><span class="s2"> started ...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">=</span> <span class="n">exchange</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span> <span class="o">=</span> <span class="n">depth_cache_update_interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_refresh_interval</span> <span class="o">=</span> <span class="n">default_refresh_interval</span>
@@ -292,7 +296,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ubdcc_port</span> <span class="o">=</span> <span class="n">ubdcc_port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_update_check_github</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tag_name&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_request</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_ask</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threading_lock_bid</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lucit_api_secret</span> <span class="o">=</span> <span class="n">lucit_api_secret</span>
@@ -310,12 +313,10 @@
         <span class="n">licensing_exception</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">get_license_exception</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">licensing_exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NoValidatedLucitLicense</span><span class="p">(</span><span class="n">licensing_exception</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubdcc_address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ubdcc_address</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ubdcc_port</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="k">if</span> <span class="n">ubra_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span> <span class="o">=</span> <span class="n">BinanceRestApiManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exchange</span><span class="p">,</span>
@@ -332,7 +333,6 @@
                 <span class="k">raise</span> <span class="ne">ConnectionRefusedError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ubra</span> <span class="o">=</span> <span class="n">ubra_manager</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span> <span class="o">=</span> <span class="n">BinanceWebSocketApiManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exchange</span><span class="p">,</span>
                                                <span class="n">enable_stream_signal_buffer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                                <span class="n">disable_colorama</span><span class="o">=</span><span class="n">disable_colorama</span><span class="p">,</span>
@@ -346,8 +346,6 @@
                                                <span class="n">lucit_license_profile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_profile</span><span class="p">,</span>
                                                <span class="n">lucit_license_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lucit_license_token</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span> <span class="o">=</span> <span class="p">{}</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_performance</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using `high_performance` ...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gen_get_init_slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generator_get_init_slot</span><span class="p">()</span>
@@ -359,6 +357,9 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">update_msg</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">update_msg</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread_manage_depthcaches</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_manage_depthcaches</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread_manage_depthcaches</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entering &#39;with-context&#39; ...&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -369,17 +370,46 @@
         <span class="k">if</span> <span class="n">exc_type</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An exception occurred: </span><span class="si">{</span><span class="n">exc_type</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">exc_value</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">error_traceback</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="BinanceLocalDepthCacheManager.set_resync_request">
+<a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_resync_request">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_resync_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unsubscribe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will set a DC out of sync and starts a new initialisation!</span>
+
+<span class="sd">        :param market: Specify the market for the used DepthCache</span>
+<span class="sd">        :type market: str</span>
+<span class="sd">        :param unsubscribe: If True the market will get unsubscribed from the web stream.</span>
+<span class="sd">        :type unsubscribe: bool</span>
+
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter &#39;market&#39; is missing!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">unsubscribe</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">],</span>
+                                                          <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
     <span class="k">def</span> <span class="nf">_add_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                          <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                          <span class="n">refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a depth_cache to the depth_caches stack.</span>
+<span class="sd">        Add a DepthCache to the depth_caches stack.</span>
 
-<span class="sd">        :param market: Specify the market for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market for the used DepthCaches</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of</span>
 <span class="sd">        `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager&gt;`__.</span>
-<span class="sd">        The depth_cache is reset and reinitialized at this interval.</span>
+<span class="sd">        The DepthCaches is reset and reinitialized at this interval.</span>
 <span class="sd">        :type refresh_interval: int</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -405,13 +435,47 @@
                             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&#39;!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
 
+    <span class="k">def</span> <span class="nf">_add_depth_cache_to_dc_stream_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a DC to `self.dc_streams`.</span>
+
+<span class="sd">        :param markets: The markets</span>
+<span class="sd">        :type markets: str or list</span>
+<span class="sd">        :return: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">markets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">markets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">markets</span> <span class="o">=</span> <span class="p">[</span><span class="n">markets</span><span class="p">,</span> <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span><span class="si">}</span><span class="s2">ms&quot;</span>
+        <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="n">markets</span><span class="p">:</span>
+            <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">dc_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dc_stream_id</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">dc_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_new_uuid_id</span><span class="p">()</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">uuid</span><span class="p">,</span>
+                                             <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span>
+                                             <span class="s2">&quot;markets&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">market</span><span class="p">,</span> <span class="p">],</span>
+                                             <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;STARTING&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;stream_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                             <span class="s2">&quot;subscribed_markets&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
     <span class="k">def</span> <span class="nf">_add_ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ask</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add, update or delete an ask of a specific depth_cache.</span>
+<span class="sd">        Add, update or delete an ask of a specific DepthCache.</span>
 
-<span class="sd">        :param ask: Add &#39;asks&#39; to the depth_cache</span>
+<span class="sd">        :param ask: Add &#39;asks&#39; to the DepthCache</span>
 <span class="sd">        :type ask: list</span>
-<span class="sd">        :param market: Specify the market for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -429,11 +493,11 @@
 
     <span class="k">def</span> <span class="nf">_add_bid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a bid to a specific depth_cache.</span>
+<span class="sd">        Add a bid to a specific DepthCache.</span>
 
-<span class="sd">        :param bid: Add bids to the depth_cache</span>
+<span class="sd">        :param bid: Add bids to the DepthCache</span>
 <span class="sd">        :type bid: list</span>
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -451,13 +515,13 @@
 
     <span class="k">def</span> <span class="nf">_apply_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bids</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Apply updates to a specific depth_cache</span>
+<span class="sd">        Apply updates to a specific DepthCache.</span>
 
 <span class="sd">        :param asks: Provide asks data</span>
 <span class="sd">        :type asks: list</span>
 <span class="sd">        :param bids: Provide bids data</span>
 <span class="sd">        :type bids: list</span>
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -466,7 +530,7 @@
                          <span class="sa">f</span><span class="s2">&quot;mandatory!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._apply_updates() - Applying updates to the depth_cache with &quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._apply_updates() - Applying updates to the DepthCache with &quot;</span>
                      <span class="sa">f</span><span class="s2">&quot;market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ask</span> <span class="ow">in</span> <span class="n">asks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_ask</span><span class="p">(</span><span class="n">ask</span><span class="p">,</span> <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
@@ -478,7 +542,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the order_book snapshot via REST of the chosen market.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCaches</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: dict or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -549,9 +613,9 @@
 
     <span class="k">def</span> <span class="nf">_init_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialise the depth_cache with a rest snapshot.</span>
+<span class="sd">        Initialise the DepthCache with a rest snapshot.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCaches</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -590,7 +654,7 @@
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_manage_depth_cache_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Process depth stream_data and manage the depth cache</span>
+<span class="sd">        Process depth stream_data and manage the depth cache data.</span>
 
 <span class="sd">        The logic is described here:</span>
 <span class="sd">        - `Binance Spot &lt;https://developers.binance.com/docs/binance-api/spot-detail/web-socket-streams#</span>
@@ -681,9 +745,7 @@
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) &quot;</span>
                                      <span class="sa">f</span><span class="s2">&quot;- There is a gap between the last and the penultimate update ID, the depth_cache&quot;</span>
                                      <span class="sa">f</span><span class="s2">&quot; `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">` is no longer correct and must be reinitialized&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_resync_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                         <span class="k">continue</span>
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-futures&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">exchange</span> <span class="o">==</span> <span class="s2">&quot;binance.com-futures-testnet&quot;</span><span class="p">:</span>
@@ -691,9 +753,7 @@
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) &quot;</span>
                                      <span class="sa">f</span><span class="s2">&quot;- There is a gap between the last and the penultimate update ID, the depth_cache&quot;</span>
                                      <span class="sa">f</span><span class="s2">&quot; `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">` is no longer correct and must be reinitialized&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_resync_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                         <span class="k">continue</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_interval&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -702,9 +762,7 @@
                         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) &quot;</span>
                                     <span class="sa">f</span><span class="s2">&quot;- The refresh interval has been exceeded, start new initialization for &quot;</span>
                                     <span class="sa">f</span><span class="s2">&quot;depth_cache `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_resync_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                         <span class="k">continue</span>
                 <span class="c1"># Apply updates</span>
@@ -772,11 +830,54 @@
                         <span class="k">continue</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depth_cache_async(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Set &quot;</span>
                             <span class="sa">f</span><span class="s2">&quot;refresh_request for depth_cache with market </span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_resync_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">asyncio_queue_task_done</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
                 <span class="k">continue</span>
+
+    <span class="k">def</span> <span class="nf">_manage_depthcaches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Observe DepthCaches and manage them.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depthcaches() started!&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_request</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">wait_time</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># Unsubscribe markets</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">market</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depthcaches() - Unsubscribing &quot;</span>
+                                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">],</span>
+                                                              <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+            <span class="c1"># Subscribe markets</span>
+            <span class="n">break_loops</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">market</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depthcaches() - Subscribing &quot;</span>
+                                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;channel&#39;</span><span class="p">],</span>
+                                                                    <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
+                                                                    <span class="n">stream_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ubldc_depth_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                                                    <span class="n">output</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+                                                                    <span class="n">process_asyncio_queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_manage_depth_cache_async</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stream_id</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">subscribe_to_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">],</span>
+                                                              <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+                            <span class="n">break_loops</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">wait_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_interval</span>
+                            <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">break_loops</span><span class="p">:</span>
+                        <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_time</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_process_stream_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_record</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error_msg</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -787,41 +888,45 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals() - received stream_signal: &quot;</span>
                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">data_record</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+        <span class="n">dc_stream_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stream_id</span><span class="p">:</span>
+                    <span class="n">dc_stream_id</span> <span class="o">=</span> <span class="n">dc_stream</span>
+
         <span class="k">if</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;CONNECT&quot;</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `CONNECTED`&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;CONNECTED&quot;</span>
         <span class="k">elif</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;DISCONNECT&quot;</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting all caches to synchronized is False and triggering a &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;refresh.&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;DISCONNECTED&quot;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">is_stop_request</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">clear_asyncio_queue</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - AsyncIO &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;Queue reset done!&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;is_synchronized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;refresh_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;last_update_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">)</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DISCONNECTED&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_resync_request</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span> <span class="n">unsubscribe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;FIRST_RECEIVED_DATA&quot;</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `RUNNING`&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
         <span class="k">elif</span> <span class="n">signal_type</span> <span class="o">==</span> <span class="s2">&quot;STOP&quot;</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `STOPPED`&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="s2">&quot;STOPPED&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._process_stream_signals(stream_id=</span><span class="si">{</span><span class="n">stream_id</span><span class="si">}</span><span class="s2">) - Received &quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;unexpected stream_signal </span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2"> - Setting stream_status to `</span><span class="si">{</span><span class="n">signal_type</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stream_status</span> <span class="o">=</span> <span class="n">signal_type</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream_id</span><span class="p">][</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal_type</span>
 
     <span class="k">def</span> <span class="nf">_reset_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset a depth_cache (delete all asks and bids)</span>
+<span class="sd">        Reset a DepthCache (delete all asks and bids)</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -869,43 +974,6 @@
                     <span class="k">break</span>
             <span class="k">return</span> <span class="n">trimmed_items</span><span class="p">[:</span><span class="n">limit_count</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_subscribe_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Subscribe a market on a stream.</span>
-
-<span class="sd">        :param markets: The markets</span>
-<span class="sd">        :type markets: str or list</span>
-<span class="sd">        :return: bool</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">markets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">markets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">markets</span> <span class="o">=</span> <span class="p">[</span><span class="n">markets</span><span class="p">,</span> <span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">channel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;depth@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_cache_update_interval</span><span class="si">}</span><span class="s2">ms&quot;</span>
-
-        <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="n">markets</span><span class="p">:</span>
-            <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stream_id</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">stream_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span>
-                                                    <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
-                                                    <span class="n">stream_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ubldc_depth&quot;</span><span class="p">,</span>
-                                                    <span class="n">output</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span>
-                                                    <span class="n">process_asyncio_queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_manage_depth_cache_async</span><span class="p">)</span>
-                <span class="n">uuid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_new_uuid_id</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">uuid</span><span class="p">,</span>
-                                         <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span>
-                                         <span class="s2">&quot;markets&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">market</span><span class="p">,</span> <span class="p">],</span>
-                                         <span class="s2">&quot;stream_id&quot;</span><span class="p">:</span> <span class="n">stream_id</span><span class="p">}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">ws_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stream_id</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
-                        <span class="k">break</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">subscribe_to_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">,</span> <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.create_depthcache">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache">[docs]</a>
     <span class="k">def</span> <span class="nf">create_depthcache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -916,7 +984,7 @@
 <span class="sd">        :type markets: str or list</span>
 <span class="sd">        :param refresh_interval: The refresh interval in seconds, default is the `default_refresh_interval` of</span>
 <span class="sd">                                 `BinanceLocalDepthCache &lt;https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=default_refresh_interval#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager&gt;`__.</span>
-<span class="sd">                                 The depth_cache is reset and reinitialized at this interval.</span>
+<span class="sd">                                 The DepthCache is reset and reinitialized at this interval.</span>
 <span class="sd">        :type refresh_interval: int</span>
 
 <span class="sd">        :return: bool</span>
@@ -926,15 +994,16 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">markets</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="n">markets</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_depth_cache</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span> <span class="n">refresh_interval</span><span class="o">=</span><span class="n">refresh_interval</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_depth_cache_to_dc_stream_list</span><span class="p">(</span><span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_depth_cache</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">markets</span><span class="p">,</span> <span class="n">refresh_interval</span><span class="o">=</span><span class="n">refresh_interval</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe_depth</span><span class="p">(</span><span class="n">markets</span><span class="o">=</span><span class="n">markets</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_depth_cache_to_dc_stream_list</span><span class="p">(</span><span class="n">markets</span><span class="o">=</span><span class="n">markets</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="BinanceLocalDepthCacheManager.create_depth_cache">
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depth_cache">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_depth_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">refresh_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ***Deprecated!*** Please use &#39;create_depthcache()&#39; instead!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -952,7 +1021,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the current list of asks with price and quantity.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
 <span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
@@ -976,7 +1045,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the current list of bids with price and quantity.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache.</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache.</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
 <span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
@@ -1000,7 +1069,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the current list of bids with price and quantity.</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache.</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache.</span>
 <span class="sd">        :type market: str</span>
 <span class="sd">        :param limit_count: List elements threshold to trim the result.</span>
 <span class="sd">        :type limit_count: int or None (0 is nothing, None is everything)</span>
@@ -1130,9 +1199,9 @@
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized">[docs]</a>
     <span class="k">def</span> <span class="nf">is_depth_cache_synchronized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Is a specific depth_cache synchronized?</span>
+<span class="sd">        Is a specific DepthCache synchronized?</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 
 <span class="sd">        :return: bool</span>
@@ -1157,7 +1226,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Is there a stop request?</span>
 
-<span class="sd">        :param market: Specify the market symbol for the used depth_cache</span>
+<span class="sd">        :param market: Specify the market symbol for the used DepthCache</span>
 <span class="sd">        :type market: str</span>
 
 <span class="sd">        :return: bool</span>
@@ -1180,24 +1249,26 @@
                 <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_stream_id">
-<a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_stream_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_stream_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="BinanceLocalDepthCacheManager.get_dc_stream_id">
+<a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_dc_stream_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_dc_stream_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the stream_id of the corresponding stream.</span>
 
 <span class="sd">        :return: stream_id (str) or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">market</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">ws_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">market</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]:</span>
+                        <span class="k">return</span> <span class="n">dc_stream</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">ws_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_number_of_free_subscription_slots</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">websockets</span><span class="p">[</span><span class="n">ws_id</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dc_stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">get_limit_of_subscriptions_per_stream</span><span class="p">()</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">dc_stream</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
@@ -1307,9 +1378,9 @@
 <a class="viewcode-back" href="../../unicorn_binance_local_depth_cache.html#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.set_refresh_request">[docs]</a>
     <span class="k">def</span> <span class="nf">set_refresh_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set refresh requests for one or more depth_caches!</span>
+<span class="sd">        Set refresh requests for one or more DepthCaches!</span>
 
-<span class="sd">        :param markets: Specify the market symbols for the depth_caches to be refreshed</span>
+<span class="sd">        :param markets: Specify the market symbols for the DepthCaches to be refreshed</span>
 <span class="sd">        :type markets: str or list</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1332,7 +1403,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stop and delete one or more DepthCaches!</span>
 
-<span class="sd">        :param markets: Specify the market symbols for the depth_caches to be stopped and deleted</span>
+<span class="sd">        :param markets: Specify the market symbols for the DepthCaches to be stopped and deleted</span>
 <span class="sd">        :type markets: str or list</span>
 <span class="sd">        :return: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1344,14 +1415,17 @@
         <span class="k">for</span> <span class="n">market</span> <span class="ow">in</span> <span class="n">markets</span><span class="p">:</span>
             <span class="n">market</span> <span class="o">=</span> <span class="n">market</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager.stop_depthcache() - Setting stop_request for &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;depth_cache `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">`, stop its stream and clear the stream_buffer&quot;</span><span class="p">)</span>
+                        <span class="sa">f</span><span class="s2">&quot;DepthCache `</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2">`, stop its stream and clear the stream_buffer&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">depth_caches</span><span class="p">[</span><span class="n">market</span><span class="p">][</span><span class="s1">&#39;stop_request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DepthCacheNotFound</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-            <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stream_id</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">stream_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="n">stream_id</span><span class="p">,</span> <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="n">dc_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dc_stream_id</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dc_stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">unsubscribe_from_stream</span><span class="p">(</span><span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">],</span> <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">)</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams_lock</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;subscribed_markets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -1488,7 +1562,7 @@
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Oct 15 2024 at 20:07 (CET).
+    Last updated on Oct 18 2024 at 18:08 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.

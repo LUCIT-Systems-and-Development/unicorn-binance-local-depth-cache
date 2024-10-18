@@ -11,11 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.3.0.dev (development stage/unreleased/unstable)
 
-## 2.3.0.dev 
+## 2.3.0
 ### Added
 - Async client functions for interacting with the UNICORN DepthCache Cluster for Binance.
 ### Fixed
 - DepthCache management now correctly handles refreshes.
+- Rewrite of the init process. Now it is possible to successfully create more DepthCaches than before!
 
 ## 2.2.0
 ### Added
