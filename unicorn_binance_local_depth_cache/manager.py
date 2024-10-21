@@ -37,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.4.1"
+__version__: str = "2.5.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -66,6 +66,10 @@ class BinanceLocalDepthCacheManager(threading.Thread):
     :param high_performance: If True, access to the depth snapshots via REST in the INIT process is not regulated.
                              Be careful!
     :type high_performance:  bool
+    :param auto_data_cleanup_stopped_streams: The parameter "auto_data_cleanup_stopped_streams=True" can be used to
+                                              inform the UBWA instance that all remaining data of a stopped stream
+                                              should be automatically and completely deleted.
+    :type auto_data_cleanup_stopped_streams: bool
     :param depth_cache_update_interval: Update speed of the depth stream in milliseconds. More info:
                                         https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/wiki/update_intervals
     :type depth_cache_update_interval: int
@@ -112,6 +116,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                  default_refresh_interval: int = None,
                  depth_cache_update_interval: int = None,
                  high_performance: bool = False,
+                 auto_data_cleanup_stopped_streams: bool = False,
                  init_interval: float = 4.0,
                  init_time_window: int = 5,
                  websocket_close_timeout: int = 2,
@@ -138,6 +143,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         self.depth_cache_update_interval = depth_cache_update_interval
         self.default_refresh_interval = default_refresh_interval
         self.high_performance = high_performance
+        self.auto_data_cleanup_stopped_streams = auto_data_cleanup_stopped_streams
         self.init_interval = init_interval
         self.init_time_window = init_time_window
         self.websocket_close_timeout = websocket_close_timeout
@@ -186,6 +192,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             self.ubra = ubra_manager
         self.ubwa = BinanceWebSocketApiManager(exchange=self.exchange,
+                                               auto_data_cleanup_stopped_streams=auto_data_cleanup_stopped_streams,
                                                enable_stream_signal_buffer=True,
                                                disable_colorama=disable_colorama,
                                                process_stream_signals=self._process_stream_signals,

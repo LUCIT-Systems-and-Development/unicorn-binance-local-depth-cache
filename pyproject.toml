@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unicorn-binance-local-depth-cache"
-version = "2.4.1"
+version = "2.5.0"
 description = "A Python SDK by LUCIT for accessing and managing multiple local Binance order books with Python in a simple, fast, flexible, robust and fully featured way."
 authors = ["LUCIT Systems and Development <info@lucit.tech>"]
 license = "LSOSL - LUCIT Synergetic Open Source License"

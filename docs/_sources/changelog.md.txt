@@ -9,7 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
-## 2.4.0.dev (development stage/unreleased/unstable)
+## 2.5.0.dev (development stage/unreleased/unstable)
+
+## 2.5.0
+### Added
+- Support of `auto_data_cleanup_stopped_streams` - Passthrough to UBWA
 
 ## 2.4.1
 ### Fixed
