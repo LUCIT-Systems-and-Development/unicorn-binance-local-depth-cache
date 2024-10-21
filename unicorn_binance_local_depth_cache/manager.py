@@ -37,7 +37,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.5.0.dev"
+__version__: str = "2.6.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -316,6 +316,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     self.dc_streams[uuid] = {"id": uuid,
                                              "channel": channel,
                                              "markets": [market, ],
+                                             "last_restart": None,
+                                             "restarts": None,
                                              "status": "STARTING",
                                              "stream_id": None,
                                              "subscribed_markets": []}
@@ -724,6 +726,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                                                     output="dict",
                                                                     process_asyncio_queue=self._manage_depth_cache_async)
                                 self.dc_streams[dc_stream]['stream_id'] = stream_id
+                                if self.dc_streams[dc_stream]['restarts'] is None:
+                                    self.dc_streams[dc_stream]['restarts'] = 0
+                                else:
+                                    self.dc_streams[dc_stream]['restarts'] += 1
+                                    self.dc_streams[dc_stream]['last_restart'] = time.time()
                             else:
                                 self.ubwa.subscribe_to_stream(stream_id=self.dc_streams[dc_stream]['stream_id'],
                                                               markets=market)
