@@ -41,5 +41,7 @@ try:
             asyncio.run(main())
         except KeyboardInterrupt:
             print("\r\nGracefully stopping ...")
+        except Exception as error_msg:
+            print(f"ERROR: {error_msg}")
 except DepthCacheClusterNotReachableError as error_msg:
     print(f"ERROR: {error_msg}")
