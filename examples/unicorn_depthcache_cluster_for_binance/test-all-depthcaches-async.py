@@ -35,7 +35,7 @@ async def main():
         loop = 1
         for market in dc['depthcache_list'][dcl_exchange]:
             asks = await ubldc.cluster.get_asks_async(exchange=dcl_exchange, market=market, limit_count=limit_count,
-                                                      threshold_volume=threshold_volume, debug=False)
+                                                      threshold_volume=threshold_volume, debug=True)
             if asks.get('error_id') is not None:
                 print(f"Asks from DepthCache #{loop} '{market}' failed: {asks.get('error_id')} - {asks.get('message')}")
                 pprint(asks)
