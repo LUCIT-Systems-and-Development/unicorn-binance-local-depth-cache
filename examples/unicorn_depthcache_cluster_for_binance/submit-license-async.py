@@ -33,7 +33,7 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    pprint(await ubldc.cluster.submit_license_async(api_secret=api_secret, license_token=license_token, debug=True))
+    pprint(await ubldc.cluster.submit_license_async(api_secret=api_secret, license_token=license_token, debug=False))
 
 try:
     with BinanceLocalDepthCacheManager(exchange=exchange, ubdcc_address=ubdcc_address, ubdcc_port=ubdcc_port) as ubldc:

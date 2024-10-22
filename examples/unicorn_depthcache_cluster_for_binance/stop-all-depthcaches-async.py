@@ -30,7 +30,7 @@ async def main():
         loop = 1
         for market in dc['depthcache_list'][dcl_exchange]:
             print(f"Stopping DepthCache #{loop}: {market}")
-            pprint(ubldc.cluster.stop_depthcache(exchange=dcl_exchange, market=market, debug=True))
+            pprint(ubldc.cluster.stop_depthcache(exchange=dcl_exchange, market=market, debug=False))
             loop += 1
     await asyncio.sleep(1)
 
