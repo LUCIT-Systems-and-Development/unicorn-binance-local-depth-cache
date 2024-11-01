@@ -1,5 +1,4 @@
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
-from pprint import pprint
 import time
 import logging
 
@@ -19,9 +18,8 @@ while True:
             asks = "Out of sync!"
             bids = "Out of sync!"
         print(f"Bids: {len(bids)}, asks: {len(asks)}")
-        #pprint(asks)
         time.sleep(1)
-    except (KeyboardInterrupt) as k:
+    except KeyboardInterrupt as k:
         print(k)
         ubldc.stop_manager()
         print(f"finished")
