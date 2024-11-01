@@ -54,12 +54,12 @@ jobs:
         run: |
           echo "CONDA_BUILD_SYSROOT: /opt/MacOSX10.10.sdk # [osx]" > conda_build_config.yaml
 
-      - name: Install Windows SDK and Build Tools (Windows only)
+      - name: Install Visual Studio Build Tools and Windows SDK (Windows only)
         if: runner.os == 'Windows'
         run: |
-          choco install visualstudio2019buildtools --params "'/IncludeRecommended /IncludeOptional'"
+          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional"
           choco install windows-sdk-10.0 --version=10.0.22621.0
-          setx CMAKE_GENERATOR "Visual Studio 16 2019" /M
+          setx CMAKE_GENERATOR "Visual Studio 17 2022" /M
           setx DISTUTILS_USE_SDK 1
           setx MSSdk 1
           setx INCLUDE "C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um"
