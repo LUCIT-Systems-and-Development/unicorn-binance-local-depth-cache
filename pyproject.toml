@@ -28,7 +28,7 @@ aiohttp = "*"
 lucit-licensing-python = ">=1.8.2"
 requests = ">=2.31.0"
 unicorn-binance-rest-api = ">=2.6.1"
-unicorn-binance-websocket-api = ">=2.8.0"
+unicorn-binance-websocket-api = ">=2.8.1"
 
 [tool.poetry.dev-dependencies]
 

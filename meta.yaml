@@ -30,14 +30,14 @@ requirements:
     - aiohttp
     - lucit::lucit-licensing-python >=1.8.2
     - lucit::unicorn-binance-rest-api >=2.6.1
-    - lucit::unicorn-binance-websocket-api >=2.8.0
+    - lucit::unicorn-binance-websocket-api >=2.8.1
     - cython >=3.0.10
     - requests >=2.31.0
   run:
     - python
     - lucit::lucit-licensing-python >=1.8.2
     - lucit::unicorn-binance-rest-api >=2.6.1
-    - lucit::unicorn-binance-websocket-api >=2.8.0
+    - lucit::unicorn-binance-websocket-api >=2.8.1
     - aiohttp
     - cython >=3.0.10
     - requests >=2.31.0
