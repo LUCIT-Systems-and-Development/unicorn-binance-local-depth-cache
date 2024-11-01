@@ -75,7 +75,7 @@ jobs:
       - name: Setup Visual Studio Environment (Windows only)
         if: runner.os == 'Windows'
         run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          cmd.exe /c "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 
       - name: "conda search: lucit::"
         run: |

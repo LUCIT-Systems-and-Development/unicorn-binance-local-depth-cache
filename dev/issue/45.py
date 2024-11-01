@@ -2,7 +2,7 @@ from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, Dep
 import time
 import logging
 
-logging.basicConfig(level=logging.DEBUG, filename='dc.log')
+logging.basicConfig(level=logging.ERROR)
 
 coin = "BTCUSDT"
 
