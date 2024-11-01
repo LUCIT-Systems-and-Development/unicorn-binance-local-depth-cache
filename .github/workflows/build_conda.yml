@@ -80,9 +80,11 @@ jobs:
 
       - name: Setup Visual Studio Environment (Windows only)
         if: runner.os == 'Windows'
+        shell: cmd
         run: |
-          set VSPATH=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
-          cmd.exe /c "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
+          for /f "delims=" %i in ('"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do set VSPATH=%i
+          echo Visual Studio Path: %VSPATH%
+          call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
 
       - name: "conda search: lucit::"
         run: |
