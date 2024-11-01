@@ -74,6 +74,7 @@ jobs:
 
       - name: Locate Visual Studio with vswhere
         if: runner.os == 'Windows'
+        shell: cmd
         run: |
           "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
 
@@ -82,7 +83,6 @@ jobs:
         run: |
           set VSPATH=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
           cmd.exe /c "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
-
 
       - name: "conda search: lucit::"
         run: |
