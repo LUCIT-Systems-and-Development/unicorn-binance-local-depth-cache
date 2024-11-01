@@ -11,9 +11,9 @@ import os
 
 load_dotenv()
 
-exchange: str = "binance.com-futures"
+exchange: str = "binance.com"
 limit_count: int = 2
-threshold_volume: float = 200000.0
+threshold_volume: float = 20000.0
 ubdcc_address: str = os.getenv('UBDCC_ADDRESS')
 ubdcc_port: int = int(os.getenv('UBDCC_PORT'))
 
@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.ERROR,
 
 
 async def main():
-    dc = await ubldc.cluster.get_depthcache_list_async(debug=True)
+    dc = await ubldc.cluster.get_depthcache_list_async(debug=False)
     errors = {}
     non_working_caches = []
     working_caches = []
