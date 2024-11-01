@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
 ## 2.6.0.dev (development stage/unreleased/unstable)
+### Changed
+- Holding the thread lock is now in the more abstract functions.
+### Fixed
+- 'Uncontrolling growth of elements in lists of asks and bids in Depth Cache Manager' 
+  [issue#45](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/45)
+  Thanks to [@chubatrik](https://github.com/chubatrik) for finding and reporting it!
+- 'error' and 'result' messages are now processed separately with corresponding log levels.
+- In `_get_book_side()` only the thread lock of 'bid' was used by mistake, also for 'asks'. This has now been corrected.
 
 ## 2.6.0
 ### Added
