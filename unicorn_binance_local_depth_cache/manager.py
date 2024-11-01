@@ -931,7 +931,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        market = market.lower()
+        if market is not None:
+            market = market.lower()
         try:
             with self.threading_lock_ask[market]:
                 return self._get_book_side(market=market,
@@ -957,7 +958,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type threshold_volume: float or None (0 is nothing, None is everything)
         :return: list
         """
-        market = market.lower()
+        if market is not None:
+            market = market.lower()
         try:
             with self.threading_lock_bid[market]:
                 return self._get_book_side(market=market,

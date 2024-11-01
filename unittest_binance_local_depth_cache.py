@@ -600,7 +600,7 @@ class TestUbldc(unittest.TestCase):
             pass
 
     def test_sort_dict(self):
-        self.assertListEqual(self.assert_list, self.__class__.ubldc._sort_depth_cache(self.items))
+        self.assertListEqual(self.assert_list, self.__class__.ubldc._select_from_depthcache(self.items))
 
     def test_is_update_available_true(self):
         print(f"test_is_update_available():")
