@@ -37,4 +37,4 @@ requires = ["setuptools", "wheel", "Cython", "pip", "mypy"]
 build-backend = "setuptools.build_meta"
 
 [tool.poetry.package_data]
-unicorn_binance_websocket_api = ["*.so", "*.dll", "*.py", "*.pyd", "*.pyi"]
+unicorn_binance_local_depth_cache = ["*.so", "*.dll", "*.py", "*.pyd", "*.pyi"]

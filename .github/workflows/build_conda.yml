@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "CONDA_BUILD_SYSROOT: /opt/MacOSX10.10.sdk # [osx]" > conda_build_config.yaml
 
-      - name: Install Windows SDK und Build Tools (nur für Windows)
+      - name: Install Windows SDK und Build Tools (Windows only)
         if: runner.os == 'Windows'
         run: |
           choco install visualstudio2019buildtools --params "'/IncludeRecommended /IncludeOptional'"
@@ -68,7 +68,6 @@ jobs:
           set CMAKE_PLAT=x64
           echo "$CONDA/bin" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin" >> $GITHUB_PATH
-
 
       - name: "conda search: lucit::"
         run: |
