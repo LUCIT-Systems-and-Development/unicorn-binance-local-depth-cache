@@ -72,11 +72,17 @@ jobs:
           echo "$CONDA/bin" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin" >> $GITHUB_PATH
 
+      - name: Locate Visual Studio with vswhere
+        if: runner.os == 'Windows'
+        run: |
+          "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+
       - name: Setup Visual Studio Environment (Windows only)
         if: runner.os == 'Windows'
-        shell: cmd
         run: |
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          set VSPATH=$("C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
+          cmd.exe /c "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
+
 
       - name: "conda search: lucit::"
         run: |
