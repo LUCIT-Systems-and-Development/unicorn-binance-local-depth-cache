@@ -60,7 +60,10 @@ jobs:
           choco install visualstudio2019buildtools --params "'/IncludeRecommended /IncludeOptional'"
           choco install windows-sdk-10.0 --version=10.0.22621.0
           setx CMAKE_GENERATOR "Visual Studio 16 2019" /M
-          setx CONDA_BUILD_SYSROOT "C:\Program Files (x86)\Windows Kits\10" /M
+          setx DISTUTILS_USE_SDK 1
+          setx MSSdk 1
+          setx INCLUDE "C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um"
+          setx LIB "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\ucrt\x64"
 
       - name: Configure CMAKE_PLAT und PATH (Windows only)
         if: runner.os == 'Windows'
