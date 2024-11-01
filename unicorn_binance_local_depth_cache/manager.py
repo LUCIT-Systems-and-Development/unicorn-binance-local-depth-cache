@@ -729,11 +729,13 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                             logger.debug(f"BinanceLocalDepthCacheManager._manage_depthcaches() - Subscribing "
                                          f"{market} ...")
                             if self.dc_streams[dc_stream]['stream_id'] is None:
-                                stream_id = self.ubwa.create_stream(channels=self.dc_streams[dc_stream]['channel'],
-                                                                    markets=market,
-                                                                    stream_label=f"ubldc_depth_{int(time.time())}",
-                                                                    output="dict",
-                                                                    process_asyncio_queue=self._manage_depth_cache_async)
+                                stream_id = self.ubwa.create_stream(
+                                    channels=self.dc_streams[dc_stream]['channel'],
+                                    markets=market,
+                                    stream_label=f"ubldc_depth_{int(time.time())}",
+                                    output="dict",
+                                    process_asyncio_queue=self._manage_depth_cache_async
+                                )
                                 self.dc_streams[dc_stream]['stream_id'] = stream_id
                                 if self.dc_streams[dc_stream]['restarts'] is None:
                                     self.dc_streams[dc_stream]['restarts'] = 0
