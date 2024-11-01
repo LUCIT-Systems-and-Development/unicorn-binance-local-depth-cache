@@ -9,7 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
-## 2.6.0.dev (development stage/unreleased/unstable)
+## 2.7.0.dev (development stage/unreleased/unstable)
+
+## 2.7.0
 ### Changed
 - Holding the thread lock is now in the more abstract functions.
 ### Fixed
