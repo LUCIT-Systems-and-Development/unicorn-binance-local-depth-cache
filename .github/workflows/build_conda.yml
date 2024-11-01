@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "CONDA_BUILD_SYSROOT: /opt/MacOSX10.10.sdk # [osx]" > conda_build_config.yaml
 
-      - name: Install Windows SDK und Build Tools (Windows only)
+      - name: Install Windows SDK and Build Tools (Windows only)
         if: runner.os == 'Windows'
         run: |
           choco install visualstudio2019buildtools --params "'/IncludeRecommended /IncludeOptional'"
@@ -71,6 +71,11 @@ jobs:
           set CMAKE_PLAT=x64
           echo "$CONDA/bin" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin" >> $GITHUB_PATH
+
+      - name: Setup Visual Studio Environment (Windows only)
+        if: runner.os == 'Windows'
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
 
       - name: "conda search: lucit::"
         run: |
@@ -91,3 +96,6 @@ jobs:
           user: lucit
           label: main
           token: ${{ secrets.ANACONDA_API_TOKEN }}
+        env:
+          PIP_VERBOSE: 1
+          CONDA_VERBOSITY: 3
