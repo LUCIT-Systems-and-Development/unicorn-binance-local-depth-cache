@@ -82,7 +82,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          for /f "delims=" %i in ('"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do set VSPATH=%i
+          for /f "delims=" %%i in ('"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath') do set "VSPATH=%%i"
           echo Visual Studio Path: %VSPATH%
           call "%VSPATH%\VC\Auxiliary\Build\vcvars64.bat"
 
