@@ -1283,7 +1283,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             except KeyError:
                 raise DepthCacheNotFound(market=market)
             dc_stream = self.get_dc_stream_id(market=market)
-            if dc_stream is not None:
+            if dc_stream is not None and self.dc_streams[dc_stream]['stream_id'] is not None:
+                print(self.dc_streams[dc_stream]['stream_id'])
                 self.ubwa.unsubscribe_from_stream(stream_id=self.dc_streams[dc_stream]['stream_id'], markets=market)
                 with self.dc_streams_lock:
                     try:

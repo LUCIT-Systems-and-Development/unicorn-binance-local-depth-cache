@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   Thanks to [@chubatrik](https://github.com/chubatrik) for finding and reporting it!
 - 'error' and 'result' messages are now processed separately with corresponding log levels.
 - In `_get_book_side()` only the thread lock of 'bid' was used by mistake, also for 'asks'. This has now been corrected.
+- 'stop_depth_cache returns "error_msg: stream_id is missing!"'
+  [issue#46](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/46)
 
 ## 2.6.0
 ### Added
