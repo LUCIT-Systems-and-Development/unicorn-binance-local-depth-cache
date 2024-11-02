@@ -1,0 +1,11 @@
+CFLAGS:
+  - "/O2 /GL"
+  - "/MP"
+  - "/W3"
+
+LDFLAGS:
+  - "/INCREMENTAL:NO"
+  - "/LTCG"
+
+c_compiler:
+  - vs2022

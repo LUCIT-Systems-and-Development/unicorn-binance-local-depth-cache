@@ -52,7 +52,7 @@ jobs:
       - name: Set CONDA_BUILD_SYSROOT (only on macOS)
         if: runner.os == 'macOS'
         run: |
-          echo "CONDA_BUILD_SYSROOT: /opt/MacOSX10.10.sdk # [osx]" > conda_build_config.yaml
+          echo "CONDA_BUILD_SYSROOT: /opt/MacOSX10.10.sdk # [osx]" >> conda_build_config.yaml
 
       - name: Install Visual Studio Build Tools and Windows SDK (Windows only)
         if: runner.os == 'Windows'
