@@ -116,5 +116,5 @@ jobs:
           label: main
           token: ${{ secrets.ANACONDA_API_TOKEN }}
         env:
-          # PIP_VERBOSE: 1
-          CONDA_VERBOSITY: 2
+          PIP_VERBOSE: 0
+          CONDA_VERBOSITY: 0
