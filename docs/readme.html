@@ -414,7 +414,7 @@ valid levels, UBLDC removes them as soon as they exceed the thousandth position.
 <p>With <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches">create_depthcache()`</a>
 the DepthCache is started and initialized, i.e. for each DepthCache that is to be created, a separate
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via
-websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized
+websocket, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized
 in real time. As soon as once this is done, the status of the cache get set to “synchronous”.</p>
 <p>Data in the DepthCache can be accessed with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">‘get_asks()’</a>
 and <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">‘get_bids()’</a>.
@@ -874,7 +874,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Nov 02 2024 at 15:21 (CET).
+    Last updated on Nov 02 2024 at 15:25 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
