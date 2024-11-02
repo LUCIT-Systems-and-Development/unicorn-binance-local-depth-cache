@@ -110,7 +110,7 @@ jobs:
         uses: uibcdf/action-build-and-upload-conda-packages@v1.3.0
         with:
           meta_yaml_dir: .
-          overwrite: False
+          overwrite: True
           python-version: ${{ matrix.python-version }}
           user: lucit
           label: main
