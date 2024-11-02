@@ -27,7 +27,6 @@ from unicorn_binance_rest_api import BinanceRestApiManager, BinanceAPIException,
 from unicorn_binance_websocket_api import BinanceWebSocketApiManager
 from operator import itemgetter
 from typing import Optional, Union, Generator, Dict, List
-
 import cython
 import logging
 import platform

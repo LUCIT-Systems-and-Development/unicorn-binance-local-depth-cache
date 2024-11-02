@@ -31,7 +31,7 @@ requirements:
     - lucit::lucit-licensing-python >=1.8.2
     - lucit::unicorn-binance-rest-api >=2.6.1
     - lucit::unicorn-binance-websocket-api >=2.8.1
-    - cython >=3.0.10
+    - Cython
     - requests >=2.31.0
   run:
     - python
@@ -39,7 +39,7 @@ requirements:
     - lucit::unicorn-binance-rest-api >=2.6.1
     - lucit::unicorn-binance-websocket-api >=2.8.1
     - aiohttp
-    - cython >=3.0.10
+    - Cython
     - requests >=2.31.0
 
 dependencies:
@@ -462,6 +462,7 @@ about:
     [![Get professional and fast support](https://raw.githubusercontent.com/LUCIT-Systems-and-Development/unicorn-binance-suite/master/images/support/LUCIT-get-professional-and-fast-support.png)](https://www.lucit.tech/get-support.html)
 
     ***Do you need a developer, operator or consultant?*** [Contact us](https://www.lucit.tech/contact.html) for a non-binding initial consultation!
+
 
   dev_url: https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache
   doc_url: https://unicorn-binance-local-depth-cache.docs.lucit.tech

@@ -99,6 +99,6 @@ jobs:
           user: lucit
           label: main
           token: ${{ secrets.ANACONDA_API_TOKEN }}
-        # env:
+        env:
           # PIP_VERBOSE: 1
-          # CONDA_VERBOSITY: 3
+          CONDA_VERBOSITY: 2
