@@ -67,15 +67,15 @@
 <li><a class="reference internal" href="#">UNICORN Binance Local Depth Cache</a><ul>
 <li><a class="reference internal" href="#get-a-unicorn-binance-suite-license">Get a UNICORN Binance Suite License</a></li>
 <li><a class="reference internal" href="#using-a-depthcache">Using a DepthCache</a><ul>
-<li><a class="reference internal" href="#create-a-local-depth-cache-for-binance-with-just-3-lines-of-code">Create a local depth_cache for Binance with just 3 lines of code</a></li>
+<li><a class="reference internal" href="#create-a-local-depthcache-for-binance-with-just-3-lines-of-code">Create a local DepthCache for Binance with just 3 lines of code</a></li>
 <li><a class="reference internal" href="#get-the-asks-and-bids">Get the asks and bids</a><ul>
 <li><a class="reference internal" href="#to-obtain-the-complete-order-book">To obtain the complete order book</a></li>
 <li><a class="reference internal" href="#get-the-first-x-elements">Get the first X elements</a></li>
 <li><a class="reference internal" href="#retain-the-elements-until-volume-x-has-been-exceeded">Retain the elements until volume X has been exceeded</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the depth_cache is out of sync while accessing its data</a></li>
-<li><a class="reference internal" href="#stop-and-delete-a-depth-cache">Stop and delete a depth_cache:</a></li>
+<li><a class="reference internal" href="#catch-an-exception-if-the-depthcache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the DepthCache is out of sync while accessing its data</a></li>
+<li><a class="reference internal" href="#stop-and-delete-a-depthcache">Stop and delete a DepthCache:</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stop-ubldc-after-usage-to-avoid-memory-leaks">Stop <code class="docutils literal notranslate"><span class="pre">ubldc</span></code> after usage to avoid memory leaks</a></li>
@@ -85,7 +85,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#description">Description</a><ul>
-<li><a class="reference internal" href="#why-a-local-depth-cache">Why a local depth_cache?</a></li>
+<li><a class="reference internal" href="#why-a-local-depthcache">Why a local DepthCache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
 </li>
@@ -283,8 +283,8 @@ as a Python C extension for maximum performance.</p>
 </section>
 <section id="using-a-depthcache">
 <h2>Using a DepthCache<a class="headerlink" href="#using-a-depthcache" title="Link to this heading">¶</a></h2>
-<section id="create-a-local-depth-cache-for-binance-with-just-3-lines-of-code">
-<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache">Create a local depth_cache</a> for Binance with just 3 lines of code<a class="headerlink" href="#create-a-local-depth-cache-for-binance-with-just-3-lines-of-code" title="Link to this heading">¶</a></h3>
+<section id="create-a-local-depthcache-for-binance-with-just-3-lines-of-code">
+<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache">Create a local DepthCache</a> for Binance with just 3 lines of code<a class="headerlink" href="#create-a-local-depthcache-for-binance-with-just-3-lines-of-code" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unicorn_binance_local_depth_cache</span> <span class="kn">import</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">,</span> <span class="n">DepthCacheOutOfSync</span>
 
 <span class="n">ubldc</span> <span class="o">=</span> <span class="n">BinanceLocalDepthCacheManager</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="s2">&quot;binance.com&quot;</span><span class="p">,</span> <span class="n">depth_cache_update_interval</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
@@ -316,8 +316,8 @@ as a Python C extension for maximum performance.</p>
 </div>
 </section>
 </section>
-<section id="catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data">
-<h3>Catch an exception, if the <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">depth_cache is out of sync</a> while accessing its data<a class="headerlink" href="#catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data" title="Link to this heading">¶</a></h3>
+<section id="catch-an-exception-if-the-depthcache-is-out-of-sync-while-accessing-its-data">
+<h3>Catch an exception, if the <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">DepthCache is out of sync</a> while accessing its data<a class="headerlink" href="#catch-an-exception-if-the-depthcache-is-out-of-sync-while-accessing-its-data" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="n">asks</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_asks</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">,</span> <span class="n">limit_count</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">threshold_volume</span><span class="o">=</span><span class="mi">300000</span><span class="p">)</span>
     <span class="n">bids</span> <span class="o">=</span> <span class="n">ubldc</span><span class="o">.</span><span class="n">get_bids</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">,</span> <span class="n">limit_count</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">threshold_volume</span><span class="o">=</span><span class="mi">300000</span><span class="p">)</span>
@@ -327,8 +327,8 @@ as a Python C extension for maximum performance.</p>
 </pre></div>
 </div>
 </section>
-<section id="stop-and-delete-a-depth-cache">
-<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">Stop and delete a depth_cache</a>:<a class="headerlink" href="#stop-and-delete-a-depth-cache" title="Link to this heading">¶</a></h3>
+<section id="stop-and-delete-a-depthcache">
+<h3><a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache">Stop and delete a DepthCache</a>:<a class="headerlink" href="#stop-and-delete-a-depthcache" title="Link to this heading">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubldc</span><span class="o">.</span><span class="n">stop_depthcache</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -403,33 +403,35 @@ provides local order books for the Binance Exchanges
 <a class="reference external" href="https://github.com/binance-exchange/binance-official-api-docs">Binance</a> (<a class="reference external" href="https://testnet.binance.vision/">+Testnet</a>),
 <a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams">Binance Futures</a>
 (<a class="reference external" href="https://testnet.binancefuture.com">+Testnet</a>) and <a class="reference external" href="https://www.binance.us/">Binance US</a>.</p>
-<p>The algorithm of the depth_cache management was designed according to these instructions:</p>
+<p>The algorithm of the DepthCache management was designed according to these instructions:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly">Binance Spot: “How to manage a local order book correctly”</a></p></li>
 <li><p><a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams">Binance Futures: “How to manage a local order book correctly”</a></p></li>
 <li><p><a class="reference external" href="https://docs.binance.us/#order-book-depth-diff-stream">Binance US: “Managing a Local Order Book”</a></p></li>
 </ul>
+<p><em><strong>Since, according to Binance’s predefined algorithm, all levels &gt; 1000 would be orphaned and remain forever between
+valid levels, UBLDC removes them as soon as they exceed the thousandth position.</strong></em></p>
 <p>With <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches">create_depthcache()`</a>
-the depth_cache is started and initialized, i.e. for each depth_cache that is to be created, a separate
+the DepthCache is started and initialized, i.e. for each DepthCache that is to be created, a separate
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via
 websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized
-in real time. As soon as Once this is done, the status of the cache is set to “synchronous”.</p>
-<p>Data in the depth_cache can be accessed with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">‘get_asks()’</a>
+in real time. As soon as once this is done, the status of the cache get set to “synchronous”.</p>
+<p>Data in the DepthCache can be accessed with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks">‘get_asks()’</a>
 and <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids">‘get_bids()’</a>.
-If the state of the depth_cache is not synchronous during access, the exception
+If the state of the DepthCache is not synchronous during access, the exception
 <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
 is thrown.</p>
-<p>The depth_cache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing
-update event) or if the websocket connection is interrupted. As soon as this happens the state of the depth_cache is set
+<p>The DepthCache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing
+update event) or if the websocket connection is interrupted. As soon as this happens the state of the DepthCache is set
 to “out of sync” and when accessing the cache the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a> is thrown.</p>
-<section id="why-a-local-depth-cache">
-<h3>Why a local depth_cache?<a class="headerlink" href="#why-a-local-depth-cache" title="Link to this heading">¶</a></h3>
-<p>A local depth_cache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the <a class="reference external" href="https://www.binance.com/en/support/faq/360004492232">Binance request weight limits</a>.</p>
+<section id="why-a-local-depthcache">
+<h3>Why a local DepthCache?<a class="headerlink" href="#why-a-local-depthcache" title="Link to this heading">¶</a></h3>
+<p>A local DepthCache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the <a class="reference external" href="https://www.binance.com/en/support/faq/360004492232">Binance request weight limits</a>.</p>
 </section>
 <section id="what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">
 <h3>What are the benefits of the UNICORN Binance Local Depth Cache?<a class="headerlink" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Always know if the cache is in sync! If the depth_cache is out of sync, the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
+<li><p>Always know if the cache is in sync! If the DepthCache is out of sync, the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a>
 is thrown or ask with <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized"><code class="docutils literal notranslate"><span class="pre">is_depth_cache_synchronized()</span></code></a>.</p></li>
 <li><p>If a depth cache is out of sync it gets refreshed automatically within a few seconds.</p></li>
 <li><p>100% Websocket auto-reconnect!</p></li>
@@ -701,15 +703,15 @@ of any kind, including but not limited to direct or indirect damages for loss of
 <li><a class="reference internal" href="#">UNICORN Binance Local Depth Cache</a><ul>
 <li><a class="reference internal" href="#get-a-unicorn-binance-suite-license">Get a UNICORN Binance Suite License</a></li>
 <li><a class="reference internal" href="#using-a-depthcache">Using a DepthCache</a><ul>
-<li><a class="reference internal" href="#create-a-local-depth-cache-for-binance-with-just-3-lines-of-code">Create a local depth_cache for Binance with just 3 lines of code</a></li>
+<li><a class="reference internal" href="#create-a-local-depthcache-for-binance-with-just-3-lines-of-code">Create a local DepthCache for Binance with just 3 lines of code</a></li>
 <li><a class="reference internal" href="#get-the-asks-and-bids">Get the asks and bids</a><ul>
 <li><a class="reference internal" href="#to-obtain-the-complete-order-book">To obtain the complete order book</a></li>
 <li><a class="reference internal" href="#get-the-first-x-elements">Get the first X elements</a></li>
 <li><a class="reference internal" href="#retain-the-elements-until-volume-x-has-been-exceeded">Retain the elements until volume X has been exceeded</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#catch-an-exception-if-the-depth-cache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the depth_cache is out of sync while accessing its data</a></li>
-<li><a class="reference internal" href="#stop-and-delete-a-depth-cache">Stop and delete a depth_cache:</a></li>
+<li><a class="reference internal" href="#catch-an-exception-if-the-depthcache-is-out-of-sync-while-accessing-its-data">Catch an exception, if the DepthCache is out of sync while accessing its data</a></li>
+<li><a class="reference internal" href="#stop-and-delete-a-depthcache">Stop and delete a DepthCache:</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#stop-ubldc-after-usage-to-avoid-memory-leaks">Stop <code class="docutils literal notranslate"><span class="pre">ubldc</span></code> after usage to avoid memory leaks</a></li>
@@ -719,7 +721,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
 </ul>
 </li>
 <li><a class="reference internal" href="#description">Description</a><ul>
-<li><a class="reference internal" href="#why-a-local-depth-cache">Why a local depth_cache?</a></li>
+<li><a class="reference internal" href="#why-a-local-depthcache">Why a local DepthCache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
 </li>
@@ -872,7 +874,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Nov 01 2024 at 12:19 (CET).
+    Last updated on Nov 02 2024 at 15:21 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.

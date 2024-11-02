@@ -171,11 +171,14 @@ The algorithm of the DepthCache management was designed according to these instr
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 - [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
 
+***Since, according to Binance's predefined algorithm, all levels > 1000 would be orphaned and remain forever between 
+valid levels, UBLDC removes them as soon as they exceed the thousandth position.***
+
 With [create_depthcache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches) 
 the DepthCache is started and initialized, i.e. for each DepthCache that is to be created, a separate 
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via 
 websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized 
-in real time. As soon as Once this is done, the status of the cache is set to "synchronous".
+in real time. As soon as once this is done, the status of the cache get set to "synchronous".
 
 Data in the DepthCache can be accessed with ['get_asks()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) 
 and ['get_bids()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids). 

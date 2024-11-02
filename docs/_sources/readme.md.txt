@@ -49,7 +49,7 @@ To run modules of the *UNICORN Binance Suite* you need a [valid license](https:/
 
 ## Using a DepthCache
 
-### [Create a local depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache) for Binance with just 3 lines of code
+### [Create a local DepthCache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcache) for Binance with just 3 lines of code
 ```
 from unicorn_binance_local_depth_cache import BinanceLocalDepthCacheManager, DepthCacheOutOfSync
 
@@ -76,7 +76,7 @@ asks = ubldc.get_asks("BTCUSDT", threshold_volume=300000)
 bids = ubldc.get_bids("BTCUSDT", threshold_volume=300000)
 ```
 
-### Catch an exception, if the [depth_cache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data
+### Catch an exception, if the [DepthCache is out of sync](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) while accessing its data
 ```
 try:
     asks = ubldc.get_asks(market="BTCUSDT", limit_count=5, threshold_volume=300000)
@@ -86,7 +86,7 @@ except DepthCacheOutOfSync:
     bids = "Out of sync!"
 ```
 
-### [Stop and delete a depth_cache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
+### [Stop and delete a DepthCache](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=stop_depth_cache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.stop_depth_cache):
 ```
 ubldc.stop_depthcache("BTCUSDT")
 ```
@@ -165,33 +165,36 @@ provides local order books for the Binance Exchanges
 [Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
 ([+Testnet](https://testnet.binancefuture.com)) and [Binance US](https://www.binance.us/).
 
-The algorithm of the depth_cache management was designed according to these instructions:
+The algorithm of the DepthCache management was designed according to these instructions:
 
 - [Binance Spot: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly)
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 - [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
 
+***Since, according to Binance's predefined algorithm, all levels > 1000 would be orphaned and remain forever between 
+valid levels, UBLDC removes them as soon as they exceed the thousandth position.***
+
 With [create_depthcache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches) 
-the depth_cache is started and initialized, i.e. for each depth_cache that is to be created, a separate 
+the DepthCache is started and initialized, i.e. for each DepthCache that is to be created, a separate 
 asyncio coroutine is inserted into the event loop of the stream. As soon as at least one depth update is received via 
 websocket is received, a REST snapshot is downloaded and the depth updates are applied to it so that it is synchronized 
-in real time. As soon as Once this is done, the status of the cache is set to "synchronous".
+in real time. As soon as once this is done, the status of the cache get set to "synchronous".
 
-Data in the depth_cache can be accessed with ['get_asks()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) 
+Data in the DepthCache can be accessed with ['get_asks()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_asks#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_asks) 
 and ['get_bids()'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=get_bids#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_bids). 
-If the state of the depth_cache is not synchronous during access, the exception 
+If the state of the DepthCache is not synchronous during access, the exception 
 ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
 is thrown.
 
-The depth_cache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing 
-update event) or if the websocket connection is interrupted. As soon as this happens the state of the depth_cache is set 
+The DepthCache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing 
+update event) or if the websocket connection is interrupted. As soon as this happens the state of the DepthCache is set 
 to "out of sync" and when accessing the cache the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) is thrown.
 
-### Why a local depth_cache?
-A local depth_cache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the [Binance request weight limits](https://www.binance.com/en/support/faq/360004492232).
+### Why a local DepthCache?
+A local DepthCache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the [Binance request weight limits](https://www.binance.com/en/support/faq/360004492232).
 
 ### What are the benefits of the UNICORN Binance Local Depth Cache?
-- Always know if the cache is in sync! If the depth_cache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
+- Always know if the cache is in sync! If the DepthCache is out of sync, the exception ['DepthCacheOutOfSync'](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync) 
 is thrown or ask with [`is_depth_cache_synchronized()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.is_depth_cache_synchronized). 
 
 - If a depth cache is out of sync it gets refreshed automatically within a few seconds.

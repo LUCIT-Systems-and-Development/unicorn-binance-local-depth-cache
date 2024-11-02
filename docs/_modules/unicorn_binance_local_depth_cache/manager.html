@@ -173,7 +173,6 @@
 <span class="kn">from</span> <span class="nn">unicorn_binance_websocket_api</span> <span class="kn">import</span> <span class="n">BinanceWebSocketApiManager</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
-
 <span class="kn">import</span> <span class="nn">cython</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">platform</span>
@@ -880,11 +879,13 @@
                             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BinanceLocalDepthCacheManager._manage_depthcaches() - Subscribing &quot;</span>
                                          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">market</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                                <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;channel&#39;</span><span class="p">],</span>
-                                                                    <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
-                                                                    <span class="n">stream_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ubldc_depth_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                                                                    <span class="n">output</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span>
-                                                                    <span class="n">process_asyncio_queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_manage_depth_cache_async</span><span class="p">)</span>
+                                <span class="n">stream_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ubwa</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span>
+                                    <span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;channel&#39;</span><span class="p">],</span>
+                                    <span class="n">markets</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
+                                    <span class="n">stream_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ubldc_depth_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                    <span class="n">output</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+                                    <span class="n">process_asyncio_queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_manage_depth_cache_async</span>
+                                <span class="p">)</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;stream_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stream_id</span>
                                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;restarts&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                                     <span class="bp">self</span><span class="o">.</span><span class="n">dc_streams</span><span class="p">[</span><span class="n">dc_stream</span><span class="p">][</span><span class="s1">&#39;restarts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1641,7 +1642,7 @@
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Nov 01 2024 at 12:19 (CET).
+    Last updated on Nov 02 2024 at 15:21 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
