@@ -57,7 +57,7 @@ jobs:
       - name: Set Compiler Flags for Windows in conda_build_config.yaml
         if: runner.os == 'Windows'
         run: |
-          echo "CFLAGS:" >> conda_build_config.yaml
+          echo "CFLAGS:" > conda_build_config.yaml
           echo "  - \"/O2 /GL\"   # [win]" >> conda_build_config.yaml
           echo "  - \"/MP\"       # [win]" >> conda_build_config.yaml
           echo "  - \"/W3\"       # [win]" >> conda_build_config.yaml
@@ -68,6 +68,7 @@ jobs:
           echo "" >> conda_build_config.yaml
           echo "c_compiler:" >> conda_build_config.yaml
           echo "  - vs2022  # [win]" >> conda_build_config.yaml          
+          echo "" >> conda_build_config.yaml
 
       - name: Install Visual Studio Build Tools and Windows SDK (Windows only)
         if: runner.os == 'Windows'
