@@ -165,7 +165,7 @@ provides local order books for the Binance Exchanges
 [Binance Futures](https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams) 
 ([+Testnet](https://testnet.binancefuture.com)) and [Binance US](https://www.binance.us/).
 
-### The algorithm of the DepthCache management was designed according to these instructions:
+***The algorithm of the DepthCache management was designed according to these instructions:***
 
 ***Since, according to Binance's predefined algorithm, 
 [all levels > 1000 would be orphaned and remain forever between valid levels](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/45)
