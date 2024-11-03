@@ -85,6 +85,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#the-algorithm-of-the-depthcache-management-was-designed-according-to-these-instructions">The algorithm of the DepthCache management was designed according to these instructions:</a></li>
 <li><a class="reference internal" href="#why-a-local-depthcache">Why a local DepthCache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
@@ -403,7 +404,8 @@ provides local order books for the Binance Exchanges
 <a class="reference external" href="https://github.com/binance-exchange/binance-official-api-docs">Binance</a> (<a class="reference external" href="https://testnet.binance.vision/">+Testnet</a>),
 <a class="reference external" href="https://binance-docs.github.io/apidocs/futures/en/#websocket-market-streams">Binance Futures</a>
 (<a class="reference external" href="https://testnet.binancefuture.com">+Testnet</a>) and <a class="reference external" href="https://www.binance.us/">Binance US</a>.</p>
-<p>The algorithm of the DepthCache management was designed according to these instructions:</p>
+<section id="the-algorithm-of-the-depthcache-management-was-designed-according-to-these-instructions">
+<h3>The algorithm of the DepthCache management was designed according to these instructions:<a class="headerlink" href="#the-algorithm-of-the-depthcache-management-was-designed-according-to-these-instructions" title="Link to this heading">¶</a></h3>
 <p><em><strong>Since, according to Binance’s predefined algorithm,
 <a class="reference external" href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/45">all levels &gt; 1000 would be orphaned and remain forever between valid levels</a>
 , UBLDC removes them as soon as they exceed the thousandth position.</strong></em></p>
@@ -425,6 +427,7 @@ is thrown.</p>
 <p>The DepthCache will immediately start an automatic re-initialization if a gap in the UpdateID`s is detected (missing
 update event) or if the websocket connection is interrupted. As soon as this happens the state of the DepthCache is set
 to “out of sync” and when accessing the cache the exception <a class="reference external" href="https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=is_depth_cache_synchronized#unicorn_binance_local_depth_cache.exceptions.DepthCacheOutOfSync">‘DepthCacheOutOfSync’</a> is thrown.</p>
+</section>
 <section id="why-a-local-depthcache">
 <h3>Why a local DepthCache?<a class="headerlink" href="#why-a-local-depthcache" title="Link to this heading">¶</a></h3>
 <p>A local DepthCache is the fastest way to access the current order book depth at any time while transferring as little data as necessary. A REST snapshot takes a lot of time and the amount of data that is transferred is relatively large. Continuous full transmission of the order book via websocket is faster, but the amount of data is huge. A local depth_cache is initialized once with a REST snapshot and then handles Diff. Depth updates applied by the websocket connection. By transferring a small amount of data (only the changes), a local depth_cache is kept in sync in real time and also allows extremely fast (local) access to the data without exceeding the <a class="reference external" href="https://www.binance.com/en/support/faq/360004492232">Binance request weight limits</a>.</p>
@@ -722,6 +725,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
 </ul>
 </li>
 <li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#the-algorithm-of-the-depthcache-management-was-designed-according-to-these-instructions">The algorithm of the DepthCache management was designed according to these instructions:</a></li>
 <li><a class="reference internal" href="#why-a-local-depthcache">Why a local DepthCache?</a></li>
 <li><a class="reference internal" href="#what-are-the-benefits-of-the-unicorn-binance-local-depth-cache">What are the benefits of the UNICORN Binance Local Depth Cache?</a></li>
 </ul>
@@ -875,7 +879,7 @@ of any kind, including but not limited to direct or indirect damages for loss of
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Nov 03 2024 at 13:59 (CET).
+    Last updated on Nov 03 2024 at 14:03 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
