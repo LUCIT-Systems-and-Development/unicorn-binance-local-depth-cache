@@ -529,8 +529,8 @@ class TestUbldc(unittest.TestCase):
             print(thread.name)
         print(f"TestUbldc stopping:")
 
-    def test_add_depth_cache_missing_market(self):
-        self.assertFalse(self.__class__.ubldc._add_depth_cache())
+    def test_add_depthcache_missing_market(self):
+        self.assertFalse(self.__class__.ubldc._add_depthcache())
 
     def test_div(self):
         self.__class__.ubldc.get_latest_release_info()
@@ -538,7 +538,7 @@ class TestUbldc(unittest.TestCase):
         self.__class__.ubldc.get_version()
         self.__class__.ubldc.is_update_available()
         self.__class__.ubldc.is_depth_cache_synchronized("BTCUSDT")
-        self.__class__.ubldc.get_list_of_depth_caches()
+        self.__class__.ubldc.get_list_of_depthcaches()
 
     def test_acreate_depth_cache_true(self):
         self.assertTrue(self.__class__.ubldc.create_depth_cache(markets='BTCUSDT'))
