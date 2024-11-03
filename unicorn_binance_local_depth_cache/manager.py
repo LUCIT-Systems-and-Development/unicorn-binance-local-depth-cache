@@ -254,7 +254,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                         return True
         return False
 
-    def _add_depth_cache(self,
+    def _add_depthcache(self,
                          market: str = None,
                          refresh_interval: int = None) -> bool:
         """
@@ -268,7 +268,7 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         :type refresh_interval: int
         :return: bool
         """
-        logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Adding new entry for market '{market}' ...")
+        logger.debug(f"BinanceLocalDepthCacheManager._add_depthcache() - Adding new entry for market '{market}' ...")
         if market is not None:
             market = market.lower()
             self.depth_caches[market] = {'asks': {},
@@ -283,14 +283,14 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                                          'stream_status': None}
             self.threading_lock_ask[market] = threading.Lock()
             self.threading_lock_bid[market] = threading.Lock()
-            logger.debug(f"BinanceLocalDepthCacheManager._add_depth_cache() - Added new entry for market '{market}'!")
+            logger.debug(f"BinanceLocalDepthCacheManager._add_depthcache() - Added new entry for market '{market}'!")
             return True
         else:
-            logger.critical(f"BinanceLocalDepthCacheManager._add_depth_cache() - Not able to add entry for market "
+            logger.critical(f"BinanceLocalDepthCacheManager._add_depthcache() - Not able to add entry for market "
                             f"'{market}'!")
             return False
 
-    def _add_depth_cache_to_dc_stream_list(self, markets: Optional[Union[str, list]] = None) -> bool:
+    def _add_depthcache_to_dc_stream_list(self, markets: Optional[Union[str, list]] = None) -> bool:
         """
         Add a DC to `self.dc_streams`.
 
@@ -902,11 +902,11 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             return False
         if type(markets) is list:
             for market in markets:
-                self._add_depth_cache(market=market, refresh_interval=refresh_interval)
-                self._add_depth_cache_to_dc_stream_list(markets=market)
+                self._add_depthcache(market=market, refresh_interval=refresh_interval)
+                self._add_depthcache_to_dc_stream_list(markets=market)
         else:
-            self._add_depth_cache(market=markets, refresh_interval=refresh_interval)
-            self._add_depth_cache_to_dc_stream_list(markets=markets)
+            self._add_depthcache(market=markets, refresh_interval=refresh_interval)
+            self._add_depthcache_to_dc_stream_list(markets=markets)
         return True
 
     def create_depth_cache(self, markets: Optional[Union[str, list]] = None, refresh_interval: int = None) -> bool:
@@ -1049,17 +1049,26 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         else:
             return None
 
-    def get_list_of_depth_caches(self) -> list:
+    def get_list_of_depthcaches(self) -> list:
         """
-        Get a list of existing depth caches
+        Get a list of active DepthCaches
 
         :return: list
         """
-        logger.debug(f"BinanceLocalDepthCacheManager.get_list_of_depth_caches() - Create and then return the list")
+        logger.debug(f"BinanceLocalDepthCacheManager.get_list_of_depthcaches() - Create and then return the list")
         depth_cache_list = []
         for depth_cache in self.depth_caches:
-            depth_cache_list.append(depth_cache)
+            if self.depth_caches[depth_cache]['stop_request'] is False:
+                depth_cache_list.append(depth_cache)
         return depth_cache_list
+
+    def get_list_of_depth_caches(self) -> list:
+        """
+        ***Deprecated!*** Please use 'get_list_of_depthcaches()' instead!
+        """
+        logger.warning(f"BinanceLocalDepthCacheManager.get_list_of_depth_caches() is deprecated, please use "
+                       f"'get_list_of_depthcaches()' instead!")
+        return self.get_list_of_depthcaches()
 
     def get_ubra_manager(self) -> BinanceRestApiManager:
         """
@@ -1287,7 +1296,6 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                 raise DepthCacheNotFound(market=market)
             dc_stream = self.get_dc_stream_id(market=market)
             if dc_stream is not None and self.dc_streams[dc_stream]['stream_id'] is not None:
-                print(self.dc_streams[dc_stream]['stream_id'])
                 self.ubwa.unsubscribe_from_stream(stream_id=self.dc_streams[dc_stream]['stream_id'], markets=market)
                 with self.dc_streams_lock:
                     try:

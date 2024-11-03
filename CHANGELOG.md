@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [How to upgrade to the latest version!](https://unicorn-binance-local-depth-cache.docs.lucit.tech/readme.html#installation-and-upgrade)
 
 ## 2.7.0.dev (development stage/unreleased/unstable)
+### Changed
+- `get_list_of_depth_caches()` is deprecated, use `get_list_of_depthcaches()` instead!
 
 ## 2.7.0
 ### Changed
