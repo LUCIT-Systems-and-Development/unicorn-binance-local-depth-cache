@@ -167,12 +167,13 @@ provides local order books for the Binance Exchanges
 
 The algorithm of the DepthCache management was designed according to these instructions:
 
+***Since, according to Binance's predefined algorithm, 
+[all levels > 1000 would be orphaned and remain forever between valid levels](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/45)
+, UBLDC removes them as soon as they exceed the thousandth position.***
+
 - [Binance Spot: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/spot/en/#how-to-manage-a-local-order-book-correctly)
 - [Binance Futures: "How to manage a local order book correctly"](https://binance-docs.github.io/apidocs/futures/en/#diff-book-depth-streams)
 - [Binance US: "Managing a Local Order Book"](https://docs.binance.us/#order-book-depth-diff-stream)
-
-***Since, according to Binance's predefined algorithm, all levels > 1000 would be orphaned and remain forever between 
-valid levels, UBLDC removes them as soon as they exceed the thousandth position.***
 
 With [create_depthcache()`](https://unicorn-binance-local-depth-cache.docs.lucit.tech/unicorn_binance_local_depth_cache.html?highlight=create_depthcache#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.create_depthcaches) 
 the DepthCache is started and initialized, i.e. for each DepthCache that is to be created, a separate 
@@ -310,10 +311,10 @@ Run in bash:
 `pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/$(curl -s https://api.github.com/repos/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")').tar.gz --upgrade`
 
 #### Windows
-Use the below command with the version (such as 2.7.0) you determined 
+Use the below command with the version (such as 2.8.0) you determined 
 [here](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/releases/latest):
 
-`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.7.0.tar.gz --upgrade`
+`pip install https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/archive/2.8.0.tar.gz --upgrade`
 
 ### From the latest source (dev-stage) with PIP from [GitHub](https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache)
 This is not a release version and can not be considered to be stable!

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 2.7.0 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unicorn_binance_local_depth_cache package &#8212; unicorn-binance-local-depth-cache 2.8.0 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
     <link rel="stylesheet" type="text/css" href="_static/pydoctheme.css?v=fdf8e9ae" />
@@ -76,6 +76,7 @@
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_release_info()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_version()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depth_caches()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depthcaches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depthcaches()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubra_manager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_ubra_manager()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubwa_manager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_ubwa_manager()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_user_agent()</span></code></a></li>
@@ -420,7 +421,13 @@ The DepthCache is reset and reinitialized at this interval.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches">
 <span class="sig-name descname"><span class="pre">get_list_of_depth_caches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/manager.html#BinanceLocalDepthCacheManager.get_list_of_depth_caches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches" title="Link to this definition">¶</a></dt>
-<dd><p>Get a list of existing depth caches</p>
+<dd><p><strong>*Deprecated!*</strong> Please use ‘get_list_of_depthcaches()’ instead!</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depthcaches">
+<span class="sig-name descname"><span class="pre">get_list_of_depthcaches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/unicorn_binance_local_depth_cache/manager.html#BinanceLocalDepthCacheManager.get_list_of_depthcaches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depthcaches" title="Link to this definition">¶</a></dt>
+<dd><p>Get a list of active DepthCaches</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
@@ -867,6 +874,7 @@ please provide a path like “/var/www/html/”. <a class="reference external" h
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_release_info"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_release_info()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_latest_version"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_latest_version()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depth_caches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depth_caches()</span></code></a></li>
+<li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_list_of_depthcaches"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_list_of_depthcaches()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubra_manager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_ubra_manager()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_ubwa_manager"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_ubwa_manager()</span></code></a></li>
 <li><a class="reference internal" href="#unicorn_binance_local_depth_cache.manager.BinanceLocalDepthCacheManager.get_user_agent"><code class="docutils literal notranslate"><span class="pre">BinanceLocalDepthCacheManager.get_user_agent()</span></code></a></li>
@@ -1048,7 +1056,7 @@ please provide a path like “/var/www/html/”. <a class="reference external" h
     <a href="https://docs.lucit.tech">Index of all LUCIT Software Documentation</a><br />
     &copy; <a href="/license.html">Copyright</a> 2022-2023, LUCIT Systems and Development. All Rights Reserved..
     See <a href="/license.html">License</a> for more information.<br />
-    Last updated on Nov 02 2024 at 15:21 (CET).
+    Last updated on Nov 03 2024 at 13:59 (CET).
     <a href="https://github.com/LUCIT-Systems-and-Development/unicorn-binance-local-depth-cache/issues/new/choose">Found a bug</a>?
     <br />
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.

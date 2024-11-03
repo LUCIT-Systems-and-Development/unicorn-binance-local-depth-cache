@@ -36,7 +36,7 @@ import threading
 
 
 __app_name__: str = "unicorn-binance-local-depth-cache"
-__version__: str = "2.7.0.dev"
+__version__: str = "2.8.0"
 __logger__: logging.getLogger = logging.getLogger("unicorn_binance_local_depth_cache")
 
 logger = __logger__
@@ -255,8 +255,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
         return False
 
     def _add_depthcache(self,
-                         market: str = None,
-                         refresh_interval: int = None) -> bool:
+                        market: str = None,
+                        refresh_interval: int = None) -> bool:
         """
         Add a DepthCache to the depth_caches stack.
 
@@ -1307,6 +1307,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
                     except ValueError:
                         logger.debug(f"ValueError: '{market}' not in "
                                      f"'self.dc_streams[dc_stream]['subscribed_markets']'")
+            self.depth_caches[market]['asks'] = {}
+            self.depth_caches[market]['bids'] = {}
         return True
 
     def stop_depth_cache(self, markets: Optional[Union[str, list]] = None) -> bool:

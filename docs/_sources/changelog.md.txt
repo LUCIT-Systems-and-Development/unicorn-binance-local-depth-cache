@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.7.0.dev (development stage/unreleased/unstable)
 
+## 2.8.0
+### Changed
+- `get_list_of_depth_caches()` is deprecated, use `get_list_of_depthcaches()` instead! From now on, only active 
+  DepthCaches are returned!
+- `stop_depthcache()` removes asks and bids, but the rest of the DepthCache remains.
+
 ## 2.7.0
 ### Changed
 - Holding the thread lock is now in the more abstract functions.
