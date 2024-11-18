@@ -10,6 +10,8 @@ __pycache__/
 
 # C extensions
 *.so
+*.c
+*.pyi
 
 # Distribution / packaging
 .Python
