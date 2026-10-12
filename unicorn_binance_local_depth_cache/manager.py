@@ -201,8 +201,8 @@ class BinanceLocalDepthCacheManager(threading.Thread):
             disable_colorama=disable_colorama,
             process_stream_signals=self._process_stream_signals,
             close_timeout_default=self.websocket_close_timeout,
-            ping_timeout_default=self.websocket_ping_interval,
-            ping_interval_default=self.websocket_ping_timeout,
+            ping_interval_default=self.websocket_ping_interval,
+            ping_timeout_default=self.websocket_ping_timeout,
             warn_on_update=warn_on_update,
         )
 

@@ -196,7 +196,7 @@ class Cluster:
             "refresh_interval": refresh_interval,
         }
         return self._request(
-            self.endpoints.create_depthcache, method="post", params=params, debug=debug
+            self.endpoints.create_depthcache, method="get", params=params, debug=debug
         )
 
     async def create_depthcache_async(
@@ -218,7 +218,7 @@ class Cluster:
             "refresh_interval": refresh_interval,
         }
         return await self._request_async(
-            self.endpoints.create_depthcache, method="post", params=params, debug=debug
+            self.endpoints.create_depthcache, method="get", params=params, debug=debug
         )
 
     def create_depthcaches(

@@ -12,6 +12,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.14.0.dev (development stage/unreleased/unstable)
 
 ## 2.14.1
+### Fixed
+- `Cluster.create_depthcache()` and `create_depthcache_async()` sent a
+  `POST` to UBDCC's `/create_depthcache`, which only accepts `GET`, so
+  every call came back as `405 Method Not Allowed`. Both now use `GET`.
+- `websocket_ping_interval` and `websocket_ping_timeout` were passed
+  swapped to UBWA (`ping_interval_default` got the timeout and vice
+  versa), so with the defaults the effective ping interval was 20s
+  instead of 10s and the timeout 10s instead of 20s.
+
 ### Changed
 - Bumped minimum `unicorn-binance-websocket-api` dependency from
   `>=2.12.2` to `>=2.13.0` in `setup.py`, `requirements.txt`,

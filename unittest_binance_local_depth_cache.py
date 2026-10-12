@@ -2240,6 +2240,15 @@ class TestUbldc(unittest.TestCase):
         with BinanceLocalDepthCacheManager(exchange="binance.us") as ubldc:
             ubldc.get_latest_release_info()
 
+    def test_websocket_ping_params_passed_to_ubwa(self):
+        with BinanceLocalDepthCacheManager(
+            exchange="binance.us",
+            websocket_ping_interval=7,
+            websocket_ping_timeout=13,
+        ) as ubldc:
+            self.assertEqual(ubldc.ubwa.ping_interval_default, 7)
+            self.assertEqual(ubldc.ubwa.ping_timeout_default, 13)
+
 
 class TestUbldcOptions(unittest.TestCase):
     """Tests for European Options (Vanilla Options) depth cache support.
@@ -2364,13 +2373,16 @@ class TestCluster(unittest.TestCase):
             json=unittest.mock.MagicMock(return_value=_CLUSTER_TEST_RESPONSE_OK),
             raise_for_status=unittest.mock.MagicMock(),
         )
-        mock_post.return_value = unittest.mock.MagicMock(
+        cluster = Cluster(address="mock-cluster.local", port=80)
+        mock_get.return_value = unittest.mock.MagicMock(
             json=unittest.mock.MagicMock(return_value={"result": "OK"}),
             raise_for_status=unittest.mock.MagicMock(),
         )
-        cluster = Cluster(address="mock-cluster.local", port=80)
         result = cluster.create_depthcache(exchange="binance.com", market="BTCUSDT")
         self.assertEqual(result, {"result": "OK"})
+        # UBDCC registers /create_depthcache as GET only, a POST gets 405
+        mock_post.assert_not_called()
+        self.assertTrue(mock_get.call_args.args[0].endswith("/create_depthcache"))
 
     @unittest.mock.patch("unicorn_binance_local_depth_cache.cluster.requests.post")
     @unittest.mock.patch("unicorn_binance_local_depth_cache.cluster.requests.get")
